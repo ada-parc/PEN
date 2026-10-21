@@ -1,0 +1,3520 @@
+/*-- scss:defaults --*/
+
+// ============================================================================
+// PEN site theme, built on Quarto's default Bootstrap theme.
+// Colour and type values mirror assets/tokens.css.
+//
+// Clean, modern, minimal: large headings and elements, readable body, Bitter
+// typeface, high contrast. Palette: navy / brick clay / cream / black /
+// white, with Slate Mist, Sky, and Apricot as field-bound support tints.
+// Keep tokens.css and this file in step.
+// ============================================================================
+
+// --- Brand palette (mirror of tokens.css) -----------------------------------
+$pen-navy:         #1B2A3B;   // structure, headings, nav, primary ink; 13.05:1 on cream
+$pen-black:        #000000;  // reserve; hover/active fill on navy elements only
+$pen-brick:        #9B3A26;  // the one light-field accent; 6.21:1 on cream
+$pen-cream:        #F6F2EA;  // page background
+$pen-white:        #FFFFFF;  // panel/card fill, text on navy or brick
+$pen-slate-mist:   #93989B;  // light-field only, decorative dividers/muted icons
+$pen-sky:          #8FB8DE;  // dark-field only, text/icons/links on navy or black
+$pen-apricot:      #E8925A;  // dark-field only, accent text/icons on navy or black
+
+// Role aliases. Every call site below reads by job, not by brand name;
+// only the assignments above changed when the palette did.
+$pen-navy-dark:    $pen-black;    // hover/active states on navy fills only
+$pen-blue:         $pen-brick;    // interactive accent on light fields: links, CTA, focus ring, progress/achievement
+$pen-blue-dark:    $pen-navy;     // link hover/active on light fields; the palette has no brick-dark tint
+$pen-blue-deep:    $pen-black;    // unused reserve slot
+$pen-gold-light:   $pen-apricot;  // dark-field accent text/icons only
+$pen-gold:         $pen-brick;    // light-field shapes (arrows, borders, cert banner); .navbar's own rule below is the one dark-field exception and names apricot directly
+$pen-gold-deep:    $pen-brick;    // light-field text that must be read: eyebrows, completion text, accent rails
+$pen-ink:          $pen-navy;     // body text; navy is the palette's primary ink
+$pen-ink-soft:     $pen-navy;     // secondary text; the palette has no cream-legal muted text tone, so hierarchy comes from size/weight
+$pen-paper:        $pen-cream;    // page background
+$pen-surface:      $pen-white;    // tinted panel, now a plain lift off cream
+$pen-surface-alt:  $pen-white;    // card fill
+$pen-surface-warm: $pen-white;    // home hero band; same value as surface now, one white in the new ref
+$pen-rule:         $pen-navy;     // meaningful border, needs 3:1; slate mist fails that floor on cream
+$pen-rule-faint:   $pen-slate-mist; // hairlines only, decorative
+
+// Brick at 12% toward white: a derived tint of the palette's one legal
+// "interaction" color, not a new swatch. Used only as a hover/focus
+// fill where a plain gray would otherwise go: there is no gray ramp,
+// and Slate Mist is decoration-only, never a state carrier.
+// 12% keeps brick-deep text at 5.75:1 and navy text at 12.08:1 on top of it
+// (both clear AA), while reading as clearly distinct from white.
+$pen-brick-wash:   mix($pen-brick, $pen-white, 12%);
+
+// --- Bootstrap / Quarto variable overrides ---------------------------------
+$font-family-serif:      'Bitter', Georgia, 'Times New Roman', serif;
+$font-family-sans-serif: $font-family-serif;   // serif everywhere: Bitter
+$font-family-monospace:  'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+
+$font-size-root:   19px;          // above the 18px floor, large, readable body copy
+$line-height-base: 1.65;
+
+$body-color:       $pen-ink;
+$body-bg:          $pen-paper;
+
+$primary:          $pen-navy;
+$link-color:       $pen-blue;
+$link-hover-color: $pen-blue-dark;
+
+$border-color:     $pen-rule;
+
+$headings-font-weight:     700;
+$headings-line-height:     1.2;
+$headings-color:           $pen-navy;
+
+$navbar-bg:                $pen-navy;
+$navbar-fg:                $pen-paper;
+$navbar-hl:                $pen-gold-light;  // text on navy
+
+$toc-color:                $pen-ink-soft;
+$toc-font-size:            0.9rem;
+
+$code-color:               $pen-navy-dark;
+$code-bg:                  $pen-surface;
+
+// Single source for the content column width, mirrors `grid: body-width`
+// in _quarto.yml (one source, always). Previously a second,
+// conflicting 780px value lived here.
+$pen-body-width:           820px;
+$content-max-width:        $pen-body-width;
+
+
+/*-- scss:rules --*/
+
+// --- Base -----------------------------------------------------------------
+body {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+main {
+  // cap line length near 70 characters per the accessibility spec
+  p, li, dd, blockquote {
+    max-width: 70ch;
+  }
+  // generous rhythm between blocks, minimal, uncrowded pages
+  p, ul, ol, blockquote {
+    margin-bottom: 1.4rem;
+  }
+}
+
+// One visible focus treatment everywhere ---------------------------------
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible,
+.nav-link:focus-visible {
+  outline: 3px solid var(--pen-focus);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+// Bootstrap's navbar hover color is Apricot at 80% over the band: 4.36 : 1 on
+// navy, under the 4.5 floor. Full Apricot is 6.03 on navy and 8.69
+// on black. Quarto marks the navbar data-bs-theme="dark", whose own rule is
+// (0,2,0), so this needs the same weight to win on source order.
+.navbar[data-bs-theme] {
+  --bs-navbar-hover-color: var(--pen-band-accent);
+}
+
+// Navbar contrast on the navy field ---------------------------------------
+.navbar {
+  // Bootstrap compiles the navbar fill to a literal, so it is pointed at the
+  // theme's band role here (navy in the light theme, black in dark and high
+  // contrast).
+  background-color: var(--pen-band);
+  // Dark field (navy): the one $pen-gold usage that needs the dark-field
+  // tint directly, since $pen-gold itself now aliases the light-field
+  // brick clay (see the palette block above) and brick fails 3:1 on navy.
+  border-bottom: 4px solid var(--pen-band-accent);
+  .navbar-brand,
+  .nav-link {
+    font-weight: 600;
+  }
+  // The sitewide focus ring above is $pen-blue (brick clay), which fails
+  // 3:1 on navy (2.10). Nav links sit on the navy field, so
+  // they need the dark-field-legal ring color instead.
+  .nav-link:focus-visible {
+    outline-color: var(--pen-band-link);
+  }
+  .nav-link:hover,
+  .nav-link:focus {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  // Quarto's default brand layout centers the logo with auto margins
+  // (mx-auto), which left a wide gap before "Home". Left-align it with a
+  // fixed gap instead. Selector matches Bootstrap's own
+  // `.navbar .navbar-container > .navbar-brand-container` specificity
+  // (0,3,0) so this wins on source order rather than losing outright.
+  .navbar-container .navbar-brand-container {
+    margin-left: 0 !important;
+    margin-right: 1.5rem !important;
+  }
+
+  // Brand pair. Left: PEN tile + "PEN" as real
+  // Bitter text (Quarto's `.navbar-title`). Right: "An initiative of" +
+  // ADA-PARC tile + wordmark + external arrow, all one link. Both tiles
+  // share one size so the two marks read as a pair. Neither is a label, so
+  // both are exempt from the underline-on-hover rule.
+  .navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    &:hover, &:focus { text-decoration: none; }
+  }
+  .navbar-brand .navbar-logo {
+    max-height: 32px;
+    height: 32px;
+    width: auto;
+  }
+  .navbar-brand .navbar-title {
+    font-weight: 900;
+    font-size: 1.6rem;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    color: var(--pen-on-band);
+  }
+  a.nav-link:has(.pen-parent-word) {
+    &:hover, &:focus { text-decoration: none; }
+    // Quarto wraps nav text in .menu-text, so the row layout goes there.
+    .menu-text {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    // The ADA-PARC wordmark is the link's visible text, so it carries the
+    // hover/focus underline instead of the whole row.
+    &:hover .pen-parent-word,
+    &:focus .pen-parent-word {
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
+    }
+  }
+  .pen-parent-kicker {
+    // Apricot on navy is 6.03:1 (dark-field accent text) and distinct
+    // from the white marks. Weight 600 because the xs step (16px floor) is
+    // small text.
+    font-size: var(--pen-text-xs);
+    font-weight: 600;
+    color: var(--pen-band-accent);
+    white-space: nowrap;
+    padding-left: 1rem;
+    margin-right: 0.25rem;
+    border-left: 1px solid var(--pen-band-rule);
+    line-height: 1.9;
+  }
+  .pen-parent-badge {
+    width: 28px;
+    height: 28px;
+    flex: none;
+  }
+  .pen-parent-word {
+    font-weight: 900;
+    font-size: 1.1rem;
+    letter-spacing: -0.02em;
+    color: var(--pen-on-band);
+    white-space: nowrap;
+  }
+  .pen-parent-ext {
+    color: var(--pen-band-link);
+    font-size: var(--pen-text-xs);
+  }
+  // Collapsed menu: drop the divider rule, which only makes sense inline.
+  @include media-breakpoint-down(lg) {
+    .pen-parent-kicker {
+      border-left: 0;
+      padding-left: 0;
+    }
+  }
+
+  // Modules dropdown. Bootstrap's default dropdown-item
+  // gave every row the same navy-on-white weight, so "1, Getting Started,
+  // ADA Insights" read as one run-on phrase with no way to spot a module by
+  // number. The number now carries its own color and weight, matching the
+  // homepage Module Tracker's numeral spine (.hero-modules-number above) so
+  // the same "01" reads the same way at both scales.
+  .dropdown-menu {
+    border-color: var(--pen-rule-faint);
+    border-radius: 8px;
+    padding: 0.4rem;
+  }
+
+  .dropdown-item {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    white-space: normal;
+    border-radius: 6px;
+    padding: 0.6rem 0.75rem;
+
+    // Light field inside the dropdown panel (white), unlike the navy navbar
+    // it hangs off of, so this reuses the sitewide light-field hover/focus
+    // treatment (underline on hover/focus, never color
+    // alone) rather than the dark-field one above.
+    &:hover,
+    &:focus-visible {
+      background: var(--pen-surface);
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
+    }
+  }
+
+  .nav-module-num {
+    flex: 0 0 auto;
+    min-width: 2ch;
+    font-weight: 700;
+    color: var(--pen-accent);
+  }
+}
+
+// Footer. Bootstrap/Quarto's defaults are #757575 text at 0.825em (about
+// 15.7px against this site's 19px root), under the 16px size floor and
+// too faint. Overridden to ink-soft at
+// the sm step, with more generous padding so the footer reads as a real
+// section rather than fine print.
+// Quarto's floating "Back to top" pill (back-to-top-navigation: true) is
+// fixed 50px above the viewport bottom, so on a page short enough that the
+// footer sits at the very bottom of the scroll, the pill lands on top of
+// the footer links. Reserve space below the footer so the two never
+// collide, on any page length.
+footer.footer {
+  padding-bottom: 6rem;
+  // White field for contrast against the cream page.
+  background-color: var(--pen-surface);
+}
+
+// The pill itself. Quarto's defaults are Bootstrap's #6c757d gray text and
+// border (4.20:1 on cream, under the 4.5:1 floor, and off the
+// palette) plus a drop shadow (no shadows). With the footer
+// now white, a white pill with a navy outline disappeared against it, so
+// the pill is a solid navy control with white text (13.05:1) that reads on
+// both the cream page and the white footer. Hover goes to black, the
+// sanctioned hover fill for navy elements. Quarto toggles display:none ->
+// inline-block on scroll, so the entrance animation replays each time it
+// appears; reduced-motion users get none of it.
+#quarto-back-to-top {
+  display: none;
+  align-items: center;
+  gap: 0.4rem;
+  left: auto;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  transform: none;
+  min-height: 44px;
+  padding: 0.6rem 1.1rem 0.6rem 0.9rem;
+  background-color: var(--pen-chrome);
+  color: var(--pen-on-chrome);
+  border: 2px solid var(--pen-chrome);
+  border-radius: 999px;
+  box-shadow: none;
+  font-size: var(--pen-text-sm);
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  animation: pen-top-in 0.2s ease-out;
+  transition: background-color 0.15s, border-color 0.15s;
+
+  .bi {
+    transition: transform 0.15s;
+  }
+
+  &:hover {
+    background-color: var(--pen-chrome-hover);
+    border-color: var(--pen-chrome-hover);
+    color: var(--pen-on-chrome);
+    text-decoration: none;
+
+    .bi {
+      transform: translateY(-2px);
+    }
+  }
+
+  &:focus-visible {
+    outline: 3px solid var(--pen-focus);
+    outline-offset: 3px;
+    border-radius: 999px;
+  }
+}
+
+// Quarto sets inline display:inline-block when it shows the pill.
+#quarto-back-to-top[style*="inline-block"],
+#quarto-back-to-top[style*="block"] {
+  display: inline-flex !important;
+}
+
+@keyframes pen-top-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #quarto-back-to-top,
+  #quarto-back-to-top .bi {
+    animation: none;
+    transition: none;
+  }
+  #quarto-back-to-top:hover .bi {
+    transform: none;
+  }
+}
+
+// assets/back-to-top.html moves focus to <main> (tabindex="-1") after a
+// keyboard activation, so focus isn't lost when the pill hides at the top.
+// <main> is a landing point, not a control, so it gets no ring; the focus
+// ring is for things that can be acted on.
+#quarto-document-content[tabindex="-1"]:focus {
+  outline: none;
+}
+
+// Footer. White field for contrast against the cream page (brick on white
+// clears 6.21:1, navy 14.4:1). Three columns share one left edge and one
+// header rule. Labels are title case at `sm`, no all-caps eyebrow. Links
+// and the disclosure summary carry a 2rem-tall box, past WCAG 2.5.8's 24px
+// minimum; the 44px tracker-row height does not apply to the footer.
+// Markup lives in `page-footer` in _quarto.yml.
+.nav-footer {
+  padding-top: 1.75rem;
+  padding-bottom: 1.75rem;
+  color: var(--pen-ink);
+  // Quarto paints the inner row with the page background, which sat as a
+  // cream band inside the white footer.footer (the 6rem pill clearance showed
+  // as white below it). Paint it white too so the field is one block.
+  background-color: var(--pen-surface);
+  column-gap: 3rem;
+
+  .nav-footer-left,
+  .nav-footer-center,
+  .nav-footer-right {
+    font-size: var(--pen-text-sm);
+    // Bootstrap holds these to `flex: 1 1 0` with no minimum, so a
+    // column's content can push past the viewport. `min-width: 0` lets it
+    // shrink (no horizontal scroll at 320px).
+    min-width: 0;
+    // Quarto centers the middle column; all three share the left edge.
+    text-align: left;
+  }
+
+  img {
+    vertical-align: middle;
+  }
+}
+
+.pen-footer-col {
+  p {
+    margin: 0 0 0.6rem;
+  }
+}
+
+// Column label: a plain-case, bold, brick label over a navy rule.
+// Not a heading element on purpose (Quarto's h2 rules would apply); each
+// column is a `role="group"` named by its label instead.
+.pen-footer-eyebrow {
+  font-size: var(--pen-text-sm);
+  font-weight: 700;
+  color: var(--pen-accent);
+  margin: 0 0 0.5rem;
+  padding-bottom: 0.45rem;
+  border-bottom: 2px solid var(--pen-rule);
+}
+
+.pen-footer-badges {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.6rem;
+}
+
+.pen-footer-badge-name {
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.pen-footer-badge-link {
+  display: block;
+  line-height: 0;
+
+  img {
+    width: 28px;
+    height: 28px;
+    border-radius: 5px;
+  }
+
+  // A logo is a brand mark, not a label: exempt from the underline rule,
+  // same as the navbar marks.
+  &,
+  &:hover,
+  &:focus-visible {
+    text-decoration: none;
+  }
+}
+
+.pen-footer-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+// Footer links and the research-team disclosure share one treatment:
+// brick, bold, always underlined (never color-only). Hover and focus
+// drop the underline further from the text and shift to navy, two signals
+// changing together.
+.pen-footer-links a,
+.pen-footer-team summary {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2rem;
+  padding: 0.2rem 0;
+  color: var(--pen-link);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.14em;
+  cursor: pointer;
+  transition: text-underline-offset 0.15s ease, color 0.12s ease;
+
+  &:hover,
+  &:focus-visible {
+    text-underline-offset: 0.34em;
+    color: var(--pen-link-hover);
+  }
+}
+
+// Research team credit, collapsed by default. Native <details>, no JS.
+// The funder line and grant numbers stay visible; the name list expands.
+// The summary is styled as a link with a chevron (the default marker is
+// hidden) that turns over when open, so it reads as a control and not a
+// label. The chevron is a CSS shape, so it needs no alt text.
+.pen-footer-team {
+  margin-top: 0.25rem;
+
+  summary {
+    list-style: none;
+    gap: 0.5rem;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    &::after {
+      content: "";
+      width: 0.55em;
+      height: 0.55em;
+      border-right: 2.5px solid currentColor;
+      border-bottom: 2.5px solid currentColor;
+      transform: translateY(-0.15em) rotate(45deg);
+      transition: transform 0.15s ease;
+    }
+  }
+
+  &[open] summary::after {
+    transform: translateY(0.1em) rotate(-135deg);
+  }
+
+  p {
+    margin: 0.4rem 0 0;
+  }
+}
+
+// Stack below the site's 640px breakpoint: three columns plus the 3rem
+// gap squeeze each to a third of a 375px phone.
+@media (max-width: 640px) {
+  .nav-footer {
+    flex-direction: column;
+    row-gap: 1.75rem;
+  }
+
+  .nav-footer-left,
+  .nav-footer-center,
+  .nav-footer-right {
+    // Reset the row layout's flex-basis, which a column main axis would
+    // turn into an equal share of height and spill text into the next column.
+    flex: 0 0 auto;
+    // Quarto's center column shrinks to its content when stacked, which
+    // left the "Get help" rule 102px wide against 337px for its siblings.
+    align-self: stretch;
+  }
+
+  .pen-footer-col {
+    width: 100%;
+  }
+}
+
+// Links in body copy: underlined, generous offset -----------------------
+main a {
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 0.08em;
+}
+main a:hover {
+  background: var(--pen-surface);
+}
+
+// External-link glyph, built by hand in R/build_modules.R's build_pages()
+// ("external links carry the icon... announced by the icon's
+// title"). Decorative and aria-hidden; the accompanying visually-hidden
+// text is what a screen reader announces.
+.external-link-icon {
+  margin-left: 0.2em;
+  font-size: 0.85em;
+}
+
+// Quarto's own link-external-icon processing fires on any external
+// `<a>` the client-side script in quarto.js doesn't exclude by class
+// (`.nav-link`, `.no-external`, etc; see site_libs/quarto-html/quarto.js),
+// which is most external links outside the hand-built content above,
+// including the footer's ADA-PARC badge until it picked up `no-external`.
+// Unlike the hand-built glyph, that automatic icon (Bootstrap's
+// box-arrow-up-right, appended via `a.external::after`) carries no
+// accessible name of its own - purely decorative with nothing for a
+// screen reader to announce - so it doesn't tell a screen reader the link leaves the site. Suppressed
+// site-wide here rather than patched, so the hand-built glyph stays the
+// one implementation.
+a.external::after {
+  content: none;
+}
+
+// A button is never wider than its column; large text wraps its label.
+.btn { max-width: 100%; white-space: normal; }
+
+// Buttons, large, minimal, high contrast -----------------------------------
+.btn-primary {
+  background: var(--pen-chrome);
+  border-color: var(--pen-chrome);
+  // Bootstrap compiles the label color to a literal white.
+  color: var(--pen-on-chrome);
+  font-weight: 700;
+  padding: 0.7rem 1.5rem;
+  font-size: 1.05rem;
+  border-radius: 6px;
+
+  // Hover/focus flips every primary button to Brick Clay with an underline
+  // (not color alone), as .btn-lg does below. Navy to near-black was too
+  // subtle to notice. White on brick is 6.9:1.
+  &:hover, &:focus-visible {
+    background: var(--pen-accent);
+    border-color: var(--pen-accent);
+    color: var(--pen-on-accent);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  // Large link-button (How to Use, "Read the accessibility page"). Navy to
+  // black was barely visible, so hover/focus flips to Brick Clay, the
+  // light-field interaction accent, with an underline so the
+  // change is not color alone. White on brick is 6.9:1.
+  &.btn-lg:hover, &.btn-lg:focus-visible {
+    background: var(--pen-accent);
+    border-color: var(--pen-accent);
+    color: var(--pen-on-accent);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+}
+
+// Bootstrap compiles heading color to a literal, so point it at the theme's
+// ink. Classed headings (.hero-title and the rest) set their own color and
+// outrank this element selector.
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 { color: var(--pen-ink); }
+
+// Quarto's "On this page" table of contents hard-codes navy for the active
+// and hovered link (with !important) and a light gray rule beside each entry.
+.sidebar nav[role=doc-toc] {
+  ul > li > a.active,
+  ul > li > ul > li > a.active {
+    color: var(--pen-ink) !important;
+    border-left-color: var(--pen-rule);
+  }
+  ul > li > a:hover,
+  ul > li > ul > li > a:hover { color: var(--pen-ink) !important; }
+  > ul a { border-left-color: var(--pen-toc-line); }
+}
+
+// Headings rhythm, large, generous, minimal --------------------------------
+h1 { font-size: 2.6rem; margin-bottom: 1.25rem; }
+h2 {
+  font-size: 2rem;
+  margin-top: 3.25rem;
+  // Quarto's base theme puts a border-bottom rule under every h1/h2. That
+  // reads as a line closing out the section above rather than opening the
+  // one below, and stacked down a page of several ## sections (e.g. a
+  // module landing page) it turns into a lot of separator lines. Dropped
+  // in favor of margin/weight alone to mark a new section.
+  border-bottom: none;
+  padding-bottom: 0;
+}
+h3 { font-size: 1.4rem; margin-top: 2.25rem; color: var(--pen-ink); }
+h4 { font-size: 1.1rem; color: var(--pen-ink-soft); }
+
+// Module number, stacked above the title inside the h1 itself (module
+// landing pages only) rather than a sibling heading or a repeated "Module
+// N" prefix in prose. Keeps the page at one h1 while still
+// surfacing the number as the first thing read. Styled as an eyebrow
+// label above the title.
+.module-eyebrow {
+  display: block;
+  // Title case ("Module 1"), not an all-caps eyebrow, so no tracking and
+  // a step up from xs.
+  font-size: var(--pen-text-sm);
+  font-weight: 700;
+  color: var(--pen-accent);
+  margin-bottom: 0.35rem;
+}
+
+// Tables -------------------------------------------------------------
+.table {
+  th {
+    background: var(--pen-band);
+    color: var(--pen-on-band-soft);
+    font-weight: 600;
+  }
+  tbody tr:nth-child(even) { background: var(--pen-surface); }
+}
+
+// --- PEN components -------------------------------------------------
+
+// Homepage hero. Light field, full bleed on $pen-surface-alt so it reads
+// as a distinct band. index.qmd has no `title:`, so the h1 in here is the page's only
+// heading.
+//
+// Light field means text and shapes come from the dark end of a ramp:
+// navy, ink, ink-soft, gold-deep. Never gold-light here (forbidden on any
+// light field).
+.hero {
+  // A "barely there" band. The warm band gives the paper tracker panel a
+  // visible, if quiet, edge on its own (see .hero-modules).
+  background: var(--pen-bg);
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+}
+
+// Bootstrap's reboot puts a 1em margin above every <main>, and Quarto adds
+// its own 14px above a page's first block at desktop widths. Together they
+// leave a visible strip of white between the navbar and the hero's navy field,
+// breaking the "one continuous band" the full-bleed hero is built for.
+// Scoped to the home page only, via
+// the hero being main's first child, so other pages keep the normal
+// breathing room above their title block.
+#quarto-content > main.content:has(> .hero) {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+// Guards the breakout above: on platforms with a non-overlay scrollbar,
+// 100vw can exceed 100% by the scrollbar's width, which would otherwise
+// put the page a few pixels into horizontal scroll. No horizontal
+// scroll is a hard rule, so this is load-bearing, not tidiness.
+body {
+  overflow-x: hidden;
+}
+
+// The hero's own column is wider than the sitewide 820px prose column
+//. Two columns share it (intro left, progress panel right), so
+// each still gets a readable measure; the lede is capped by its own
+// max-width, not by this container. 820px stays the single source for the
+// content column on every other page.
+.hero-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3.5rem 1.5rem 3.5rem;
+}
+
+// Two-column split:
+// pitch and primary action on the left, "Your progress" panel on the right.
+// `minmax(0, ...)` so a long title can never push the grid past the viewport.
+.hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 3rem;
+  align-items: center;
+}
+
+.hero-intro {
+  min-width: 0;
+}
+
+// Attribution row: PEN badge, then "An Initiative of ADA-PARC", over a 2px
+// navy rule. Title case, `h3` size, 700. A sibling of the h1,
+// never inside it: it is attribution, not heading text.
+.hero-initiative {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin: 0 0 2rem;
+  padding-bottom: 1.1rem;
+  border-bottom: 2px solid var(--pen-rule);
+  font-size: var(--pen-text-h3);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--pen-ink);
+}
+
+.hero-initiative-badge {
+  flex: 0 0 auto;
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+// Weighted like the ADA-PARC wordmark and set in brick, the one light-field
+// accent. Brick on cream is 6.21:1.
+.hero-initiative-mark {
+  white-space: nowrap;
+  font-weight: 800;
+  color: var(--pen-accent);
+}
+
+// The page's one h1: the acronym spelled out, as real text. `display` is
+// reserved for exactly this element. Initials are brick and a
+// step larger, so they read by size as well as color: brick here is
+// large display text only, never a small label, a deliberate exception to
+// "brick is interaction and achievement". Weight 800 is the heaviest face tokens.css loads.
+.hero-title {
+  margin: 0;
+  font-size: var(--pen-text-display);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--pen-ink);
+  overflow-wrap: break-word;
+}
+
+.hero-title-initial {
+  font-size: 1.12em;
+  font-weight: 800;
+  color: var(--pen-accent);
+}
+
+.hero-lede {
+  max-width: 30ch;
+  margin: 1.25rem 0 0;
+  font-size: var(--pen-text-lede);
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--pen-ink);
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2rem;
+
+  // Pandoc wraps the two links in a paragraph; neutralise its margins.
+  p { display: contents; }
+}
+
+// Both are links that navigate, styled as buttons. Brick fill for the one
+// primary action (instead of the usual navy); brick outline for the single
+// secondary. Hover has to be unmistakable without shadows, so each stacks
+// cues that do not depend on color alone: the fill inverts, a 3px ring
+// appears, the label underlines, and the arrow slides.
+.hero-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-height: 3.25rem;
+  padding: 0.7rem 1.5rem;
+  border: 2px solid var(--pen-accent);
+  border-radius: 6px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+  outline: 3px solid transparent;
+  outline-offset: 3px;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, outline-color 0.15s ease;
+
+  svg { flex: 0 0 auto; transition: transform 0.2s ease; }
+
+  &:hover,
+  &:focus-visible {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.25em;
+    outline-color: var(--pen-accent);
+  }
+
+  &:hover svg,
+  &:focus-visible svg {
+    transform: translateX(5px);
+  }
+}
+
+.hero-btn-primary {
+  background: var(--pen-accent);
+  color: var(--pen-on-accent);
+
+  &:visited { color: var(--pen-on-accent); }
+
+  &:hover,
+  &:focus-visible {
+    background: var(--pen-chrome);
+    border-color: var(--pen-chrome);
+    color: var(--pen-on-chrome);
+  }
+}
+
+.hero-btn-secondary {
+  background: transparent;
+  color: var(--pen-accent);
+
+  &:visited { color: var(--pen-accent); }
+
+  &:hover,
+  &:focus-visible {
+    background: var(--pen-accent);
+    color: var(--pen-on-accent);
+  }
+}
+
+// Progress panel. A container (8px, 2px navy emphasis border) on
+// the cream band, white fill. Rows run edge to edge inside it so a row's
+// hover fill and brick bar reach the border; the header and bar carry their
+// own side padding instead.
+.hero-progress {
+  min-width: 0;
+  background: var(--pen-surface);
+  border: 2px solid var(--pen-rule);
+  border-radius: 8px;
+  overflow: hidden;
+  padding-top: 1.5rem;
+}
+
+.hero-progress-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.25rem 1rem;
+  padding: 0 1.6rem;
+
+  h2 {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: var(--pen-text-h3);
+    font-weight: 800;
+    line-height: 1.2;
+  }
+
+  p { margin: 0; }
+}
+
+// The count is real text, written by progress-init.html ("N of M modules
+// complete"); the bar below is a decorative echo of it, aria-hidden.
+.hero-progress-count {
+  font-size: var(--pen-text-base);
+  font-weight: 600;
+}
+
+// 2px navy outline so the track clears the 3:1 non-text floor on its
+// own; the brick fill is reinforcement, the count carries the meaning.
+.hero-progress-bar {
+  height: 0.9rem;
+  margin: 1rem 1.6rem 1.25rem;
+  background: var(--pen-surface);
+  border: 2px solid var(--pen-rule);
+  border-radius: 999px;
+  overflow: hidden;
+
+  span {
+    display: block;
+    width: 0;
+    height: 100%;
+    background: var(--pen-accent);
+    transition: width 0.3s ease;
+  }
+}
+
+// Certificate link: swaps in for the count once the series is done (the
+// count goes visually-hidden, so the header keeps one line and one height).
+// Brick on white, underlined, so it reads as a link without color alone.
+.hero-progress-cert {
+  font-size: var(--pen-text-base);
+  font-weight: 700;
+
+  a {
+    color: var(--pen-link);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    text-decoration-thickness: 2px;
+
+    &:hover { color: var(--pen-link-hover); }
+  }
+}
+
+// Module tracker rows. Grid, not a single flex line: number and
+// title on top, status pill underneath the title, so the title keeps the
+// `h3` step in a half-width panel and never truncates. The whole row is the
+// link target.
+.hero-modules {
+  margin: 0;
+
+  > ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  li {
+    margin: 0;
+    border-top: 1px solid var(--pen-rule-faint);
+  }
+
+  a {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "num title arrow"
+      "num pill  arrow";
+    align-items: center;
+    column-gap: 1rem;
+    row-gap: 0.5rem;
+    min-height: 4.75rem;
+    padding: 1.25rem 1.6rem;
+    text-decoration: none;
+    color: var(--pen-ink);
+    transition: background-color 0.15s ease, box-shadow 0.15s ease;
+
+    &:focus-visible { outline-offset: -3px; }
+
+    // Hover/focus: brick-wash fill plus a 4px inset brick bar on the leading
+    // edge, title underline, and the arrow turning navy and
+    // sliding. Four cues, none of them color alone.
+    &:hover,
+    &:focus-visible {
+      background: var(--pen-wash);
+      box-shadow: inset 4px 0 0 var(--pen-accent);
+    }
+
+    &:hover .hero-modules-title,
+    &:focus-visible .hero-modules-title {
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 0.2em;
+    }
+
+    &:hover .hero-modules-arrow,
+    &:focus-visible .hero-modules-arrow {
+      background: var(--pen-chrome);
+      transform: translateX(4px);
+    }
+
+    .status-pill {
+      grid-area: pill;
+      justify-self: start;
+      margin-top: 0;
+      white-space: nowrap;
+      font-size: var(--pen-text-sm);
+      padding: 0.2rem 0.85rem;
+    }
+  }
+
+  // Two-digit code. The spoken "Module " prefix is visually hidden.
+  &-number {
+    grid-area: num;
+    align-self: start;
+    min-width: 2.4ch;
+    padding-top: 0.1em;
+    font-size: var(--pen-text-h3);
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--pen-accent);
+  }
+
+  &-title {
+    grid-area: title;
+    min-width: 0;
+    font-size: var(--pen-text-h3);
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  // Inert line-break span from the old flex layout; the grid places the pill
+  // itself, so it is never needed.
+  &-break { display: none; }
+
+  // Brick circle, white chevron: decorative and aria-hidden. 2.75rem (~52px)
+  // clears the 44px touch floor even though the whole row is the target.
+  &-arrow {
+    grid-area: arrow;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 999px;
+    background: var(--pen-accent);
+    color: var(--pen-on-accent);
+    line-height: 1;
+    transition: transform 0.15s ease, background-color 0.15s ease;
+
+    svg { display: block; }
+  }
+}
+
+// Narrow widths: stack the columns, step the type one rung down (display
+// to h1 for the title), drop the decorative arrow.
+@media (max-width: 860px) {
+  .hero-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  // Large text can make a pill wider than the row; let its label wrap.
+  .status-pill { white-space: normal !important; text-align: center; }
+
+  // Heading anchor icons are a hover affordance and overshoot the column at
+  // large text; a phone has no hover.
+  .anchorjs-link { display: none !important; }
+
+  .hero-inner { padding: 2rem 1.25rem 2.5rem; }
+
+  .hero-initiative {
+    font-size: var(--pen-text-lede);
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-initiative-badge { width: 2rem; height: 2rem; }
+
+  .hero-title { font-size: var(--pen-text-h1); }
+
+  .hero-btn { width: 100%; justify-content: center; }
+
+  .hero-progress-head,
+  .hero-progress-bar { margin-left: 1.1rem; margin-right: 1.1rem; }
+  .hero-progress-head { padding: 0; }
+
+  .hero-modules {
+    a {
+      grid-template-columns: auto minmax(0, 1fr);
+      grid-template-areas:
+        "num title"
+        "num pill";
+      padding: 1.1rem 1.1rem;
+      min-height: 0;
+    }
+    &-number,
+    &-title { font-size: var(--pen-text-lede); }
+    &-arrow { display: none; }
+  }
+}
+
+// A single quiet line of housekeeping text, not a coloured callout box.
+.fine-print {
+  margin-top: 2.5rem;
+  font-size: 0.9rem;
+  color: var(--pen-ink-soft);
+}
+
+// Generic small muted text, "Loading your progress…", per-unit summaries,
+// module/unit meta lines. Shared across the home page, module pages, and
+// unit pages so it doesn't carry module- or unit-specific naming.
+.meta-text {
+  font-size: 0.95rem;
+  color: var(--pen-ink-soft);
+}
+
+// Status text is written by assets/progress-init.html, never colour alone.
+// Shared by the home page's module cards ([data-pen-module]) and a module
+// page's unit rows ([data-pen-unit]).
+.status-pill {
+  display: inline-block;
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.2rem 0.7rem;
+  border: 1.5px solid var(--pen-rule);
+  border-radius: 999px;
+}
+.status-pill[data-state="done"] {
+  border-color: var(--pen-accent);
+  color: var(--pen-accent);
+}
+.status-pill[data-state="done"]::before { content: "\2713\00a0"; } // check mark
+// Deliberately $pen-navy, not $pen-blue: the new ref gives one light-field
+// accent (brick clay), which $pen-blue and $pen-gold both now alias, so a
+// "done" pill (below) and an "in progress" pill sharing $pen-blue would
+// share a border color too. Navy keeps the two states visually distinct;
+// the state word and check mark still carry the meaning either way.
+.status-pill[data-state="in-progress"] {
+  border-color: var(--pen-rule);
+  color: var(--pen-ink);
+}
+
+// Unit list on a module's landing page. The same tracker-list pattern as the
+// home page's Module Tracker (.hero-modules): a plain list, one row per
+// unit, the whole row a link carrying a number, title, status pill, and
+// arrow, so every unit and its status fit on screen at once. Duplicated
+// rather than shared with .hero-modules because that component is scoped
+// to the home page hero; this one needs its
+// own top/bottom page margin instead of a hero's own spacing.
+//
+// Framed as a card: once rows carried their
+// own $pen-surface fill (below), white-on-cream gave almost no edge contrast
+// (1.02:1) to define the list's shape, so the hairline row dividers were
+// doing all the perceptual work and read as harsh cuts with nothing framing
+// them. A $pen-rule-faint border plus radius around the whole list, matching
+// .hero-modules' panel chrome, now gives the list its own visible edge so
+// the dividers read as internal structure, not the list's only boundary.
+// Module progress card: a white card with a navy header band
+// holding the label and the count in words, over one connected bar divided
+// by light ticks at each unit boundary. The words carry the state; the bar is
+// a progressbar for assistive tech (set up in assets/progress-init.html).
+.module-progress {
+  margin: 0.5rem 0 0;
+  background: var(--pen-surface);
+  border: 2px solid var(--pen-rule);
+  border-radius: 8px;
+  overflow: hidden;
+
+  .module-progress-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.1rem 1rem;
+    padding: 0.5rem 1rem;
+    background: var(--pen-band);
+    color: var(--pen-on-band);
+    font-weight: 700;
+  }
+
+  .module-progress-label,
+  .module-progress-text {
+    margin: 0;
+    max-width: none;
+    font-size: var(--pen-text-base);
+    color: var(--pen-on-band);
+  }
+
+  .module-progress-body { padding: 0.8rem 1rem; }
+
+  .module-progress-bar {
+    position: relative;
+    height: 1.1rem;
+    border: 2px solid var(--pen-rule);
+    border-radius: 6px;
+    background: var(--pen-surface);
+    overflow: hidden;
+  }
+
+  .module-progress-fill {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: var(--pen-accent);
+    transition: width 0.3s ease;
+  }
+
+  .module-progress-tick {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    margin-left: -1px;
+    background: var(--pen-tick);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .module-progress-fill { transition: none; }
+  }
+
+  @media (forced-colors: active) {
+    .module-progress-fill { background: Highlight; }
+    .module-progress-tick { background: CanvasText; }
+  }
+}
+
+.unit-list {
+  margin: 1rem 0 2.5rem;
+  border: 2px solid var(--pen-rule-faint);
+  border-radius: 8px;
+  overflow: hidden;
+
+  > ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  li + li {
+    border-top: 2px solid var(--pen-rule-faint);
+  }
+
+  // Matches .hero-modules' proportions: title and number at `h3`, min-height holding rows even instead
+  // of shrinking type and ellipsis-truncating titles. Horizontal padding
+  // matches .hero-modules' 1.5rem so the number and arrow do not press
+  // against the framed card's edges.
+  //
+  // Row fill: rows sit on $pen-surface (white) at rest, distinct from the
+  // $pen-paper (cream) page behind the list. Hover/focus moves onto
+  // $pen-brick-wash rather than a gray: there is no gray ramp and Slate Mist is decoration-only, never a state
+  // carrier, so the hover fill borrows a light tint of
+  // Brick Clay, the one color that carries the "interaction" job.
+  a {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 1rem;
+    padding: 1.5rem 1.5rem;
+    min-height: 4.75rem;
+    text-decoration: none;
+    color: var(--pen-ink);
+    background: var(--pen-surface);
+    transition: background-color 0.15s ease, box-shadow 0.15s ease;
+
+    &:focus-visible {
+      outline-offset: -2px;
+    }
+
+    &:hover,
+    &:focus-visible {
+      background: var(--pen-wash);
+      box-shadow: inset 4px 0 0 var(--pen-accent); // leading-edge bar, matches .hero-modules
+    }
+
+    &:hover .unit-title,
+    &:focus-visible .unit-title {
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
+    }
+
+    &:hover .unit-arrow,
+    &:focus-visible .unit-arrow {
+      transform: translateX(4px);
+    }
+
+    .status-pill {
+      flex: 0 0 auto;
+      margin-top: 0;
+      white-space: nowrap;
+      font-size: var(--pen-text-sm);
+      padding: 0.3rem 0.85rem;
+    }
+  }
+
+  .unit-number {
+    flex: 0 0 auto;
+    min-width: 2.4ch;
+    font-size: var(--pen-text-h3);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.01em;
+    color: var(--pen-accent);
+  }
+
+  .unit-title {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: var(--pen-text-h3);
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  // Zero-height flex line-break, inert and aria-hidden, matching
+  // .hero-modules-break. Does nothing above 640px; below it, forces the
+  // status pill onto its own line without giving the pill itself a 100%
+  // flex basis, which would stretch its fill/border across the row and
+  // stop it reading as a pill.
+  .unit-break {
+    display: none;
+  }
+
+  // A filled gold circle with a white chevron, matching .hero-modules-arrow
+  // (2.75rem target, bold SVG chevron for low-vision readability).
+  .unit-arrow {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 999px;
+    background: var(--pen-accent);
+    color: var(--pen-on-accent-soft);
+    line-height: 1;
+    transition: transform 0.15s ease;
+
+    svg { display: block; }
+  }
+
+  // Raised from 480px to 640px to match .hero-modules: the enlarged title
+  // and pill need the same extra room at the same width. Horizontal padding
+  // matches .hero-modules' own mobile inset (1.1rem, down from 1.5rem).
+  @media (max-width: 640px) {
+    a {
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 0.6rem;
+      row-gap: 0.65rem;
+      padding: 1.25rem 1.1rem;
+      min-height: 0;
+    }
+    .unit-number { font-size: var(--pen-text-base); }
+    .unit-title {
+      font-size: var(--pen-text-base);
+      line-height: 1.3;
+    }
+    .unit-arrow { display: none; }
+
+    a .status-pill {
+      margin-left: calc(2.4ch + 0.6rem);
+      max-width: calc(100% - 2.4ch - 0.6rem);
+      font-size: var(--pen-text-xs);
+      padding: 0.2rem 0.7rem;
+    }
+
+    .unit-break {
+      display: block;
+      flex: 0 0 100%;
+      height: 0;
+      margin: 0;
+    }
+  }
+}
+
+// Module map on How to Use: four native <details> rows,
+// closed by default, no JS. Replaces the old prose paragraph that named the
+// modules. Modules 1 to 3 are solid white rows; Module 4 is cream with a
+// dashed border, so "not part of the sequence" is carried by shape as well
+// as by the words in its label. No caps anywhere, so labels are sentence case at weight 700. The toggle's state
+// is stated in words ("Show details" / "Hide details"); the chevron only
+// reinforces. Focus uses the site-wide summary:focus-visible rule.
+.module-map {
+  margin: 0 0 3rem;
+
+  .module-map-label {
+    margin: 0 0 1rem;
+    padding-top: 0.6rem;
+    border-top: 5px solid var(--pen-rule);
+    font-size: var(--pen-text-base);
+    font-weight: 700;
+  }
+
+  // Dashed rule over the Module 4 label, matching its dashed row.
+  .module-map-label-ref {
+    margin-top: 1.75rem;
+    border-top-style: dashed;
+  }
+
+  details {
+    background: var(--pen-surface);
+    border: 2px solid var(--pen-rule);
+    border-radius: 12px;
+    margin: 0 0 1rem;
+  }
+
+  details.module-map-ref {
+    background: var(--pen-bg);
+    border-style: dashed;
+  }
+
+  summary {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 1.25rem;
+    min-height: 3rem;
+    padding: 1rem 1.25rem;
+    border-radius: 10px;
+    cursor: pointer;
+    list-style: none;
+    // Explicit: the framework's summary rule otherwise paints these rows grey.
+    color: var(--pen-ink);
+
+    &::-webkit-details-marker { display: none; }
+    transition: background-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  details { transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease; }
+
+  // Hover and keyboard focus: the border turns accent, a 10px accent
+  // rail fills the leading edge, the fill tints to the wash, the title gains a
+  // thick underline, and the row lifts on a hard shadow. Rail, underline and
+  // lift are the non-color cues. Dark and high contrast re-point the
+  // same tokens; high contrast adds its ring in the theme block below.
+  details:hover,
+  details:has(summary:focus-visible) {
+    border-color: var(--pen-accent);
+    box-shadow: 0 5px 0 var(--pen-rule);
+    transform: translateY(-2px);
+  }
+  summary:hover,
+  summary:focus-visible {
+    background: var(--pen-wash);
+    box-shadow: inset 10px 0 0 var(--pen-accent);
+  }
+  summary:hover .module-map-title,
+  summary:focus-visible .module-map-title {
+    text-decoration: underline;
+    text-decoration-thickness: 3px;
+    text-underline-offset: 0.2em;
+    text-decoration-color: var(--pen-accent);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    details, summary { transition: none; }
+    details:hover, details:has(summary:focus-visible) { transform: none; }
+  }
+
+  .module-map-num {
+    min-width: 1.2ch;
+    text-align: center;
+    font-size: 3rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--pen-accent);
+  }
+
+  .module-map-title {
+    display: block;
+    font-size: 1.3rem;
+    font-weight: 800;
+    line-height: 1.25;
+  }
+
+  .module-map-meta {
+    display: block;
+    margin-top: 0.1rem;
+    font-size: var(--pen-text-sm);
+  }
+
+  .module-map-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: var(--pen-text-sm);
+    font-weight: 700;
+    white-space: nowrap;
+    color: var(--pen-link);
+
+    &::before { content: "Show details"; }
+    &::after {
+      content: "";
+      width: 0.6rem;
+      height: 0.6rem;
+      border-right: 3px solid currentColor;
+      border-bottom: 3px solid currentColor;
+      transform: rotate(45deg) translateY(-2px);
+      transition: transform 150ms;
+    }
+  }
+
+  details[open] .module-map-toggle {
+    &::before { content: "Hide details"; }
+    &::after { transform: rotate(-135deg) translateY(-2px); }
+  }
+
+  .module-map-body {
+    margin: 0 1.25rem;
+    padding: 1.1rem 0 1.5rem;
+    border-top: 2px solid var(--pen-rule-faint);
+
+    > :last-child { margin-bottom: 0; }
+
+    p { margin: 0 0 1rem; }
+
+    h3 {
+      margin: 0 0 0.4rem;
+      font-size: var(--pen-text-base);
+      font-weight: 700;
+    }
+
+    ul, ol { margin: 0; padding-left: 1.4rem; }
+    li { margin-bottom: 0.3rem; }
+  }
+
+  .module-map-cols {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+
+  // Custom breakpoint, not a Bootstrap default: the toggle drops under the title and the two lists
+  // stack once a three-column summary row no longer fits at 320px.
+  @media (max-width: 640px) {
+    summary {
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 0.75rem 1rem;
+      padding: 1rem;
+    }
+    .module-map-toggle { grid-column: 1 / -1; white-space: normal; }
+    .module-map-num { font-size: 2.4rem; }
+    .module-map-cols { grid-template-columns: minmax(0, 1fr); }
+  }
+}
+
+// Step list on the How to Use page: a vertical timeline. A navy
+// rail runs down the left with a "Step N" pill on it; each step is a bordered
+// card to its right, with a small notch pointing at the pill. The last step
+// is the goal: brick fill, white text, and the certificate link as a button.
+// Still a real <ol>; the pill is literal visible text ("Step 1"), the rail
+// and notch are decorative pseudo-elements.
+.step-list {
+  list-style: none;
+  margin: 0 0 2rem;
+  padding: 0;
+
+  li {
+    position: relative;
+    display: grid;
+    grid-template-columns: 6rem minmax(0, 1fr);
+    column-gap: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+
+  // The rail, from under one pill to the next.
+  li:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    left: 3rem;
+    top: 2.6rem;
+    bottom: -0.2rem;
+    width: 4px;
+    margin-left: -2px;
+    background: var(--pen-rule);
+  }
+
+  .step-tag {
+    position: relative;
+    z-index: 1;
+    align-self: start;
+    justify-self: center;
+    padding: 0.3rem 0.9rem;
+    border: 3px solid var(--pen-bg);
+    border-radius: 999px;
+    background: var(--pen-band);
+    color: var(--pen-on-band);
+    font-size: var(--pen-text-sm);
+    font-weight: 800;
+    white-space: nowrap;
+  }
+
+  .step-card {
+    position: relative;
+    background: var(--pen-surface);
+    border: 2px solid var(--pen-rule);
+    border-radius: 12px;
+    padding: 1rem 1.25rem 1.1rem;
+  }
+
+  // Notch pointing back at the pill.
+  .step-card::before {
+    content: "";
+    position: absolute;
+    left: -0.75rem;
+    top: 0.75rem;
+    width: 1rem;
+    height: 1rem;
+    background: var(--pen-surface);
+    border-left: 2px solid var(--pen-rule);
+    border-bottom: 2px solid var(--pen-rule);
+    transform: rotate(45deg);
+  }
+
+  .step-title {
+    margin: 0 0 0.25rem;
+    font-size: 1.3rem;
+    font-weight: 800;
+    line-height: 1.25;
+  }
+
+  .step-text {
+    margin: 0;
+    font-size: var(--pen-text-base);
+  }
+
+  // The goal: brick fill, white text. Dark and high contrast re-point
+  // --pen-accent / --pen-on-accent, so the pairing holds in every theme.
+  li.step-goal {
+    .step-tag { background: var(--pen-accent); color: var(--pen-on-accent); }
+    .step-card {
+      background: var(--pen-accent);
+      border-color: var(--pen-accent);
+      color: var(--pen-on-accent);
+    }
+    .step-card::before { background: var(--pen-accent); border-color: var(--pen-accent); }
+  }
+
+  // Certificate link. At rest: an inverted pill (on-accent fill, accent text,
+  // 6.94:1 in light). On hover or focus it flips to the chrome fill, lifts on
+  // a hard shadow, the seal tilts, the arrow slides, a hint line opens and the
+  // underline thickens. The hint is aria-hidden (the link's name is complete
+  // without it); the seal and arrow are decorative. --cert-bg keeps the
+  // seal's cut-out lines matched to the button fill in every theme.
+  .cert-link {
+    --cert-bg: var(--pen-on-accent);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 2.75rem;
+    margin-top: 0.9rem;
+    padding: 0.55rem 1rem 0.55rem 0.65rem;
+    border: 3px solid var(--pen-on-accent);
+    border-radius: 10px;
+    background: var(--cert-bg);
+    color: var(--pen-accent);
+    font-weight: 800;
+    text-decoration: none;
+    transition: transform 0.18s ease, box-shadow 0.18s ease,
+      background-color 0.18s ease, color 0.18s ease;
+
+    .cert-seal {
+      flex: none;
+      width: 2.2rem;
+      height: 2.2rem;
+      transition: transform 0.35s cubic-bezier(0.3, 1.6, 0.5, 1);
+    }
+    .cert-seal .mark { fill: currentColor; }
+    .cert-seal .cut { fill: none; stroke: var(--cert-bg); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+    .cert-arrow {
+      flex: none;
+      width: 1.2rem;
+      height: 1.2rem;
+      transition: transform 0.18s ease;
+    }
+    .cert-label {
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 0.22em;
+    }
+    .cert-hint {
+      display: block;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      font-size: var(--pen-text-xs);
+      font-weight: 700;
+      transition: max-height 0.18s ease, opacity 0.18s ease;
+    }
+  }
+
+  // Beats the sitewide `main a:hover` surface fill.
+  .cert-link:hover,
+  .cert-link:focus-visible {
+    --cert-bg: var(--pen-chrome);
+    background: var(--cert-bg);
+    color: var(--pen-on-chrome);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 0 var(--pen-chrome-hover);
+
+    .cert-label { text-decoration-thickness: 4px; }
+    .cert-seal { transform: rotate(-12deg) scale(1.15); }
+    .cert-arrow { transform: translateX(6px); }
+    .cert-hint { max-height: 2rem; opacity: 1; }
+  }
+  .cert-link:focus-visible { outline: 3px solid var(--pen-on-accent); outline-offset: 3px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cert-link, .cert-link * { transition: none; }
+    .cert-link:hover, .cert-link:focus-visible { transform: none; }
+    .cert-link:hover .cert-seal, .cert-link:focus-visible .cert-seal,
+    .cert-link:hover .cert-arrow, .cert-link:focus-visible .cert-arrow { transform: none; }
+  }
+
+  // Custom breakpoint, not a Bootstrap default: the 6rem pill column plus gap leaves a card too narrow
+  // under about 560px, so the pill moves above its card and the rail moves
+  // to the left edge.
+  @media (max-width: 560px) {
+    li { grid-template-columns: minmax(0, 1fr); }
+    li:not(:last-child)::before { left: 1.1rem; top: 2.4rem; }
+    .step-tag { justify-self: start; margin-bottom: 0.5rem; }
+    .step-card { margin-left: 1.5rem; }
+    .step-card::before { display: none; }
+  }
+}
+
+// Saved / never-saved contrast on the How to Use page. A real <dl>
+// (definition lists over prose on reference pages),
+// laid out as a two-column grid so each dt/dd pair reads as a label/value
+// row, hairline dividers matching .step-list above. Replaces a single
+// dense paragraph explaining what local storage does and does not hold.
+.fact-list {
+  display: grid;
+  grid-template-columns: 10rem 1fr;
+  margin: 0 0 1.25rem;
+  border-top: 1px solid var(--pen-rule-faint);
+
+  dt, dd {
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--pen-rule-faint);
+  }
+
+  dt {
+    font-weight: 700;
+  }
+
+  dd {
+    margin: 0;
+    font-size: var(--pen-text-sm);
+  }
+
+  // Same non-Bootstrap breakpoint as .step-list, same reason: the 10rem
+  // label column has no room to sit beside its value at 320-375px, so
+  // stack label above value instead of shrinking either.
+  @media (max-width: 480px) {
+    grid-template-columns: minmax(0, 1fr);
+
+    dt { padding-bottom: 0.25rem; border-bottom: none; }
+    dd { padding-top: 0; }
+  }
+}
+
+// "You're done" banner on the home page, shown once the series is complete.
+.cert-banner {
+  border: 2px solid var(--pen-accent);
+  border-radius: 8px;
+  background: var(--pen-surface);
+  padding: 1rem 1.5rem;
+  margin: 1.5rem 0;
+
+  p { margin: 0; }
+}
+
+// Video slot; an empty placeholder frame until a unit's video is set in modules.yml
+.video-embed {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: var(--pen-surface);
+  border: 2px dashed var(--pen-rule);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1.5rem;
+  margin: 0.5rem 0 1.5rem;
+
+  &.has-video { border-style: solid; padding: 0; overflow: hidden; background: var(--pen-black); }
+  video { width: 100%; height: 100%; border-radius: 6px; }
+  iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; border-radius: 8px; }
+}
+
+// Unit made of several videos. Each video is a `.unit-part`: an h2,
+// its player, and its transcript. `.unit-parts` is the jump list above them.
+// The count ("Part 2 of 4") is small text above the title inside the h2, so
+// the heading still reads as one phrase to a screen reader.
+.unit-parts {
+  margin: 0.5rem 0 2rem;
+  padding: 1.1rem 1.25rem 1.25rem;
+  background: var(--pen-surface);
+  border: 1px solid var(--pen-rule-faint);
+  border-radius: 8px;
+
+  .unit-parts-label { margin: 0 0 0.75rem; font-weight: 700; color: var(--pen-ink); }
+  ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: part;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.5rem;
+  }
+  li { counter-increment: part; min-width: 0; }
+  a {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    min-height: 2.75rem;
+    padding: 0.6rem 0.9rem;
+    background: var(--pen-bg);
+    border: 2px solid var(--pen-rule);
+    border-radius: 8px;
+    font-weight: 700;
+    color: var(--pen-link);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+
+    &::before { content: counter(part) "."; margin-right: 0.6rem; }
+    &:hover, &:focus-visible { background: var(--pen-wash); }
+  }
+  .unit-parts-title { flex: 1 1 8rem; min-width: 0; overflow-wrap: anywhere; }
+  .unit-parts-time { font-weight: 400; font-size: var(--pen-text-sm); color: var(--pen-ink); }
+}
+.unit-part {
+  margin: 0 0 2.5rem;
+  // Land below the sticky navbar when reached from the jump list.
+  scroll-margin-top: 5rem;
+
+  .unit-part-title {
+    margin: 0 0 0.75rem;
+    font-size: var(--pen-text-h3);
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+  }
+  .unit-part-count {
+    display: block;
+    font-size: var(--pen-text-sm);
+    font-weight: 700;
+    color: var(--pen-ink);
+  }
+  .video-embed { margin-bottom: 0.75rem; }
+  .unit-transcript { margin: 0; }
+  .unit-transcript details > p { max-width: 70ch; margin: 0 0 1rem; }
+}
+
+// Module 4 Resource Padlet. A board, not a video: it scrolls internally, so
+// it gets a tall fixed height instead of 16:9. The link below it is the
+// keyboard/screen-reader-friendly path to the full Padlet.
+.padlet-embed {
+  border: 1px solid var(--pen-rule);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 0.5rem 0 0.5rem;
+
+  iframe { display: block; width: 100%; height: min(75vh, 720px); min-height: 480px; border: 0; }
+}
+.padlet-fallback {
+  margin: 0 0 1.5rem;
+  font-size: 0.95em;
+}
+// Module 4 categorized link list: plain stacked rows inside the FAQ-style
+// <details>. Name on its own line (bold link), description under it.
+.link-list {
+  ul { list-style: none; margin: 0; padding: 0 0 0.25rem; }
+  li {
+    display: block;
+    padding: 0.75rem 0;
+    border-top: 1px solid var(--pen-rule-faint);
+  }
+  li:first-child { border-top: 0; padding-top: 0; }
+  li a { font-weight: 700; }
+  .link-desc { display: block; margin-top: 0.15rem; }
+  summary .link-count { margin-left: 0.35rem; font-size: 0.85em; font-weight: 400; color: var(--pen-ink-soft); white-space: nowrap; }
+}
+// Poster frame over a unit's video until it first plays. Shows
+// the unit title and length on the navy field so the player is not a black
+// box. It stops short of the bottom edge, leaving the native control bar
+// uncovered and operable. aria-hidden: the same title and length are already
+// in the video's accessible name, and the native controls are the keyboard
+// path. Clicking it is a mouse and touch convenience that starts playback.
+// Ships hidden and is revealed by assets/video-poster.html only when the
+// video has not started, so a no-JS visitor never gets a poster stuck over a
+// playing video. Dark field: white text, Apricot play disc.
+.video-poster {
+  position: absolute;
+  inset: 0 0 2.75rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  text-align: center;
+  background: var(--pen-navy);
+  color: var(--pen-white);
+  cursor: pointer;
+
+  .poster-play {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 4rem;
+    height: 4rem;
+    margin-bottom: 0.5rem;
+    border-radius: 999px;
+    background: var(--pen-apricot);
+    color: var(--pen-navy);
+
+    svg { display: block; margin-left: 0.15rem; }
+  }
+  .poster-title {
+    font-size: var(--pen-text-h3);
+    font-weight: 700;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+  }
+  .poster-meta {
+    font-size: var(--pen-text-sm);
+  }
+
+  @media (max-width: 640px) {
+    .poster-title { font-size: var(--pen-text-lede); }
+  }
+  // Too short for the disc as well as the text.
+  @media (max-width: 480px) {
+    .poster-play { display: none; }
+    .poster-title { font-size: var(--pen-text-base); }
+  }
+}
+
+// "Mark unit complete" control on a unit page. No card chrome; the browser
+// storage note lives on How to Use.
+.progress-control {
+  margin: 2.75rem 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr) minmax(0, 1fr);
+  align-items: stretch;
+  gap: 1rem;
+
+  // "Mark unit complete" is the primary action and the largest target:
+  // wider column, taller, bigger type. The two resource buttons flank it
+  // as secondary, outlined controls.
+  button {
+    order: 2;
+    font-family: inherit;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--pen-on-chrome-soft);
+    background: var(--pen-chrome);
+    border: 2px solid var(--pen-chrome-hover);
+    padding: 1.5rem 1.5rem;
+    min-height: 5.25rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease,
+      transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  button:hover,
+  button:focus-visible {
+    background: var(--pen-accent);
+    border-color: var(--pen-accent);
+    color: var(--pen-on-accent);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 0 var(--pen-chrome-hover);
+  }
+  button:active { transform: translateY(0); box-shadow: none; }
+  button[aria-pressed="true"] {
+    background: var(--pen-surface);
+    color: var(--pen-ink-strong);
+  }
+  button[aria-pressed="true"]:hover,
+  button[aria-pressed="true"]:focus-visible {
+    background: var(--pen-wash);
+    border-color: var(--pen-chrome-hover);
+    color: var(--pen-ink-strong);
+  }
+  button[aria-pressed="true"]::before { content: "\2713\00a0"; }
+
+  .unit-resource {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    text-align: center;
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1.2;
+    padding: 0.9rem 1rem;
+    border-radius: 8px;
+    border: 2px solid var(--pen-rule);
+    color: var(--pen-ink-strong);
+    background: var(--pen-surface);
+    text-decoration: none;
+    transition: background-color 0.15s ease, color 0.15s ease,
+      transform 0.15s ease, box-shadow 0.15s ease;
+
+    svg { transition: transform 0.15s ease; flex: 0 0 auto; }
+    .unit-resource-state { font-size: var(--pen-text-sm); font-weight: 400; }
+  }
+  .unit-resource:first-child { order: 1; }
+  .unit-resource:last-child { order: 3; }
+  a.unit-resource:hover,
+  a.unit-resource:focus-visible {
+    background: var(--pen-chrome);
+    color: var(--pen-on-chrome);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 0 var(--pen-accent);
+  }
+  a.unit-resource:hover svg,
+  a.unit-resource:focus-visible svg { transform: translateY(2px); }
+  a.unit-resource:active { transform: translateY(0); box-shadow: none; }
+  .unit-resource.is-unavailable {
+    border-style: dashed;
+    background: transparent;
+    cursor: not-allowed;
+  }
+
+  // Units whose transcripts sit under their videos have no third button.
+  &.is-two-up { grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr); }
+  // Modules with no slides: the unit has just the button (and maybe a transcript).
+  &.is-two-up-end { grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); }
+  &.is-solo { grid-template-columns: minmax(0, 1fr); }
+
+  // Stay side by side on narrow screens too; just tighten the type.
+  @media (max-width: 760px) {
+    gap: 0.5rem;
+    button { font-size: 1rem; padding: 1rem 0.5rem; }
+    .unit-resource { font-size: 0.85rem; padding: 0.75rem 0.4rem; }
+  }
+}
+
+// Module landing page: outside resources. Light cards (white on cream, navy
+// text and border) so they read as links out, distinct from the navy slide
+// downloads. Whole card is the link; hover uses the brick wash plus a brick
+// leading bar and shifted arrow, never color alone (underlined title too).
+.resource-list {
+  list-style: none;
+  margin: 1.5rem 0 2.5rem;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr));
+  gap: 1rem;
+
+  li { margin: 0; padding: 0; display: flex; min-width: 0; }
+
+  a {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 1.5rem;
+    min-height: 11rem;
+    border-radius: 8px;
+    border: 2px solid var(--pen-rule);
+    border-top-width: 8px;
+    background: var(--pen-surface);
+    color: var(--pen-ink);
+    text-decoration: none;
+    transition: background-color 0.15s ease, transform 0.15s ease,
+      box-shadow 0.15s ease, border-top-color 0.15s ease;
+  }
+  a:hover,
+  a:focus-visible {
+    background: var(--pen-wash);
+    border-top-color: var(--pen-accent);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 0 var(--pen-rule);
+  }
+  a:active { transform: translateY(0); box-shadow: none; }
+
+  .resource-title { font-size: 1.3rem; font-weight: 700; line-height: 1.2; overflow-wrap: anywhere; }
+  .resource-desc { line-height: 1.4; overflow-wrap: anywhere; }
+  .resource-foot {
+    margin-top: auto;
+    padding-top: 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    min-width: 0;
+  }
+  .resource-host { min-width: 0; font-size: var(--pen-text-sm); font-weight: 700; color: var(--pen-accent); overflow-wrap: anywhere; }
+  a:hover .resource-title,
+  a:focus-visible .resource-title { text-decoration: underline; text-underline-offset: 0.2em; }
+  .resource-icon { flex: 0 0 auto; transition: transform 0.15s ease; }
+  a:hover .resource-icon,
+  a:focus-visible .resource-icon { transform: translate(3px, -3px); }
+}
+
+// Learning objectives: a white panel with a heavy navy left edge,
+// a bold lead-in sentence, then an unordered list with the leading verb bolded.
+// Not numbered: the objectives have no order, and numbered discs read as buttons.
+// Round navy bullets are decorative; the list itself carries the meaning.
+.objective-panel {
+  background: var(--pen-surface);
+  border: 2px solid var(--pen-rule);
+  border-left-width: 10px;
+  padding: 1.1rem 1.4rem 0.6rem;
+  margin: 0 0 2.5rem;
+  color: var(--pen-ink);
+}
+.objective-stem { margin: 0 0 0.6rem; font-weight: 700; }
+.objective-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    display: flex;
+    gap: 0.9rem;
+    align-items: baseline;
+    margin: 0;
+    padding: 0.55rem 0;
+    font-size: 1.1rem;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+  }
+  li::before {
+    content: "";
+    flex: 0 0 auto;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--pen-rule);
+    transform: translateY(-0.08em);
+  }
+  b { font-weight: 800; }
+}
+
+// Module landing page: one large, high-contrast row per unit deck.
+.slides-list {
+  list-style: none;
+  margin: 1.5rem 0 2.5rem;
+  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem;
+
+  li { margin: 0; padding: 0; min-width: 0; }
+
+  a {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+    padding: 1.25rem 1.5rem;
+    min-height: 4.5rem;
+    border-radius: 8px;
+    border: 2px solid var(--pen-rule);
+    background: var(--pen-chrome);
+    color: var(--pen-on-chrome);
+    text-decoration: none;
+    transition: background-color 0.15s ease, border-color 0.15s ease,
+      transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  a:hover,
+  a:focus-visible {
+    background: var(--pen-accent);
+    border-color: var(--pen-accent);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 0 var(--pen-chrome-hover);
+  }
+  a:active { transform: translateY(0); box-shadow: none; }
+
+  .slides-unit {
+    flex: 0 0 auto;
+    font-size: var(--pen-text-h3);
+    font-weight: 700;
+    min-width: 2.4ch;
+  }
+  .slides-text { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 0.15rem; }
+  .slides-title { font-size: 1.2rem; font-weight: 700; line-height: 1.25; overflow-wrap: anywhere; }
+  .slides-meta { font-size: var(--pen-text-sm); overflow-wrap: anywhere; }
+  a:hover .slides-title,
+  a:focus-visible .slides-title { text-decoration: underline; text-underline-offset: 0.2em; }
+  .slides-icon { flex: 0 0 auto; transition: transform 0.15s ease; }
+  a:hover .slides-icon,
+  a:focus-visible .slides-icon { transform: translateY(3px); }
+}
+
+// Certificate page
+// Same as the `hidden` attribute, used instead of it for the certificate
+// gate/body split: Safari can fail to paint content for print/PDF that was
+// revealed by script removing `hidden`, even though it displays correctly
+// on screen (see assets/progress-init.html, initCertificate).
+// !important so a component's own `display` (.after-complete, .video-poster)
+// can never outrank it; a hidden panel that still showed was a real bug.
+.is-hidden {
+  display: none !important;
+}
+
+.certificate-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 1rem;
+  margin: 1.5rem 0 2rem;
+
+  label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+  }
+  .certificate-field {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 16rem;
+    max-width: 24rem;
+  }
+  input[type="text"] {
+    font: inherit;
+    padding: 0.55rem 0.75rem;
+    border: 1.5px solid var(--pen-rule);
+    border-radius: 6px;
+    width: 100%;
+  }
+  // Match the input's height so the two sit on one line.
+  .btn {
+    padding-top: 0.55rem;
+    padding-bottom: 0.55rem;
+    white-space: nowrap;
+  }
+}
+
+.certificate-sheet {
+  border: 3px solid var(--pen-rule);
+  border-radius: 10px;
+  padding: 3rem 2.5rem;
+  background: var(--pen-surface);
+  margin: 1.5rem 0;
+}
+
+.certificate-inner {
+  max-width: 46rem;
+  margin: 0 auto;
+  text-align: center;
+
+  .certificate-badge { width: 56px; height: 56px; margin-bottom: 1rem; }
+  .certificate-eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--pen-accent);
+    margin-bottom: 0.5rem;
+  }
+  // The sheet's own heading, not the page title. Demoted from h1 to h2
+  // (certificate.qmd) so the page carries exactly one h1 ("Your
+  // certificate", the title block) once the sheet unhides. Font size and spacing kept as they were, scoped here
+  // rather than inherited from the sitewide h2 rule.
+  h2 { font-size: 2.1rem; margin-top: 0; margin-bottom: 1.5rem; }
+  .certificate-name {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--pen-ink);
+    border-bottom: 2px solid var(--pen-rule-faint);
+    padding-bottom: 0.5rem;
+    margin: 0.5rem auto 1.25rem;
+    display: inline-block;
+    min-width: 60%;
+  }
+  .certificate-modules {
+    text-align: left;
+    display: inline-block;
+    margin: 1rem auto 1.5rem;
+  }
+  .certificate-date { color: var(--pen-ink-soft); margin-top: 1.5rem; }
+  .certificate-note { color: var(--pen-ink-soft); margin: 0.75rem auto 0; max-width: 32rem; }
+}
+
+// Page wayfinding: breadcrumb, pager, and the "up next" panel
+// that appears after a unit is marked complete. All three are generated by
+// R/build_modules.R (module 4's copies are hand-written to match).
+
+// Breadcrumb. A real <nav><ol>, last item `aria-current="page"` and not a
+// link. Separators are generated content with an empty alt, so they are not
+// read aloud. Links keep the sitewide underline; the inline
+// links get a block box so each target is at least 24px tall (WCAG 2.5.8).
+.pen-breadcrumb {
+  margin: 0 0 1.5rem;
+  font-size: var(--pen-text-sm);
+
+  ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.1rem 0.25rem;
+  }
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin: 0;
+    max-width: none;
+  }
+
+  // Separator: a bold navy chevron drawn as a background image (the old
+  // text glyph was a thin 1px stroke). Decorative, so no alt text and no
+  // announcement; the list structure already says "next level down".
+  li + li::before {
+    content: "";
+    flex: none;
+    width: 0.8rem;
+    height: 0.8rem;
+    background: var(--pen-chevron-ink) center / contain no-repeat;
+  }
+
+  // Links keep the sitewide underline. Each one is a padded block so the
+  // target clears 24px, and hover/focus add a brick-wash fill, a heavier
+  // underline and a brick bar on the leading edge: three cues, none of
+  // them color alone.
+  a {
+    display: inline-block;
+    padding: 0.3rem 0.5rem;
+    border-radius: 4px;
+    text-underline-offset: 0.18em;
+    transition: background-color 0.15s ease, box-shadow 0.15s ease;
+
+    &:hover,
+    &:focus-visible {
+      background: var(--pen-wash);
+      box-shadow: inset 3px 0 0 var(--pen-accent);
+      text-decoration-thickness: 2px;
+    }
+  }
+
+  li[aria-current="page"] {
+    padding: 0.3rem 0.5rem;
+    font-weight: 600;
+    color: var(--pen-ink);
+  }
+
+  // In the right-hand margin, above "On this page": stacked one level per
+  // row, each step indented under its parent, so the trail reads as a path
+  // down rather than a wrapped line in a narrow column.
+  &.is-in-margin {
+    margin: 0 0 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--pen-rule-faint);
+
+    &::before {
+      content: "Where you are";
+      display: block;
+      margin-bottom: 0.4rem;
+      font-weight: 600;
+      color: var(--pen-ink);
+    }
+
+    ol {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.1rem;
+    }
+
+    li {
+      flex-wrap: nowrap;
+      align-items: center;
+    }
+
+    li:nth-child(2) { margin-left: 0.9rem; }
+    li:nth-child(3) { margin-left: 1.8rem; }
+    li:nth-child(4) { margin-left: 2.7rem; }
+  }
+}
+
+// Pager: previous and next as two large link cards, replacing the old
+// 23px-tall text links (large elements; one column on small screens). Same hover vocabulary as the tracker rows (.unit-list): brick
+// wash fill, underlined title, arrow nudge. A 2px navy border (emphasis) because these are the page's main exits.
+.pager {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1rem;
+  margin: 2rem 0 1rem;
+}
+
+.pager-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+  min-height: 5.5rem;
+  padding: 1.1rem 1.25rem;
+  color: var(--pen-ink);
+  text-decoration: none;
+  background: var(--pen-surface);
+  border: 2px solid var(--pen-rule);
+  border-radius: 8px;
+  transition: background-color 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    background: var(--pen-wash);
+  }
+
+  &:hover .pager-title,
+  &:focus-visible .pager-title {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  &:hover .pager-arrow,
+  &:focus-visible .pager-arrow {
+    transform: translateX(4px);
+  }
+
+  &.pager-prev:hover .pager-arrow,
+  &.pager-prev:focus-visible .pager-arrow {
+    transform: translateX(-4px);
+  }
+}
+
+.pager-next {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.pager-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.pager-label {
+  font-size: var(--pen-text-sm);
+  font-weight: 600;
+  color: var(--pen-accent);
+}
+
+.pager-title {
+  font-size: var(--pen-text-lede);
+  font-weight: 700;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+// Same filled circle and white chevron as .unit-arrow.
+.pager-arrow {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 999px;
+  background: var(--pen-accent);
+  color: var(--pen-on-accent-soft);
+  transition: transform 0.15s ease;
+
+  svg { display: block; }
+}
+
+@media (max-width: 640px) {
+  .pager {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .pager-next {
+    justify-content: space-between;
+    text-align: left;
+  }
+  .pager-title {
+    font-size: var(--pen-text-base);
+  }
+}
+
+// "Up next" panel, unit pages. Hidden until the unit is marked complete
+// (assets/progress-init.html). Brick left rail = "this is about your
+// progress". It states the next step in words and offers one
+// link; it does not congratulate and does not take focus.
+.after-complete {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  max-width: 34rem;
+  margin: -1rem auto 2.75rem;
+  padding: 1.25rem 1.5rem;
+  background: var(--pen-surface);
+  border-left: 6px solid var(--pen-accent);
+  border-radius: 8px;
+
+  .after-complete-label {
+    margin: 0;
+    font-weight: 600;
+  }
+  .btn {
+    text-align: left;
+  }
+}
+
+@media print {
+  #quarto-header, .sidebar, #TOC, .page-navigation, .pager, .pen-breadcrumb, .after-complete, .certificate-controls,
+  footer, .fine-print, [data-pen-certificate-gate], #title-block-header {
+    display: none !important;
+  }
+  // The certificate download must contain nothing but the certificate
+  // itself, not the intro sentence. That copy is a direct <p> child of
+  // [data-pen-certificate-body] alongside .certificate-sheet, so hide
+  // every direct-child <p> rather than naming it, which stays correct
+  // if the copy is ever reworded or more is added.
+  [data-pen-certificate-body] > p {
+    display: none !important;
+  }
+  .certificate-sheet { border-width: 1.5pt; }
+}
+
+// Reduced motion
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+// "Who PEN is built for" on How to Use: three open columns, no
+// cards. Each is a solid accent icon tile, a small accent label, and the
+// answer in large bold ink, separated by faint hairlines. Tiles use accent / on-accent, so dark becomes an
+// apricot tile with a navy glyph and high contrast a navy tile with a white
+// one. Labels are accent on the page field (6.21:1 light, 6.03:1 dark). The
+// icons are decorative (aria-hidden); the label words carry the meaning. The
+// wrapper is a size container: the content column narrows when the "On this
+// page" sidebar is present, so the columns respond to the column, not the
+// viewport. Three columns need about 15rem each; below 48rem the items stack
+// as icon-left rows.
+.audience-wrap { container-type: inline-size; }
+
+.audience-grid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  margin: 0 0 2rem;
+  padding: 0;
+
+  li {
+    padding: 0 1.4rem;
+    border-left: 2px solid var(--pen-rule-faint);
+  }
+  li:first-child { padding-left: 0; border-left: 0; }
+
+  .audience-icon {
+    display: grid;
+    place-items: center;
+    width: 4.2rem;
+    height: 4.2rem;
+    margin: 0 0 1rem;
+    border-radius: 14px;
+    background: var(--pen-accent);
+    color: var(--pen-on-accent);
+
+    svg { width: 2.3rem; height: 2.3rem; }
+  }
+
+  .audience-label {
+    margin: 0 0 0.15rem;
+    font-size: var(--pen-text-sm);
+    font-weight: 800;
+    color: var(--pen-accent);
+  }
+
+  .audience-text {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 800;
+    line-height: 1.3;
+    color: var(--pen-ink);
+  }
+
+  @container (max-width: 48rem) {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem;
+
+    li {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      column-gap: 1.1rem;
+      align-items: center;
+      padding: 0;
+      border: 0;
+    }
+    .audience-icon { grid-row: span 2; margin: 0; }
+  }
+}
+
+// Plain-language note, replaces Bootstrap's blue callout-note on How to
+// Use: a white panel with a brick rail so it separates from the cream page
+// in palette colors only (no off-palette blue).
+.pen-note {
+  background: var(--pen-surface);
+  border-left: 4px solid var(--pen-accent);
+  border-radius: 0 6px 6px 0;
+  padding: 1rem 1.25rem;
+  margin: 0 0 1.25rem;
+
+  p { margin: 0; }
+}
+
+// "Clear my saved progress": high-contrast outline button, navy on white
+// with a 2px navy border, filling navy on hover/focus.
+.pen-reset-btn {
+  background: var(--pen-surface);
+  color: var(--pen-ink);
+  border: 2px solid var(--pen-rule);
+  font-weight: 700;
+  font-size: 1.05rem;
+  padding: 0.65rem 1.4rem;
+  border-radius: 6px;
+
+  &:hover, &:focus-visible {
+    background: var(--pen-chrome);
+    color: var(--pen-on-chrome);
+    border-color: var(--pen-chrome);
+  }
+}
+
+// How to Use, "Your progress". Two white cards: a live sample of
+// the three real status labels (the same .status-pill the tracker uses, static
+// here and never bound to data-pen-*), and where progress is saved, with a
+// brick top rail. The clear control sits directly below, next to the storage
+// note it belongs with. State is in the pill words; color only reinforces.
+.progress-help {
+  margin: 0 0 1.5rem;
+
+  .progress-help-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+    margin: 0 0 1.25rem;
+  }
+
+  .progress-help-card {
+    background: var(--pen-surface);
+    border: 2px solid var(--pen-rule);
+    border-radius: 12px;
+    padding: 1.5rem 1.75rem;
+
+    h3 { margin: 0 0 0.5rem; font-size: 1.3rem; font-weight: 800; }
+    p { margin: 0; font-size: var(--pen-text-sm); }
+    p + p { margin-top: 0.75rem; }
+  }
+
+  .progress-help-saved { border-top: 8px solid var(--pen-accent); }
+
+  .progress-help-sample {
+    list-style: none;
+    margin: 1rem 0 0;
+    padding: 0;
+    border-top: 1px solid var(--pen-rule-faint);
+
+    li {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem 1rem;
+      padding: 0.8rem 0;
+      border-bottom: 1px solid var(--pen-rule-faint);
+      font-weight: 700;
+    }
+
+    .status-pill { margin-top: 0; }
+  }
+
+  .progress-help-reset {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.5rem;
+
+    p { flex: 1 1 16rem; margin: 0; font-size: var(--pen-text-sm); }
+    .pen-reset-btn { margin: 0; }
+  }
+
+  @media (max-width: 768px) {
+    .progress-help-grid { grid-template-columns: minmax(0, 1fr); }
+    .progress-help-card { padding: 1.25rem; }
+  }
+}
+
+// Help page FAQ: native <details>/<summary>, no JS. The default browser
+// triangle was too small a target and too easy to miss, so it is replaced by
+// a 2.25rem plus/minus circle at the right edge of a full-width, larger
+// question row. The glyph is decorative; open/closed state is exposed by
+// <details> itself. Hover and focus-visible flip the circle to Brick Clay and
+// underline the question (not color alone).
+.faq-list {
+  margin: 0 0 1.5rem;
+
+  details {
+    background: var(--pen-surface);
+    border: 1px solid var(--pen-rule-faint);
+    border-radius: 8px;
+    margin: 0 0 0.75rem;
+    padding: 0 1.25rem;
+
+    &[open] {
+      border-left: 4px solid var(--pen-accent);
+      padding-bottom: 0.5rem;
+    }
+  }
+
+  summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    cursor: pointer;
+    list-style: none;
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: var(--pen-ink);
+    padding: 1.1rem 0;
+
+    &::-webkit-details-marker { display: none; }
+    &::marker { content: ""; }
+
+    // White chevron (inline SVG, pen-white) centred on a navy circle. Points
+    // down when closed, up when open. Decorative.
+    &::after {
+      content: "";
+      flex: none;
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: 50%;
+      background-color: var(--pen-chrome);
+      background-image: var(--pen-chevron-on-chrome);
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 1.25rem;
+    }
+
+    &:hover, &:focus-visible {
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
+      &::after {
+        background-color: var(--pen-accent);
+        background-image: var(--pen-chevron-on-accent);
+      }
+    }
+  }
+
+  details[open] > summary::after { transform: rotate(180deg); }
+
+  details > :last-child { margin-bottom: 0.75rem; }
+}
+
+// ---------------------------------------------------------------------------
+// Accessibility page. Dark bands (goal, report) are the dark
+// field: white text, Sky links, Apricot accent. Cards, table,
+// and details are the light field: navy ink, brick accent. Apricot and Sky
+// never touch a light field; brick never touches navy as text.
+// Measured: white on navy 14.6, sky on navy 6.99, apricot on navy 6.03,
+// navy on apricot 6.03, navy on white 14.6, brick on white 6.9.
+// ---------------------------------------------------------------------------
+.a11y-lede {
+  font-size: var(--pen-text-lede);
+  margin: 0 0 1.5rem;
+  p { margin: 0; max-width: 46ch; }
+}
+
+.a11y-intro { margin: 0 0 1.5rem; }
+
+// Bands: shared dark-field rules -------------------------------------------
+// Quarto copies a heading's classes onto both its <section> and the <h2>, so
+// the goal band is scoped to `section.` or the h2 would become a second band.
+section.a11y-goal,
+.a11y-report {
+  background: var(--pen-band);
+  color: var(--pen-on-band);
+  border-radius: 12px;
+  padding: 2.25rem;
+
+  h2 { color: var(--pen-on-band); margin-top: 0; }
+  a { color: var(--pen-band-link); }
+  a:hover { background: transparent; }
+  // The sitewide ring is brick, 2.10:1 on navy. White is 14.6.
+  a:focus-visible { outline-color: var(--pen-on-band); }
+  // Quarto's anchor-link glyph beside headings.
+  .anchorjs-link { color: var(--pen-band-link); }
+
+  .a11y-big {
+    font-size: var(--pen-text-lede);
+    font-weight: 700;
+    line-height: 1.35;
+    margin: 0 0 0.6rem;
+  }
+}
+
+section.a11y-goal {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 2.5rem;
+  align-items: center;
+  align-content: center;
+  margin: 0 0 3.25rem;
+
+  > * { grid-column: 2; }
+  > p:last-child { margin: 0; font-size: var(--pen-text-sm); }
+
+  // Decorative; the heading and sentence beside it say the same in words.
+  .a11y-goal-mark {
+    grid-column: 1;
+    grid-row: 1 / span 3;
+    font-size: 4.25rem;
+    font-weight: 800;
+    line-height: 1;
+    text-align: center;
+    margin: 0;
+    padding: 1.25rem 1.5rem;
+    color: var(--pen-band-accent);
+    border: 3px solid var(--pen-band-accent);
+    border-radius: 12px;
+
+    small {
+      display: block;
+      margin-top: 0.35rem;
+      font-size: var(--pen-text-sm);
+      font-weight: 700;
+      color: var(--pen-on-band);
+    }
+  }
+}
+
+.a11y-report {
+  margin: 3.25rem 0 0;
+
+  .a11y-big { max-width: 40ch; }
+  .a11y-ask { font-size: var(--pen-text-sm); max-width: 52ch; margin: 0 0 1.5rem; }
+}
+
+// Inverse button: the one dark-field button. Navy primary vanishes on navy,
+// so it flips to white fill with navy text; hover is Apricot with navy text
+// (6.03:1) plus an underline so the change is not color alone.
+.a11y-btn-inverse,
+main a.a11y-btn-inverse {
+  display: inline-block;
+  background: var(--pen-on-band);
+  color: var(--pen-band);
+  border: 2px solid var(--pen-on-band);
+  border-radius: 6px;
+  padding: 0.85rem 1.75rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  text-decoration: none;
+
+  &:hover, &:focus-visible {
+    background: var(--pen-band-accent);
+    border-color: var(--pen-band-accent);
+    color: var(--pen-band);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+}
+
+// Cards: ways to use the site, and the three video rules ---------------------
+.a11y-ways,
+.a11y-video {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.5rem;
+  display: grid;
+  gap: 1.25rem;
+
+  li {
+    background: var(--pen-surface);
+    border: 2px solid var(--pen-rule);
+    border-radius: 12px;
+    max-width: none;
+  }
+
+  h3 { margin: 0 0 0.4rem; font-size: 1.3rem; font-weight: 800; line-height: 1.25; }
+  p { margin: 0; font-size: var(--pen-text-sm); }
+  p + p { margin-top: 0.7rem; }
+}
+
+.a11y-ways {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  li { border-top: 8px solid var(--pen-accent); padding: 1.4rem 1.6rem 1.6rem; }
+}
+
+.a11y-video {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  li { padding: 1.25rem 1.4rem 1.4rem; }
+}
+
+// Key table: real table, navy header, stacks to rows on a phone --------------
+.a11y-keys {
+  background: var(--pen-surface);
+  border: 2px solid var(--pen-rule);
+  border-radius: 12px;
+  padding: 1.5rem 1.75rem 1.75rem;
+  margin: 0 0 1.5rem;
+
+  table { width: 100%; border-collapse: collapse; margin: 0; }
+  // Bootstrap puts captions at the bottom; the caption introduces the table.
+  caption { caption-side: top; text-align: left; font-size: var(--pen-text-sm); padding: 0 0 0.6rem; color: var(--pen-ink); }
+  thead th {
+    background: var(--pen-band);
+    color: var(--pen-on-band);
+    text-align: left;
+    font-weight: 700;
+    font-size: var(--pen-text-sm);
+    padding: 0.6rem 0.9rem;
+  }
+  tbody th,
+  tbody td {
+    text-align: left;
+    vertical-align: top;
+    padding: 0.85rem 0.9rem;
+    border-bottom: 1px solid var(--pen-rule-faint);
+    font-size: var(--pen-text-sm);
+    background: transparent;
+  }
+  tbody th { font-weight: 400; width: 52%; }
+  tbody tr:last-child th,
+  tbody tr:last-child td { border-bottom: 2px solid var(--pen-rule); }
+}
+
+// Key caps: text, so a screen reader reads "Tab". Bootstrap's own kbd is
+// dark with 0.875em type, which would drop under the 16px floor.
+kbd {
+  display: inline-block;
+  font-family: inherit;
+  font-size: var(--pen-text-sm);
+  font-weight: 800;
+  line-height: 1.2;
+  padding: 0.1rem 0.55rem;
+  border-radius: 6px;
+  border: 2px solid var(--pen-rule);
+  border-bottom-width: 4px;
+  background: var(--pen-surface);
+  color: var(--pen-ink);
+  white-space: nowrap;
+}
+
+// Technical details: native details, the toggle states its state in words ----
+.a11y-more {
+  background: var(--pen-surface);
+  border: 2px solid var(--pen-rule);
+  border-radius: 12px;
+  margin: 0 0 1.5rem;
+
+  summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.1rem 1.5rem;
+    cursor: pointer;
+    list-style: none;
+    font-weight: 800;
+    font-size: 1.15rem;
+    color: var(--pen-ink);
+
+    &::-webkit-details-marker { display: none; }
+    &::after {
+      content: "Show details";
+      color: var(--pen-link);
+      font-size: var(--pen-text-sm);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+  }
+
+  &[open] summary {
+    border-bottom: 1px solid var(--pen-rule-faint);
+    &::after { content: "Hide details"; }
+  }
+
+  ul { margin: 0; padding: 1.1rem 1.5rem 1.4rem 2.75rem; font-size: var(--pen-text-sm); }
+  li + li { margin-top: 0.6rem; }
+}
+
+@media (max-width: 800px) {
+  section.a11y-goal {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 1.5rem 1.25rem;
+    > * { grid-column: 1; }
+    .a11y-goal-mark {
+      grid-row: auto;
+      order: -1;
+      justify-self: start;
+      margin-bottom: 1rem;
+      font-size: 3.25rem;
+      padding: 1rem 1.25rem;
+    }
+  }
+  .a11y-report { padding: 1.5rem 1.25rem; }
+  .a11y-ways, .a11y-video { grid-template-columns: minmax(0, 1fr); }
+  .a11y-keys { padding: 1.25rem; tbody th { width: auto; } }
+}
+
+@media (max-width: 520px) {
+  .a11y-keys {
+    thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+    tr, th, td { display: block; }
+    tbody th,
+    tbody tr:last-child th { padding-bottom: 0; border-bottom: 0; }
+  }
+  .a11y-more summary { flex-direction: column; align-items: flex-start; gap: 0.25rem; }
+}
+
+
+// ---------------------------------------------------------------------------
+// Display settings. assets/display-init.html sets these attributes
+// on <html> before first paint; assets/display-settings.html builds the panel.
+// Theme palettes live in tokens.css. Everything here reads roles, never a
+// brand color, so a theme is a token swap and nothing else.
+// ---------------------------------------------------------------------------
+
+// The page behind the page: overscroll and any gap below short content.
+:root[data-pen-theme] { background-color: var(--pen-bg); }
+
+// A theme change repaints everything at once. Skip color transitions for that
+// frame so nothing visibly lags behind the choice.
+.pen-switching,
+.pen-switching *,
+.pen-switching *::before,
+.pen-switching *::after {
+  transition: none !important;
+}
+
+// Text size. Every size on the site is in rem against one root, so
+// one root value scales all of it. 19px is the standard root.
+// Screen only: print keeps its own 11pt root.
+@media screen {
+  :root[data-pen-size="125"] { font-size: 23.75px; }
+  :root[data-pen-size="150"] { font-size: 28.5px; }
+}
+
+// At Extra large, Quarto's right-hand "On this page" column no longer fits
+// beside the text on a tablet (its page grid scales with the root size and runs
+// 20px past the edge). Below 1100px the column steps aside; the page keeps its
+// headings and every section is still reachable by scrolling.
+@media screen and (max-width: 1100px) {
+  :root[data-pen-size="150"] #quarto-margin-sidebar { display: none; }
+}
+
+// The expanded navbar is sized for the standard root. At larger text, with the
+// wider easy-to-read font, its seven items run past the edge on a laptop, so
+// they wrap onto a second row instead of being cut off.
+@media screen {
+  :root[data-pen-size="125"],
+  :root[data-pen-size="150"] {
+    .navbar-expand-xl .navbar-collapse,
+    .navbar-expand-xl .navbar-nav,
+    .navbar-expand-xl .navbar-nav-scroll {
+      flex-wrap: wrap;
+    }
+    .navbar-expand-xl .navbar-collapse { row-gap: 0.25rem; }
+  }
+}
+
+// Easy-to-read font: Atkinson Hyperlegible, designed for low vision. Bootstrap
+// reads the family from --bs-body-font-family; headings and controls inherit.
+:root[data-pen-font="easy"] {
+  --pen-font-serif: 'Atkinson Hyperlegible', Verdana, 'Helvetica Neue', Arial, sans-serif;
+  --bs-body-font-family: var(--pen-font-serif);
+  --bs-font-sans-serif: var(--pen-font-serif);
+}
+
+// Roomy spacing: more line height in running text, and open letter and word
+// spacing (WCAG 1.4.12 asks that text survive these; this is the reader's own
+// option to ask for them).
+:root[data-pen-spacing="roomy"] {
+  body {
+    letter-spacing: 0.04em;
+    word-spacing: 0.12em;
+  }
+  main :is(p, li, dd, dt, td, th, blockquote, summary, label) {
+    line-height: 1.9;
+  }
+  main :is(p, ul, ol, blockquote) { margin-bottom: 1.8rem; }
+}
+
+// Underline all links. Running text is already underlined; this adds the
+// navbar, dropdown, footer and breadcrumb links, which are plain until hover.
+// High contrast turns it on for everyone.
+@mixin pen-underline-links {
+  .navbar .nav-link,
+  .navbar .dropdown-item,
+  footer a,
+  footer summary,
+  .pen-breadcrumb a,
+  main :is(p, dd, td, blockquote) a,
+  .pen-note a {
+    text-decoration: underline !important;
+    text-underline-offset: 0.2em;
+  }
+  // Brand marks are not labels; they stay as they are.
+  .navbar a.nav-link:has(.pen-parent-word),
+  .navbar .navbar-brand,
+  .pen-footer-badge-link {
+    text-decoration: none !important;
+  }
+}
+:root[data-pen-underline="on"] { @include pen-underline-links; }
+:root[data-pen-theme="contrast"] { @include pen-underline-links; }
+
+// High contrast also thickens the focus ring.
+:root[data-pen-theme="contrast"] :focus-visible { outline-width: 4px; }
+
+// Reduce motion, chosen in the panel. Mirrors the media query below, which
+// still applies on its own for a device that asks for it.
+:root[data-pen-motion="reduce"] {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  #quarto-back-to-top:hover .bi,
+  .hero-btn:hover svg,
+  .hero-btn:focus-visible svg { transform: none; }
+}
+
+// Bootstrap compiles form fields to literal cream and navy.
+.form-control,
+.form-control:focus {
+  background-color: var(--pen-bg);
+  color: var(--pen-ink);
+}
+
+// --- The Display button and panel -------------------------------------------
+// Fixed bottom left, the opposite corner from the "Back to top" pill, on every
+// page. A pill with a visible word, not an icon alone. The panel is
+// not a modal: the page stays visible so a change can be seen as it is made.
+.pen-display {
+  position: fixed;
+  left: 1.5rem;
+  bottom: 1.5rem;
+  z-index: 1045;
+}
+
+.pen-display-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.6rem 1.1rem 0.6rem 0.9rem;
+  background: var(--pen-chrome);
+  color: var(--pen-on-chrome);
+  border: 2px solid var(--pen-chrome);
+  border-radius: 999px;
+  font: inherit;
+  font-size: var(--pen-text-sm);
+  font-weight: 700;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s;
+
+  &:hover {
+    background: var(--pen-chrome-hover);
+    border-color: var(--pen-chrome-hover);
+  }
+
+  &[aria-expanded="true"] {
+    background: var(--pen-surface);
+    color: var(--pen-ink);
+    border-color: var(--pen-rule);
+  }
+
+  &:focus-visible {
+    outline: 3px solid var(--pen-focus);
+    outline-offset: 3px;
+  }
+}
+
+.pen-display-panel {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 0.75rem);
+  display: flex;
+  flex-direction: column;
+  width: min(25rem, calc(100vw - 3rem));
+  max-height: calc(100vh - 7.5rem);
+  background: var(--pen-surface);
+  color: var(--pen-ink);
+  border: 2px solid var(--pen-rule);
+  border-radius: 12px;
+  font-size: var(--pen-text-sm);
+
+  &[hidden] { display: none; }
+  &:focus { outline: none; }
+}
+
+// Title and Reset stay in view; only the options scroll on a short window.
+.pen-display-head {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.1rem 1.25rem 0.75rem;
+}
+
+.pen-display-title {
+  margin: 0;
+  font-size: var(--pen-text-h3);
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.pen-display-close,
+.pen-display-reset {
+  min-height: 44px;
+  padding: 0.4rem 1rem;
+  background: var(--pen-surface);
+  color: var(--pen-ink);
+  border: 2px solid var(--pen-rule);
+  border-radius: 6px;
+  font: inherit;
+  font-size: var(--pen-text-sm);
+  font-weight: 700;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--pen-chrome);
+    color: var(--pen-on-chrome);
+    border-color: var(--pen-chrome);
+  }
+}
+
+.pen-display-form {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin: 0;
+  padding: 0.25rem 1.25rem 0;
+  overflow-y: auto;
+}
+
+.pen-display-group {
+  margin: 0 0 1rem;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+
+  legend {
+    float: none;
+    width: auto;
+    margin: 0 0 0.4rem;
+    padding: 0;
+    font-size: var(--pen-text-sm);
+    font-weight: 700;
+    line-height: 1.3;
+  }
+}
+
+.pen-display-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+// A radio drawn as a labeled button. The native input stays in place and
+// focusable, invisible and stretched over its label, so keyboard and screen
+// reader behavior is the browser's own. The chosen option is stated by a
+// check mark and heavier weight as well as by fill.
+.pen-display-opt {
+  position: relative;
+  flex: 1 1 auto;
+  margin: 0;
+
+  input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.4rem 0.9rem;
+    background: var(--pen-surface);
+    color: var(--pen-ink);
+    border: 2px solid var(--pen-rule);
+    border-radius: 6px;
+    font-weight: 600;
+    line-height: 1.2;
+    text-align: center;
+  }
+
+  input:hover + span { background: var(--pen-wash); }
+
+  input:checked + span {
+    background: var(--pen-chrome);
+    color: var(--pen-on-chrome);
+    border-color: var(--pen-chrome);
+    font-weight: 700;
+
+    &::before { content: "\2713\00a0"; }
+  }
+
+  input:focus-visible + span {
+    outline: 3px solid var(--pen-focus);
+    outline-offset: 2px;
+  }
+}
+
+.pen-display-checks {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0 0 1rem;
+}
+
+.pen-display-check {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-height: 44px;
+  margin: 0;
+  font-weight: 600;
+  cursor: pointer;
+
+  input {
+    flex: 0 0 auto;
+    width: 1.4rem;
+    height: 1.4rem;
+    margin: 0;
+    accent-color: var(--pen-chrome);
+  }
+}
+
+.pen-display-foot {
+  flex: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 1rem;
+  padding: 0.9rem 1.25rem 1.1rem;
+  border-top: 1px solid var(--pen-rule-faint);
+}
+
+.pen-display-note {
+  flex: 1 1 10rem;
+  margin: 0;
+  font-size: var(--pen-text-xs);
+  line-height: 1.4;
+}
+
+@media (max-width: 480px) {
+  .pen-display { left: 1rem; bottom: 1rem; }
+  .pen-display-panel { width: calc(100vw - 2rem); }
+}
+
+@media print {
+  .pen-display { display: none !important; }
+}
+
+// Brand marks are images and cannot read a theme token, so a mark that has to
+// change with the theme ships as a pair: the standard mark and its reversed
+// twin. The reversed one shows on the dark theme only; print never shows it.
+.pen-img-dark { display: none; }
+@media screen {
+  :root[data-pen-theme="dark"] {
+    .pen-img-light { display: none; }
+    .pen-img-dark { display: inline-block; }
+  }
+}
+
+
+// ---------------------------------------------------------------------------
+// Hover and focus in dark and high contrast.
+// A hover has to be noticed, and in these themes the usual cues fail in ways
+// they do not in light: a fill one step off the card is barely there in dark,
+// cream on white is nothing in high contrast, and sky to apricot (or black to
+// navy) are different hues of near-equal brightness. So heavy fills invert to
+// a luminance jump, text controls gain a fill, and rows gain a ring. Every
+// rule here still reads role tokens, and each keeps its underline or other
+// non-color cue. Light is untouched.
+// ---------------------------------------------------------------------------
+:root:is([data-pen-theme="dark"], [data-pen-theme="contrast"]) {
+  // Heavy fills: invert.
+  .btn-primary:hover, .btn-primary:focus-visible,
+  .btn-primary.btn-lg:hover, .btn-primary.btn-lg:focus-visible,
+  .hero-btn-primary:hover, .hero-btn-primary:focus-visible,
+  .hero-btn-secondary:hover, .hero-btn-secondary:focus-visible,
+  .slides-list a:hover, .slides-list a:focus-visible,
+  .progress-control button:not([aria-pressed="true"]):hover,
+  .progress-control button:not([aria-pressed="true"]):focus-visible {
+    background: var(--pen-hover-fill);
+    border-color: var(--pen-hover-edge);
+    color: var(--pen-on-hover-fill);
+  }
+  .hero-btn:hover, .hero-btn:focus-visible { outline-color: var(--pen-hover-edge); }
+
+  // Navbar links: an inverted pill. The ADA-PARC link keeps its own colored
+  // parts, so it gets a ring instead.
+  .navbar .nav-link:not(:has(.pen-parent-word)):hover,
+  .navbar .nav-link:not(:has(.pen-parent-word)):focus-visible {
+    background: var(--pen-on-band);
+    color: var(--pen-band);
+    border-radius: 6px;
+  }
+  .navbar a.nav-link:has(.pen-parent-word):hover,
+  .navbar a.nav-link:has(.pen-parent-word):focus-visible {
+    outline: 2px solid var(--pen-on-band);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  // The Modules menu: the hovered row fills with the interactive color, and
+  // its numeral follows the row's text color instead of clashing with the fill.
+  .navbar .dropdown-item:hover,
+  .navbar .dropdown-item:focus-visible {
+    background: var(--pen-chrome);
+    color: var(--pen-on-chrome);
+  }
+  .navbar .dropdown-item:hover .nav-module-num,
+  .navbar .dropdown-item:focus-visible .nav-module-num { color: inherit; }
+
+  // "On this page": it had no hover at all.
+  .sidebar nav[role=doc-toc] a:hover,
+  .sidebar nav[role=doc-toc] a:focus-visible {
+    background: var(--pen-wash);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  // Logo links in the footer (marks, not labels) get a ring.
+  .pen-footer-badge-link:hover,
+  .pen-footer-badge-link:focus-visible {
+    outline: 2px solid var(--pen-ink);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  // Disclosure rows.
+  .faq-list summary:hover, .a11y-more summary:hover, .module-map summary:hover,
+  .faq-list summary:focus-visible, .a11y-more summary:focus-visible, .module-map summary:focus-visible {
+    background: var(--pen-wash);
+  }
+  .a11y-more summary:hover { border-radius: 10px; }
+}
+
+// Dark: the row wash is black, so rows also need nothing more.
+// High contrast: cream on white is not a visible change, so a hovered or
+// focused row, card or control gets a heavy ring as well as the fill, and
+// links get a thicker underline.
+:root[data-pen-theme="contrast"] {
+  .hero-modules a:hover, .hero-modules a:focus-visible,
+  .unit-list a:hover, .unit-list a:focus-visible,
+  .pager-link:hover, .pager-link:focus-visible,
+  .resource-list a:hover, .resource-list a:focus-visible,
+  .pen-breadcrumb a:hover, .pen-breadcrumb a:focus-visible,
+  .faq-list summary:hover, .a11y-more summary:hover, .module-map summary:hover,
+  .pen-display-opt input:hover + span {
+    outline: 3px solid var(--pen-ink);
+    outline-offset: -3px;
+  }
+  // Plain text links only; classed links (buttons, cards, rows) have their own.
+  main a:not([class]):hover,
+  .pen-footer-links a:hover, .pen-footer-team summary:hover {
+    background: var(--pen-wash);
+    text-decoration-thickness: 0.2em;
+  }
+  // Black to navy is no change: invert the floating controls instead.
+  #quarto-back-to-top:hover, #quarto-back-to-top:focus-visible,
+  .pen-display-button:hover {
+    background: var(--pen-hover-fill);
+    color: var(--pen-on-hover-fill);
+    border-color: var(--pen-hover-edge);
+  }
+  .sidebar nav[role=doc-toc] a:hover {
+    background: var(--pen-wash);
+    text-decoration-thickness: 0.2em;
+    outline: 2px solid var(--pen-ink);
+    outline-offset: -2px;
+  }
+}

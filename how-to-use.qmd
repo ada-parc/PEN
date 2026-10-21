@@ -1,0 +1,81 @@
+---
+title: "How to use PEN"
+pagetitle: "How to use PEN"
+description: "What a module involves, how it's organized, and how your progress is tracked."
+---
+
+## How PEN is organized
+
+The training has **4 modules**. Modules 1 to 3 each hold a short set of
+**units**. Each unit is a recorded video, and some also have slides you can
+download. Module 4 is a Resources page you can return to any time. Open a
+module below to see what it covers.
+
+<!-- Hand-authored summary of content/modules.yml (title, summary, objectives,
+     unit titles, and each module's total video time). If the YAML changes, update
+     this block to match. Unit copy elsewhere on this page (the intro and step 2
+     below) is deliberately written so it holds whether or not a module has
+     slides; Module 2 has none. -->
+<div class="module-map">
+<p class="module-map-label">Modules 1 to 3: finish these for your certificate</p>
+<details><summary><span class="module-map-num" aria-hidden="true">1</span><span><span class="module-map-title"><span class="visually-hidden">Module 1: </span>Getting Started, ADA Insights</span><span class="module-map-meta">4 units, about 57 minutes of video</span></span><span class="module-map-toggle"></span></summary><div class="module-map-body"><p>A plain-language foundation in the ADA: where it came from, what it covers, its five titles, and what it requires, before you look at any data.</p><div class="module-map-cols"><div><h3>You will be able to</h3><ul><li>Place the ADA in its historical context</li><li>Describe the ADA's overall purpose</li><li>Name the five titles and what each covers</li><li>Summarize what the ADA requires</li></ul></div><div><h3>Units</h3><ol><li>ADA History</li><li>Overview of the ADA</li><li>ADA Five Titles</li><li>ADA Requirements</li></ol></div></div></div></details>
+<details><summary><span class="module-map-num" aria-hidden="true">2</span><span><span class="module-map-title"><span class="visually-hidden">Module 2: </span>Exploring ADA-PARC Website &amp; Data</span><span class="module-map-meta">3 units, about 51 minutes of video</span></span><span class="module-map-toggle"></span></summary><div class="module-map-body"><p>How the ADA-PARC site is organized: national data, city-level data, and scorecards, so you can find a specific number without a guide.</p><div class="module-map-cols"><div><h3>You will be able to</h3><ul><li>Locate national-level disability data</li><li>Locate city-level data and say how it differs</li><li>Read a scorecard and say what it compares</li></ul></div><div><h3>Units</h3><ol><li>National Data</li><li>City Data</li><li>Scorecards</li></ol></div></div></div></details>
+<details><summary><span class="module-map-num" aria-hidden="true">3</span><span><span class="module-map-title"><span class="visually-hidden">Module 3: </span>Making Sense of Data</span><span class="module-map-meta">4 units, about 14 minutes of video</span></span><span class="module-map-toggle"></span></summary><div class="module-map-body"><p>Data literacy for advocacy: what disability data can and cannot tell you, reading numbers versus percentages, and interpreting scorecards responsibly.</p><div class="module-map-cols"><div><h3>You will be able to</h3><ul><li>Explain what a measure is actually counting</li><li>Tell a raw number from a percentage</li><li>Name a limit of national-level data</li><li>Read a scorecard without over-claiming</li></ul></div><div><h3>Units</h3><ol><li>Understanding Data on Disability</li><li>Making Sense of Numbers vs. Percentages</li><li>Limitations of National Data</li><li>How to Make Sense of Scorecards</li></ol></div></div></div></details>
+<p class="module-map-label module-map-label-ref">Module 4: use any time, nothing to complete</p>
+<details class="module-map-ref"><summary><span class="module-map-num" aria-hidden="true">4</span><span><span class="module-map-title"><span class="visually-hidden">Module 4: </span>Resources</span><span class="module-map-meta">No units</span></span><span class="module-map-toggle"></span></summary><div class="module-map-body"><p>A page to return to after you finish, with links and downloads for using the ADA-PARC data on your own.</p><div class="module-map-cols"><div><h3>What you will find</h3><ul><li>Resource links sorted by category</li><li>The shared Resource Padlet</li><li>A pointer to the glossary</li></ul></div><div><h3>Good to know</h3><ul><li>Not required for your certificate</li><li>No progress to track</li><li>Open it as often as you like</li></ul></div></div></div></details>
+</div>
+
+## How a unit works
+
+<ol class="step-list">
+<li><span class="step-tag">Step 1</span><div class="step-card"><p class="step-title">Open a module</p><p class="step-text">Start from the home page to see its units.</p></div></li>
+<li><span class="step-tag">Step 2</span><div class="step-card"><p class="step-title">Watch a unit</p><p class="step-text">Play the video at your own pace. If the unit has slides, you can download them.</p></div></li>
+<li><span class="step-tag">Step 3</span><div class="step-card"><p class="step-title">Mark it complete</p><p class="step-text">Use <strong>Mark unit complete</strong> when you are done with it.</p></div></li>
+<li class="step-goal"><span class="step-tag">Step 4</span><div class="step-card"><p class="step-title">Unlock your certificate</p><p class="step-text">Once every unit in Modules 1 to 3 is complete, your certificate unlocks.</p>
+<a class="cert-link" href="certificate.qmd"><svg class="cert-seal" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><circle class="mark" cx="24" cy="20" r="14"/><path class="mark" d="M17 32l-3 13 10-5 10 5-3-13"/><circle class="cut" cx="24" cy="20" r="9.5"/><path class="cut" d="M19.5 20.5l3 3 6-6.5"/></svg><span><span class="cert-label">Go to your certificate</span><span class="cert-hint" aria-hidden="true">Opens the certificate page</span></span><svg class="cert-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15M13 5l7 7-7 7"/></svg></a></div></li>
+</ol>
+
+## Who PEN is built for
+
+<div class="audience-wrap">
+<ul class="audience-grid" aria-label="Who PEN is built for">
+<li><div class="audience-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle cx="12" cy="7" r="3.5"/><path d="M4.5 21v-2a5 5 0 015-5h5a5 5 0 015 5v2"/></svg></div><p class="audience-label">Who</p><p class="audience-text">Disability advocates and self-advocates</p></li>
+<li><div class="audience-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M5 20V10M12 20V4M19 20v-7"/></svg></div><p class="audience-label">Why</p><p class="audience-text">Hard numbers for meetings, letters, and testimony</p></li>
+<li><div class="audience-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><p class="audience-label">How</p><p class="audience-text">Self-paced. No group session or facilitator required</p></li>
+</ul>
+</div>
+
+## Your progress
+
+<div class="progress-help">
+<div class="progress-help-grid">
+<div class="progress-help-card">
+<h3>What you will see</h3>
+<p>Each module shows how many of its units you have completed. For example:</p>
+<ul class="progress-help-sample" aria-label="Example progress labels">
+<li>Module 2 <span class="status-pill" data-state="todo">Not started</span></li>
+<li>Module 3 <span class="status-pill" data-state="in-progress">2 of 4 complete</span></li>
+<li>Module 1 <span class="status-pill" data-state="done">Completed</span></li>
+</ul>
+</div>
+<div class="progress-help-card progress-help-saved">
+<h3>Where it is saved</h3>
+<p>Only in this browser, on the device you are using. Nothing is sent anywhere.</p>
+<p>On a new device, or after you clear your browser data, it starts over. You can mark the units you already finished as complete again.</p>
+<p>In a private window, the buttons work for the current visit but are not remembered.</p>
+<p>Your Display choices, such as dark colors or larger text, are saved the same way. Clearing your progress does not change them.</p>
+</div>
+</div>
+<div class="progress-help-reset">
+<p>You will be asked to confirm. Clearing removes your completed units and the name on your certificate from this browser.</p>
+<button type="button" data-pen-reset class="btn pen-reset-btn">Clear my saved progress</button>
+</div>
+</div>
+
+## How do I take part with assistive technology?
+
+The site is built to WCAG 2.2 AA. Every page works with the keyboard alone
+and with a screen reader. Full detail, and a way to report anything that does
+not work, is on the accessibility page.
+
+[Read the accessibility page](accessibility.qmd){.btn .btn-primary .btn-lg}

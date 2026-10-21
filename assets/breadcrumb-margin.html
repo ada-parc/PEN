@@ -1,0 +1,50 @@
+<!-- Breadcrumb placement. On wide screens the breadcrumb lives at
+     the top of the right-hand margin column, above "On this page". Below the
+     breakpoint that column is collapsed, so the breadcrumb goes back to its
+     in-flow spot above the page content. Unit pages have no table of contents,
+     so they get a margin column of their own. Without script the breadcrumb
+     simply stays inline, which is a complete experience. -->
+<script>
+  (function () {
+    var crumb = document.querySelector('.pen-breadcrumb');
+    var content = document.getElementById('quarto-content');
+    if (!crumb || !content) return;
+    var home = document.createComment('pen-breadcrumb-home');
+    crumb.parentNode.insertBefore(home, crumb);
+    var mq = window.matchMedia('(min-width: 992px)');
+
+    function column() {
+      var col = document.getElementById('quarto-margin-sidebar');
+      if (!col) {
+        col = document.createElement('div');
+        col.id = 'quarto-margin-sidebar';
+        col.className = 'sidebar margin-sidebar';
+        col.setAttribute('data-pen-made', '');
+        document.body.classList.remove('fullcontent');
+        document.body.setAttribute('data-pen-fullcontent', '');
+        content.insertBefore(col, document.getElementById('quarto-document-content'));
+      }
+      return col;
+    }
+
+    function place() {
+      if (mq.matches) {
+        var col = column();
+        col.insertBefore(crumb, col.firstChild);
+        crumb.classList.add('is-in-margin');
+      } else {
+        home.parentNode.insertBefore(crumb, home.nextSibling);
+        crumb.classList.remove('is-in-margin');
+        var made = document.querySelector('[data-pen-made]');
+        if (made && !made.children.length) {
+          made.remove();
+          if (document.body.hasAttribute('data-pen-fullcontent')) document.body.classList.add('fullcontent');
+        }
+      }
+    }
+
+    place();
+    if (mq.addEventListener) mq.addEventListener('change', place);
+    else mq.addListener(place);
+  })();
+</script>

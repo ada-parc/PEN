@@ -1,0 +1,24 @@
+<!-- Keyboard access for Quarto's "Back to top" pill (nothing is
+     reachable by mouse but not by keyboard). Quarto renders it as
+     <a role="button" onclick="..."> with no href, which leaves it out of the
+     tab order entirely. Put it in the tab order and give it the Enter and
+     Space activation a role="button" element promises. Focus then moves to
+     the page's main content, so a keyboard user lands where they scrolled. -->
+<script>
+  (function () {
+    var btn = document.getElementById('quarto-back-to-top');
+    if (!btn) return;
+    btn.setAttribute('tabindex', '0');
+    btn.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        btn.click();
+        var main = document.getElementById('quarto-document-content');
+        if (main) {
+          main.setAttribute('tabindex', '-1');
+          main.focus({ preventScroll: true });
+        }
+      }
+    });
+  })();
+</script>

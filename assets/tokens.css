@@ -1,0 +1,243 @@
+/* ================================================================
+   PEN design tokens
+   ----------------------------------------------------------------
+   The PEN Colour System: navy / brick clay / cream / black / white, with
+   Slate Mist, Sky, and Apricot as field-bound support tints.
+
+   Every colour pair below is checked against WCAG 2.2. Ratios are
+   against cream unless noted.
+   ================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
+/* Easy-to-read font, loaded only when a reader picks it (Display settings). */
+@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+:root {
+  /* Brand colour, PEN Colour System */
+  --pen-navy:         #1B2A3B;  /* 13.05 : 1 on cream, structure, headings, nav, primary ink */
+  --pen-black:        #000000;  /* reserve; hover/active fill on navy elements only, never default text over navy */
+  --pen-brick:        #9B3A26;  /* 6.21 : 1 on cream, the one light-field accent: links, CTAs, active states, progress/achievement */
+  --pen-cream:         #F6F2EA;  /* page background */
+  --pen-white:        #FFFFFF;  /* card/panel fills, text on navy or brick */
+
+  /* Support tints, field-bound. Never cross fields. */
+  --pen-slate-mist:   #93989B;  /* light-field only: dividers, muted icons, disabled states. Decorative, never a meaning carrier. */
+  --pen-sky:          #8FB8DE;  /* dark-field only: text/icons/links on navy or black, 6.99 : 1 on navy */
+  --pen-apricot:      #E8925A;  /* dark-field only: accent text/icons on navy or black, 6.03 : 1 on navy */
+
+  /* Semantic roles, the light theme (the default). Every call site in
+     pen.scss reads by job, never by brand name, so a theme is nothing more
+     than a block that re-points these. Brand names above never change. The
+     dark and high-contrast themes (data-pen-theme) re-point this same list. */
+
+  /* Text */
+  --pen-ink:          var(--pen-navy);       /* body text, headings, primary ink */
+  --pen-ink-soft:     var(--pen-navy);       /* secondary text; hierarchy comes from size and weight, not a second ink */
+  --pen-ink-strong:   var(--pen-black);      /* heaviest ink: pressed-button text and border */
+
+  /* Fields and lines */
+  --pen-bg:           var(--pen-cream);      /* page background */
+  --pen-paper:        var(--pen-bg);         /* legacy alias of --pen-bg */
+  --pen-surface:      var(--pen-white);      /* panel and card fill, a plain lift off the page */
+  --pen-surface-alt:  var(--pen-surface);    /* legacy alias */
+  --pen-surface-warm: var(--pen-surface);    /* legacy alias */
+  --pen-rule:         var(--pen-navy);       /* meaningful border, needs 3:1; slate mist fails that on cream */
+  --pen-rule-faint:   var(--pen-slate-mist); /* hairlines only, decorative */
+
+  /* Links. Brick in the light theme, where one accent carries both jobs;
+     the dark theme splits them: Sky for interaction. */
+  --pen-link:         var(--pen-brick);
+  --pen-link-hover:   var(--pen-navy);       /* the palette has no darker brick */
+
+  /* Accent: progress, achievement, rails, the primary action */
+  --pen-accent:       var(--pen-brick);      /* 6.21 : 1 on cream */
+  --pen-focus:        var(--pen-brick);      /* focus ring on the page field */
+  --pen-on-accent:      var(--pen-white);    /* text on an accent fill */
+  --pen-on-accent-soft: var(--pen-cream);    /* chevron glyph on an accent disc */
+  --pen-wash:         #F3E7E5;               /* brick at 12% toward white: hover fill on light rows */
+
+  /* Chrome: interactive heavy fills (primary buttons, slide cards, the
+     back-to-top pill). */
+  --pen-chrome:         var(--pen-navy);
+  --pen-chrome-hover:   var(--pen-black);    /* hover and active fill on chrome */
+  --pen-on-chrome:      var(--pen-white);    /* text on chrome */
+  --pen-on-chrome-soft: var(--pen-cream);    /* text on chrome where cream was chosen */
+
+  /* Band: non-interactive heavy fields (navbar, table headers, progress
+     heads, the accessibility page bands). Light theme: same navy as chrome. */
+  --pen-band:         var(--pen-navy);
+  --pen-on-band:      var(--pen-white);
+  --pen-on-band-soft: var(--pen-cream);
+  --pen-band-accent:  var(--pen-apricot);    /* accent text and rules on a band */
+  --pen-band-link:    var(--pen-sky);        /* links and focus rings on a band */
+  --pen-band-rule:    rgba(246, 242, 234, 0.35); /* divider inside the navbar */
+  /* What a heavy fill becomes on hover. Light keeps the existing brick; dark and
+     high contrast invert to white so the change is a luminance jump, not a hue
+     swap between two colors of similar brightness (sky to apricot). */
+  --pen-hover-fill:    var(--pen-brick);
+  --pen-on-hover-fill: var(--pen-white);
+  --pen-hover-edge:    var(--pen-brick);
+  --pen-tick:         #AFB4BA;               /* unit boundary ticks in the module progress bar */
+  --pen-toc-line:     #E9ECEF;               /* the hairline beside each "On this page" entry: Bootstrap's own gray, off palette */
+
+  /* Legacy names kept so nothing external breaks */
+  --pen-navy-dark:    var(--pen-chrome-hover);
+
+  /* Glyphs that must change color with the theme. An SVG used as a CSS
+     background cannot read a custom property, so each variant is a whole
+     URL held in a variable, and a theme swaps the variable. */
+  --pen-chevron-ink: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M9 5l7 7-7 7' stroke='%2314293D' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --pen-chevron-on-chrome: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  --pen-chevron-on-accent: var(--pen-chevron-on-chrome);
+
+  /* Type */
+  --pen-font-serif:   'Bitter', Georgia, 'Times New Roman', serif;
+  --pen-font-mono:    'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  --pen-measure:      70ch;
+
+  /* Type scale. Root is 19px; rem values resolve against it. */
+  --pen-text-xs:      0.85rem;  /* 16.15px, eyebrows and pills only */
+  --pen-text-sm:      0.90rem;  /* 17.10px, meta lines, captions */
+  --pen-text-base:    1.00rem;  /* 19.00px, body */
+  --pen-text-lede:    1.20rem;  /* 22.80px, hero lede, first paragraph */
+  --pen-text-h3:      1.44rem;  /* 27.36px */
+  --pen-text-h2:      2.07rem;  /* 39.33px */
+  --pen-text-h1:      2.49rem;  /* 47.31px */
+  --pen-text-display: 2.99rem;  /* 56.81px, home hero h1 only */
+}
+
+/* ================================================================
+   Themes. The default (light) is the :root block above. A theme only
+   re-points roles, never brand names or components. Set by
+   assets/display-settings.html as <html data-pen-theme="...">.
+   Every pair below is measured by
+   R/check_contrast.R and scripts/style_snapshot.mjs scan.
+   ================================================================ */
+
+/* Themes apply on screen only. Print always uses the light roles above, so a
+   saved dark or high-contrast choice never reaches the certificate PDF. */
+@media screen {
+  /* Dark: the dark field is the page. Navy page, a lifted navy
+     surface, cream ink, Sky for interaction, Apricot for achievement. Nothing
+     here is a new swatch: #2D3B4B is navy at 8% toward white, a derived tint
+     like --pen-wash, chosen as the lightest lift that still keeps Apricot text
+     at 4.5:1 (4.73) and Sky at 5.48. */
+  :root[data-pen-theme="dark"] {
+    color-scheme: dark;
+    --pen-ink:          var(--pen-cream);      /* 13.05 : 1 on navy */
+    --pen-ink-soft:     var(--pen-cream);
+    --pen-ink-strong:   var(--pen-white);
+    --pen-bg:           var(--pen-navy);
+    --pen-surface:      #2D3B4B;               /* navy 8% toward white; cream 10.23 : 1 */
+    --pen-rule:         var(--pen-cream);
+    --pen-rule-faint:   var(--pen-slate-mist); /* decorative hairline; 5.00 : 1 on navy */
+    --pen-link:         var(--pen-sky);        /* 6.99 : 1 on navy, 5.48 on surface */
+    --pen-link-hover:   var(--pen-white);
+    --pen-accent:       var(--pen-apricot);    /* 6.03 : 1 on navy, 4.73 on surface */
+    --pen-focus:        var(--pen-sky);
+    --pen-on-accent:      var(--pen-navy);     /* 6.03 : 1 on apricot */
+    --pen-on-accent-soft: var(--pen-navy);
+    --pen-wash:         var(--pen-black);      /* row hover: sinks to the deepest tone (1.9 : 1 from the card), plus the accent bar */
+    --pen-hover-fill:    var(--pen-white);
+    --pen-on-hover-fill: var(--pen-navy);
+    --pen-hover-edge:    var(--pen-white);
+    --pen-chrome:         var(--pen-sky);      /* interactive fills read as interaction */
+    --pen-chrome-hover:   var(--pen-white);
+    --pen-on-chrome:      var(--pen-navy);     /* 6.99 : 1 on sky */
+    --pen-on-chrome-soft: var(--pen-navy);
+    --pen-band:         var(--pen-black);      /* heavy non-interactive fields sit below the page */
+    --pen-on-band:      var(--pen-white);
+    --pen-on-band-soft: var(--pen-cream);
+    --pen-band-accent:  var(--pen-apricot);
+    --pen-band-link:    var(--pen-sky);
+    --pen-tick:         var(--pen-slate-mist);
+    --pen-toc-line:     var(--pen-slate-mist);
+    --pen-chevron-ink: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M9 5l7 7-7 7' stroke='%23F6F2EA' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    --pen-chevron-on-chrome: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231B2A3B' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    --pen-chevron-on-accent: var(--pen-chevron-on-chrome);
+  }
+
+  /* High contrast: white page, black ink, nothing but navy, black and white
+     (plus Apricot and Sky on the black bands). Every text pair is 7:1 or
+     better (AAA). Brick is not used: it is 6.94 : 1 on white, under 7. */
+  :root[data-pen-theme="contrast"] {
+    --pen-ink:          var(--pen-black);
+    --pen-ink-soft:     var(--pen-black);
+    --pen-ink-strong:   var(--pen-black);
+    --pen-bg:           var(--pen-white);
+    --pen-surface:      var(--pen-white);
+    --pen-rule:         var(--pen-black);
+    --pen-rule-faint:   var(--pen-black);
+    --pen-link:         var(--pen-navy);       /* 14.57 : 1 on white; always underlined */
+    --pen-link-hover:   var(--pen-black);
+    --pen-accent:       var(--pen-navy);
+    --pen-focus:        var(--pen-black);
+    --pen-on-accent:      var(--pen-white);
+    --pen-on-accent-soft: var(--pen-white);
+    --pen-wash:         var(--pen-cream);      /* black on cream 18.81 : 1 */
+    --pen-hover-fill:    var(--pen-white);
+    --pen-on-hover-fill: var(--pen-black);
+    --pen-hover-edge:    var(--pen-black);
+    --pen-chrome:         var(--pen-black);
+    --pen-chrome-hover:   var(--pen-navy);
+    --pen-on-chrome:      var(--pen-white);
+    --pen-on-chrome-soft: var(--pen-white);
+    --pen-band:         var(--pen-black);
+    --pen-on-band:      var(--pen-white);
+    --pen-on-band-soft: var(--pen-white);
+    --pen-band-accent:  var(--pen-apricot);    /* 8.69 : 1 on black */
+    --pen-band-link:    var(--pen-sky);        /* 10.08 : 1 on black */
+    --pen-tick:         var(--pen-black);
+    --pen-toc-line:     var(--pen-black);
+    --pen-chevron-ink: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M9 5l7 7-7 7' stroke='%23000000' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  }
+
+  /* Bootstrap and Quarto read their own --bs-* variables, which are baked from
+     the light palette at build time. Re-point the ones this site uses. */
+  :root[data-pen-theme="dark"],
+  :root[data-pen-theme="contrast"] {
+    --bs-body-bg: var(--pen-bg);
+    --bs-body-color: var(--pen-ink);
+    --bs-heading-color: var(--pen-ink);
+    --bs-emphasis-color: var(--pen-ink-strong);
+    --bs-secondary-color: var(--pen-ink);
+    --bs-border-color: var(--pen-rule);
+    --bs-link-color: var(--pen-link);
+    --bs-link-hover-color: var(--pen-link-hover);
+    --bs-code-color: var(--pen-ink);
+  }
+  :root[data-pen-theme="dark"] {
+    --bs-body-color-rgb: 246, 242, 234;
+    --bs-body-bg-rgb: 27, 42, 59;
+    --bs-link-color-rgb: 143, 184, 222;
+    --bs-link-hover-color-rgb: 255, 255, 255;
+  }
+  :root[data-pen-theme="contrast"] {
+    --bs-body-color-rgb: 0, 0, 0;
+    --bs-body-bg-rgb: 255, 255, 255;
+    --bs-link-color-rgb: 27, 42, 59;
+    --bs-link-hover-color-rgb: 0, 0, 0;
+  }
+
+  /* Bootstrap sets these on the component, which beats a :root override, so
+     they are re-pointed on the component. */
+  :root[data-pen-theme="dark"] .dropdown-menu,
+  :root[data-pen-theme="contrast"] .dropdown-menu {
+    --bs-dropdown-bg: var(--pen-surface);
+    --bs-dropdown-color: var(--pen-ink);
+    --bs-dropdown-link-color: var(--pen-ink);
+    --bs-dropdown-link-hover-color: var(--pen-ink);
+    --bs-dropdown-link-hover-bg: var(--pen-surface);
+    --bs-dropdown-link-active-bg: var(--pen-chrome);
+    --bs-dropdown-link-active-color: var(--pen-on-chrome);
+    --bs-dropdown-border-color: var(--pen-rule);
+  }
+  :root[data-pen-theme="dark"] .table,
+  :root[data-pen-theme="contrast"] .table {
+    --bs-table-color: var(--pen-ink);
+    --bs-table-bg: var(--pen-bg);
+    --bs-table-border-color: var(--pen-rule);
+    --bs-table-striped-color: var(--pen-ink);
+    --bs-table-striped-bg: var(--pen-surface);
+  }
+}

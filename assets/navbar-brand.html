@@ -1,0 +1,38 @@
+<!-- Navbar brand a11y fixes that _quarto.yml can't express.
+     1. Quarto renders the navbar logo and title as two separate links to
+        the home page. The title ("PEN", real text) carries the name, so the
+        image-only logo link leaves the tab order and the accessibility
+        tree: one tab stop, one "PEN" link.
+     2. The ADA-PARC link's badge is decorative (its text already says
+        ADA-PARC) and its arrow is a visual cue whose meaning is spelled out
+        in visually-hidden text; nav `text:` markdown can't carry alt=""
+        or aria-hidden, so set them here.
+     3. "You are here" for the Modules dropdown. Quarto marks a nav item
+        current only on an exact page match, so on a unit page nothing in the
+        bar is current, and the dropdown never is. On Module 1 to 3 pages and
+        their unit pages, mark the Modules toggle active and the matching
+        menu row current: aria-current="page" on the module's own page,
+        "true" (current within the set) on one of its unit pages. -->
+<script>
+  document.querySelectorAll('.navbar-brand-logo').forEach(function (a) {
+    a.setAttribute('tabindex', '-1');
+    a.setAttribute('aria-hidden', 'true');
+  });
+  document.querySelectorAll('.navbar .pen-parent-badge').forEach(function (img) {
+    img.setAttribute('alt', '');
+  });
+  document.querySelectorAll('.navbar .pen-parent-ext').forEach(function (s) {
+    s.setAttribute('aria-hidden', 'true');
+  });
+  (function () {
+    var m = window.location.pathname.match(/module-(0[1-3])(-unit-\d+)?(?:\.html)?$/);
+    if (!m) return;
+    var item = document.querySelector('.navbar .dropdown-item[href$="module-' + m[1] + '.html"]');
+    var toggle = document.querySelector('.navbar .nav-link.dropdown-toggle');
+    if (!item || !toggle) return;
+    item.classList.add('active');
+    item.setAttribute('aria-current', m[2] ? 'true' : 'page');
+    toggle.classList.add('active');
+    toggle.setAttribute('aria-current', 'true');
+  })();
+</script>

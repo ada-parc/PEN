@@ -1,0 +1,193 @@
+project:
+  type: website
+  output-dir: _site
+  # Regenerate module + unit pages from content/modules.yml before every
+  # render. The pages are gitignored, so on a fresh clone run
+  # `Rscript R/build_modules.R` once before the first render (Quarto lists
+  # pages before this hook runs; publish.yml does the same).
+  pre-render:
+    - Rscript R/build_modules.R
+  # Quarto 1.4 writes _site/search.json even with `search: false` below. Nothing
+  # reads it, so drop it rather than publish an index of every page's text.
+  post-render:
+    - Rscript R/post_render.R
+  render:
+    - "*.qmd"
+    - "modules/*.qmd"
+  # Hand-authored downloadable files (not Quarto documents) that must still
+  # be copied into _site. Quarto only auto-detects resources referenced by
+  # a relative link, and this belt-and-suspenders entry covers the case
+  # where that detection misses a file.
+  resources:
+    - "assets/downloads/**"
+    - "assets/brand/**"
+    - "assets/captions/**"
+    - "videos/**"
+
+website:
+  title: "PEN"
+  description: >
+    Participation Equity Navigator. The training companion to the ADA-PARC
+    project.
+  site-url: https://pen.example.org/
+  # ^ Placeholder. Set to the GitHub Pages address for testing, then to the
+  #   final domain once it is confirmed. It feeds sitemap.xml and robots.txt.
+  # Simplified small-size mark (no clip/band detail), not the full badge.
+  # PNG fallbacks + apple-touch-icon are linked in assets/icons.html.
+  favicon: assets/brand/pen-favicon.svg
+  page-navigation: true
+  back-to-top-navigation: true
+  bread-crumbs: true
+  # No site search. The nav is four top-level destinations and a handful of
+  # module pages; a search box added a control nobody asked for and a chunk
+  # of unused JS/index.
+  search: false
+  navbar:
+    # Navbar "matched pair". The logo is PEN's simplified small-size mark
+    # (pen-favicon-reversed.svg, white tile on the navy field), and "PEN" is
+    # real HTML text via `title:`, styled as the wordmark in pen.scss. The
+    # wordmark is deliberately not an image: text inside an SVG loaded as
+    # <img> can't use the page's Bitter web font and falls back per device.
+    logo: assets/brand/pen-favicon-reversed.svg
+    logo-alt: ""
+    title: "PEN"
+    # xl, not lg: with six left links plus the ADA-PARC link, the expanded
+    # bar overlapped the logo and wrapped "How to Use" onto three lines
+    # between 992px and about 1150px (common laptop widths, and 1366px
+    # laptops at 125% zoom). Below 1200px it now collapses to the menu.
+    collapse-below: xl
+    # Plain reading order, left-aligned right after the logo. No tab is
+    # enlarged or centered as a false anchor; the current page is marked by
+    # Bootstrap's own active-link color, not by size. The ADA-PARC mark
+    # stays in `right`, pushed to the far edge by `me-auto` on this group.
+    left:
+      - text: "Home"
+        href: index.qmd
+      - text: "Modules"
+        menu:
+          # Numeral badge mirrors the homepage Module Tracker's
+          # .hero-modules-number (brick clay on paper), so the
+          # same "numeral spine" reads here at dropdown scale. Styled in
+          # pen.scss under .navbar .dropdown-item.
+          - text: "<span class='nav-module-num'>01</span> Getting Started, ADA Insights"
+            href: modules/module-01.qmd
+          - text: "<span class='nav-module-num'>02</span> Exploring ADA-PARC Website & Data"
+            href: modules/module-02.qmd
+          - text: "<span class='nav-module-num'>03</span> Making Sense of Data"
+            href: modules/module-03.qmd
+          - text: "<span class='nav-module-num'>04</span> Resources"
+            href: modules/module-04.qmd
+      - text: "Resources"
+        href: modules/module-04.qmd
+      - text: "Certificate"
+        href: certificate.qmd
+      - text: "How to Use"
+        href: how-to-use.qmd
+      - text: "Help"
+        href: help.qmd
+    right:
+      # "An initiative of [badge] ADA-PARC ↗" as one link with one accessible
+      # name. Pandoc span syntax on ONE line: Quarto escapes raw HTML in nav
+      # `text:`, and a folded multi-line value with quoted attributes came
+      # out as literal text too. So the badge's alt="" and the arrow's aria-hidden
+      # are set in assets/navbar-brand.html. Styled in pen.scss `.pen-parent-*`.
+      - text: "[An initiative of]{.pen-parent-kicker} ![](/assets/brand/adaparc-badge-reversed.svg){.pen-parent-badge width=28 height=28} [ADA-PARC]{.pen-parent-word} [↗]{.pen-parent-ext} [(opens in a new tab)]{.visually-hidden}"
+        href: https://adaparc.shinyapps.io/ADA_PARC/
+        target: _blank
+        rel: noopener
+  # Footer. All three columns are hand-authored HTML in the left/center/
+  # right scalars, not Quarto's `items:` schema, so every column can carry
+  # its own eyebrow label. Internal hrefs use root-absolute paths
+  # (`/accessibility.html`) rather than Quarto's `.qmd`-to-`.html` rewriting,
+  # because that rewriting only fires on its own structured `items:` links,
+  # not on raw HTML anchors; root-absolute is depth-safe from any page,
+  # matching the pattern the badge `src` paths already used here.
+  page-footer:
+    border: true
+    # The ADA-PARC badge link carries `no-external`: Quarto's client-side
+    # link-decoration script (site_libs) tags any external, non-excluded
+    # `<a>` with the new-tab icon at runtime, and this link isn't excluded
+    # by class the way `.nav-link` is for the navbar's own ADA-PARC mark.
+    # Same "logo, not a label" exemption as that navbar link and as the
+    # underline rule in pen.scss - both badges are brand marks, not body prose.
+    #
+    # Every line below sits at this same base indentation, deliberately
+    # not nested visually. A YAML folded scalar (`>`) preserves any extra
+    # indentation on a line as literal text, and pandoc's markdown then
+    # reads 4+ of those literal leading spaces as the start of an indented
+    # code block - hand-nesting the HTML (e.g. the two <a> lines inside
+    # <div class="pen-footer-badges">) tripped exactly that and rendered
+    # as a <pre><code> block instead of markup. Flat indentation avoids it.
+    # Each column is a role="group" named by its visible label (aria-labelledby),
+    # so a screen reader announces "About, group" etc. without adding
+    # headings to the page outline. The help links sit in a <nav> named
+    # "Help and accessibility". Contact is a mailto link; the address is not
+    # shown, and the visually-hidden text says what it does. The address is
+    # the one the accessibility and help pages already use.
+    left: >
+      <div class="pen-footer-col" role="group" aria-labelledby="pen-footer-about">
+      <p class="pen-footer-eyebrow" id="pen-footer-about">About</p>
+      <div class="pen-footer-badges">
+      <a href="/index.html" class="pen-footer-badge-link"><img class="pen-img-light" src="/assets/brand/pen-badge.svg" width="28" height="28" alt="PEN home"><img class="pen-img-dark" src="/assets/brand/pen-badge-reversed.svg" width="28" height="28" alt="PEN home"></a>
+      <a href="https://adaparc.shinyapps.io/ADA_PARC/" target="_blank" rel="noopener" class="pen-footer-badge-link no-external"><img class="pen-img-light" src="/assets/brand/adaparc-badge.svg" width="28" height="28" alt="ADA-PARC (opens in a new tab)"><img class="pen-img-dark" src="/assets/brand/adaparc-badge-reversed.svg" width="28" height="28" alt="ADA-PARC (opens in a new tab)"></a>
+      <span class="pen-footer-badge-name">PEN &times; ADA&#8209;PARC</span>
+      </div>
+      <p>A training module developed as part of the ADA-PARC project.</p>
+      </div>
+    center: >
+      <div class="pen-footer-col" role="group" aria-labelledby="pen-footer-help">
+      <p class="pen-footer-eyebrow" id="pen-footer-help">Get help</p>
+      <nav aria-label="Help and accessibility">
+      <ul class="pen-footer-links">
+      <li><a href="/accessibility.html">Accessibility</a></li>
+      <li><a href="/help.html">Help</a></li>
+      <li><a href="mailto:hammel@uic.edu?subject=PEN%20site%20question" class="no-external">Contact<span class="visually-hidden"> (opens your email app)</span></a></li>
+      </ul>
+      </nav>
+      </div>
+    right: >
+      <div class="pen-footer-col" role="group" aria-labelledby="pen-footer-funding">
+      <p class="pen-footer-eyebrow" id="pen-footer-funding">Funding &amp; credits</p>
+      <p>Funded by NIDILRR under grants 90DP0026 and 90DPAD0001.</p>
+      <details class="pen-footer-team">
+      <summary>Research team</summary>
+      <p>Joy Hammel, Principal Investigator; Elnaz Alimi, Nikki Rothstein, Emmalynne Shumard, and Ariel Merritt, Research Assistants; Colin Heeneman, Research Assistant and App Developer.</p>
+      </details>
+      </div>
+
+format:
+  html:
+    theme:
+      - assets/pen.scss
+    css:
+      - assets/tokens.css
+    toc: true
+    toc-depth: 3
+    toc-title: "On this page"
+    number-sections: false
+    anchor-sections: true
+    smooth-scroll: true
+    link-external-newwindow: false
+    link-external-icon: true
+    lang: en
+    include-in-header:
+      - assets/icons.html
+      - assets/display-init.html
+    include-after-body:
+      - assets/navbar-brand.html
+      - assets/breadcrumb-margin.html
+      - assets/back-to-top.html
+      - assets/pen-manifest.html
+      - assets/progress-init.html
+      - assets/video-poster.html
+      - assets/display-settings.html
+    grid:
+      body-width: 820px
+
+execute:
+  echo: false
+  warning: false
+  message: false
+  freeze: auto
+
+lang: en

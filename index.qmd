@@ -1,0 +1,45 @@
+---
+pagetitle: "PEN, the ADA-PARC training companion"
+description: >
+  A short, self-paced training that teaches disability advocates how to read and
+  use the data on the ADA-PARC website.
+toc: false
+---
+
+::: {.hero}
+::: {.hero-inner}
+::: {.hero-grid}
+
+::: {.hero-intro}
+<p class="hero-initiative"><img class="hero-initiative-badge pen-img-light" src="assets/brand/pen-badge.svg" alt="" width="40" height="40"><img class="hero-initiative-badge pen-img-dark" src="assets/brand/pen-badge-reversed.svg" alt="" width="40" height="40"><span>An Initiative of <span class="hero-initiative-mark">ADA-PARC</span></span></p>
+
+<h1 class="hero-title"><span class="hero-title-initial">P</span>articipation <span class="hero-title-initial">E</span>quity <span class="hero-title-initial">N</span>avigator</h1>
+
+<p class="hero-lede">Self-paced training teaching disability advocates how to use the <strong>ADA-PARC</strong> data resource.</p>
+
+<div class="hero-actions">
+[<span data-pen-start-label>Start Module 1</span> <svg viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>](modules/module-01.qmd){.hero-btn .hero-btn-primary data-pen-start="true"}
+[How the training works](how-to-use.qmd){.hero-btn .hero-btn-secondary}
+</div>
+:::
+
+::: {.hero-progress role="region" aria-labelledby="modules"}
+<div class="hero-progress-head">
+<h2 id="modules">Your progress</h2>
+<p class="hero-progress-count" data-pen-count-series>0 of 3 modules complete</p>
+<p class="hero-progress-cert" data-pen-certificate-ready hidden="hidden"><a href="certificate.qmd">Get your certificate <span aria-hidden="true">→</span></a></p>
+</div>
+
+<div class="hero-progress-bar" aria-hidden="true"><span data-pen-bar></span></div>
+
+::: {.hero-modules}
+- [<span class="hero-modules-number"><span class="visually-hidden">Module </span>01</span><span class="hero-modules-title">Getting Started, ADA Insights</span><span class="hero-modules-break" aria-hidden="true"></span><span class="status-pill" data-pen-module="01">Loading…</span><span class="hero-modules-arrow" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>](modules/module-01.qmd)
+- [<span class="hero-modules-number"><span class="visually-hidden">Module </span>02</span><span class="hero-modules-title">Exploring ADA-PARC Website &amp; Data</span><span class="hero-modules-break" aria-hidden="true"></span><span class="status-pill" data-pen-module="02">Loading…</span><span class="hero-modules-arrow" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>](modules/module-02.qmd)
+- [<span class="hero-modules-number"><span class="visually-hidden">Module </span>03</span><span class="hero-modules-title">Making Sense of Data</span><span class="hero-modules-break" aria-hidden="true"></span><span class="status-pill" data-pen-module="03">Loading…</span><span class="hero-modules-arrow" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>](modules/module-03.qmd)
+:::
+
+:::
+
+:::
+:::
+:::

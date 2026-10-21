@@ -1,0 +1,41 @@
+---
+title: "[Module {{NUMBER}}]{.module-eyebrow} {{TITLE}}"
+pagetitle: "Module {{NUMBER}}: {{TITLE}} · PEN"
+description: "{{SUMMARY}}"
+---
+
+{{BREADCRUMB}}
+
+{{STATUS_BANNER}}
+
+## Module {{NUMBER}} Units {#units}
+
+<div class="module-progress">
+<div class="module-progress-head">
+<span class="module-progress-label">Your progress</span>
+<p data-pen-count-module="{{ID}}" class="module-progress-text">Loading your progress…</p>
+</div>
+<div class="module-progress-body">
+<div class="module-progress-bar" aria-hidden="true"><span class="module-progress-fill" data-pen-count-fill></span></div>
+</div>
+</div>
+
+::: {.unit-list}
+{{UNIT_LIST}}
+:::
+
+## Learning objectives
+
+{{OBJECTIVES}}
+
+## Resources
+
+{{ADAPARC_PAGES}}
+
+{{DOWNLOADS_SECTION}}
+
+{{CERT_BANNER}}
+
+------------------------------------------------------------------------
+
+{{PAGER}}

@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PEN Glossary</title>
+<meta name="description" content="Definitions for terms used throughout the PEN training and the ADA-PARC data site.">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,600;0,700;0,800&display=swap');
+
+  /* PEN colours, copied from assets/tokens.css (this page is standalone). */
+  :root {
+    --pen-navy: #1B2A3B;
+    --pen-blue: #9B3A26;    /* brick clay, the one light-field accent */
+    --pen-ink: #1B2A3B;     /* body text; the ref names navy the primary ink */
+    --pen-ink-soft: #1B2A3B;
+    --pen-paper: #F6F2EA;   /* cream, page background */
+    --pen-surface-alt: #FFFFFF;
+    --pen-rule-faint: #93989B; /* slate mist, decorative only */
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--pen-paper);
+    color: var(--pen-ink);
+    font-family: 'Bitter', Georgia, 'Times New Roman', serif;
+    font-size: 19px;
+    line-height: 1.65;
+  }
+
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 4rem;
+  }
+
+  header {
+    border-bottom: 2px solid var(--pen-rule-faint);
+    padding-bottom: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  h1 {
+    color: var(--pen-navy);
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin: 0 0 0.75rem;
+  }
+
+  header p {
+    color: var(--pen-ink-soft);
+    font-size: 1.05rem;
+    margin: 0;
+  }
+
+  dl { margin: 0; }
+
+  dt {
+    color: var(--pen-navy);
+    font-weight: 700;
+    font-size: 1.15rem;
+    margin-top: 1.75rem;
+    scroll-margin-top: 1.5rem;
+  }
+
+  dd {
+    margin: 0.35rem 0 0;
+    padding: 0 0 1.5rem;
+    border-bottom: 1px solid var(--pen-rule-faint);
+  }
+
+  dd:last-of-type { border-bottom: none; }
+
+  a { color: var(--pen-blue); }
+
+  footer {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid var(--pen-rule-faint);
+    color: var(--pen-ink-soft);
+    font-size: 1rem;
+  }
+
+  .glossary-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.5rem;
+    margin-top: 1.25rem;
+  }
+
+  .pdf-btn {
+    display: inline-block;
+    text-decoration: none;
+    background: var(--pen-blue);
+    color: #FFFFFF;
+    border: 2px solid var(--pen-blue);
+    border-radius: 6px;
+    padding: 0.65rem 1.4rem;
+    font: inherit;
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .pdf-btn:hover, .pdf-btn:focus-visible { background: var(--pen-navy); border-color: var(--pen-navy); color: #FFFFFF; text-decoration: underline; }
+  .back-link { font-weight: 700; }
+  .pdf-btn:focus-visible { outline: 3px solid var(--pen-blue); outline-offset: 3px; }
+
+  @media print {
+    .glossary-actions { display: none !important; }
+    a { color: inherit; text-decoration: none; }
+  }
+
+  @media (max-width: 480px) {
+    h1 { font-size: 1.8rem; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>PEN Glossary</h1>
+    <p>Terms used throughout the PEN training and the ADA-PARC data site.</p>
+    <p class="glossary-actions">
+      <a class="pdf-btn" href="glossary.pdf" download="PEN-glossary.pdf">Download the glossary (PDF)</a>
+      <a class="back-link" href="../../help.html">Back to PEN Help</a>
+    </p>
+  </header>
+
+  <dl>
+    <dt id="term-ada">ADA</dt>
+    <dd>The Americans with Disabilities Act, the 1990 civil rights law that
+      prohibits discrimination against people with disabilities.</dd>
+
+    <dt id="term-five-titles">Five Titles</dt>
+    <dd>The ADA's five parts: Employment (Title I), Public Services (Title II),
+      Public Accommodations (Title III), Telecommunications (Title IV), and
+      Miscellaneous Provisions (Title V).</dd>
+
+    <dt id="term-ada-parc">ADA-PARC</dt>
+    <dd>The ADA Participation Action Research Consortium site, the public data
+      dashboard this training teaches you to read.</dd>
+
+    <dt id="term-national-data">National data</dt>
+    <dd>ADA-PARC measures summarized for the whole country, used as the
+      baseline a state or city is compared against.</dd>
+
+    <dt id="term-city-data">City data</dt>
+    <dd>ADA-PARC measures narrowed to a specific metro area (see
+      <em>metropolitan statistical area</em>), so you can see local variation
+      the national figure hides.</dd>
+
+    <dt id="term-scorecard">Scorecard</dt>
+    <dd>An ADA-PARC page that ranks or compares states/metro areas side by
+      side on a set of measures.</dd>
+
+    <dt id="term-percentage">Percentage</dt>
+    <dd>A rate expressed out of 100. Useful for comparing places of different
+      sizes, but only meaningful alongside its underlying count (see
+      <em>rate</em>, <em>count</em>).</dd>
+
+    <dt id="term-community-integration">Community integration</dt>
+    <dd>People with disabilities living, working, and taking part in ordinary
+      community life, rather than being separated in institutions or
+      segregated settings.</dd>
+
+    <dt id="term-integration-mandate">Integration mandate</dt>
+    <dd>The ADA requirement that public services be provided in the most
+      integrated setting appropriate to a person's needs.</dd>
+
+    <dt id="term-olmstead">Olmstead</dt>
+    <dd>The 1999 Supreme Court decision (<em>Olmstead v. L.C.</em>) holding
+      that the unjustified institutionalization of people with disabilities
+      is discrimination under the ADA.</dd>
+
+    <dt id="term-institutionalization">Institutionalization</dt>
+    <dd>Living in a nursing facility, an intermediate care facility, or
+      another congregate institutional setting rather than in the
+      community.</dd>
+
+    <dt id="term-hcbs">HCBS</dt>
+    <dd>Home and Community-Based Services, Medicaid-funded supports that let
+      people live at home instead of in an institution.</dd>
+
+    <dt id="term-nursing-facility">Nursing facility</dt>
+    <dd>A licensed residential facility providing ongoing nursing care; one of
+      the institutional settings ADA-PARC tracks.</dd>
+
+    <dt id="term-rate">Rate</dt>
+    <dd>A count expressed as a share of a population, for example the
+      percentage of working-age people with disabilities who are employed. Rates let
+      you compare places of different sizes.</dd>
+
+    <dt id="term-count">Count</dt>
+    <dd>A plain number of people or things, with no population adjustment.</dd>
+
+    <dt id="term-rank">Rank</dt>
+    <dd>Where a state or metro area sits in an ordered list of all of them on
+      a given measure.</dd>
+
+    <dt id="term-metropolitan-statistical-area">Metropolitan statistical area</dt>
+    <dd>A Census-defined region built around an urban core, used as the
+      "metro area" geography on ADA-PARC.</dd>
+
+    <dt id="term-employment-gap">Employment gap</dt>
+    <dd>The difference between the employment rate of people with disabilities
+      and that of people without disabilities in the same place.</dd>
+
+    <dt id="term-labor-force-participation">Labor force participation</dt>
+    <dd>The share of working-age people who are either working or actively
+      looking for work.</dd>
+
+    <dt id="term-poverty-rate">Poverty rate</dt>
+    <dd>The share of people with income below the federal poverty
+      threshold.</dd>
+
+    <dt id="term-title-i">Title I</dt>
+    <dd>The part of the ADA that prohibits disability discrimination in
+      employment.</dd>
+
+    <dt id="term-acs">ACS</dt>
+    <dd>The American Community Survey, the U.S. Census Bureau survey that
+      most ADA-PARC measures are drawn from.</dd>
+
+    <dt id="term-data-source">Data source</dt>
+    <dd>Where a number comes from (the survey, the year, and the table),
+      stated plainly enough that someone else can find the same number.</dd>
+
+    <dt id="term-evidence">Evidence</dt>
+    <dd>A claim backed by a figure whose source is named, as opposed to an
+      anecdote.</dd>
+
+    <dt id="term-public-comment">Public comment</dt>
+    <dd>A formal written response to a proposed government rule or plan, one
+      common place ADA-PARC data is used.</dd>
+  </dl>
+
+  <footer>
+    PEN is part of the ADA-PARC project.
+  </footer>
+</main>
+</body>
+</html>

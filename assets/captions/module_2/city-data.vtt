@@ -1,0 +1,561 @@
+WEBVTT
+
+1
+00:00:01.960 --> 00:00:06.867
+Hello, and welcome back. So far,
+we've explored the National Data tab,
+
+2
+00:00:06.867 --> 00:00:10.512
+including topics from
+community living to economics.
+
+3
+00:00:10.512 --> 00:00:15.840
+In this session, we're going to zoom in
+and take a deeper dive on city data.
+
+4
+00:00:16.190 --> 00:00:18.415
+Right now, we're on the home page,
+
+5
+00:00:18.415 --> 00:00:22.670
+so let's start by clicking on City
+Data on the top center banner.
+
+6
+00:00:24.900 --> 00:00:31.089
+Previously, we explored national data. This
+was information collected by each state.
+
+7
+00:00:31.210 --> 00:00:37.799
+Whereas city data is specific to each city
+in each state. It's much more specific.
+
+8
+00:00:38.380 --> 00:00:43.120
+Before we dive into the data, I want to
+orient you to the setup of the page.
+
+9
+00:00:43.330 --> 00:00:45.420
+Each page will have a map.
+
+10
+00:00:46.980 --> 00:00:50.787
+General information on the number
+of residents in the city and the
+
+11
+00:00:50.787 --> 00:00:54.479
+number of residents and percentages
+of people with disabilities.
+
+12
+00:00:55.000 --> 00:00:59.379
+And then below, there's a summary
+table that provides information on
+
+13
+00:00:59.379 --> 00:01:04.209
+disability demographics and ADA-PARC
+key indicators that we've seen before.
+
+14
+00:01:04.319 --> 00:01:08.929
+Including community participation, work
+and economics, and community living.
+
+15
+00:01:11.630 --> 00:01:13.600
+Let's start by looking in the map.
+
+16
+00:01:14.430 --> 00:01:17.329
+In the corner, it says Chicago, Illinois.
+
+17
+00:01:17.740 --> 00:01:23.270
+We have a key in the top right corner that
+tells us exactly what these colors means.
+
+18
+00:01:23.300 --> 00:01:27.222
+In this case, it's the percent
+of people with disabilities.
+
+19
+00:01:27.222 --> 00:01:30.345
+The map shows us the city
+we selected, Chicago,
+
+20
+00:01:30.345 --> 00:01:35.596
+broken down into different areas called
+census tracts. These areas are colored,
+
+21
+00:01:35.596 --> 00:01:38.920
+with darker colored areas
+showing places that have
+
+22
+00:01:38.920 --> 00:01:42.110
+a higher percentage of
+people with disabilities.
+
+23
+00:01:42.140 --> 00:01:46.240
+And lighter colors show a lower
+percentage of people with disabilities.
+
+24
+00:01:46.480 --> 00:01:48.899
+This gray represents not applicable.
+
+25
+00:01:49.060 --> 00:01:51.627
+This either means that there's no people
+
+26
+00:01:51.627 --> 00:01:54.451
+with disabilities who
+live in that district,
+
+27
+00:01:54.451 --> 00:01:57.789
+or it means that there wasn't
+enough data collected.
+
+28
+00:01:58.130 --> 00:02:00.990
+This can be one of the
+downfalls of city data.
+
+29
+00:02:00.990 --> 00:02:03.539
+There might not be enough data collected.
+
+30
+00:02:04.210 --> 00:02:07.209
+On the left side of the map,
+there's a plus and a minus sign.
+
+31
+00:02:07.420 --> 00:02:09.765
+The minus sign zooms out the map,
+
+32
+00:02:09.765 --> 00:02:13.459
+so you can see more of the
+area, but less specifics.
+
+33
+00:02:13.800 --> 00:02:16.032
+The plus sign zooms in the map,
+
+34
+00:02:16.032 --> 00:02:20.280
+so you can see more specifics,
+but less of the entire city.
+
+35
+00:02:22.280 --> 00:02:25.009
+You can see that in the west of the city.
+
+36
+00:02:25.220 --> 00:02:28.729
+In the south sides, it's
+represented by these darker colors.
+
+37
+00:02:28.729 --> 00:02:32.531
+So there's more people with
+disabilities who live in these areas.
+
+38
+00:02:32.531 --> 00:02:36.859
+Whereas, when you drag your mouse and
+go up north, there's lighter colors.
+
+39
+00:02:36.859 --> 00:02:41.480
+There's… meaning there's less people with
+disabilities who live in these areas.
+
+40
+00:02:41.620 --> 00:02:45.613
+You might start to wonder and reflect
+on your own cities and think,
+
+41
+00:02:45.613 --> 00:02:48.236
+why are there higher or
+lower percentages of
+
+42
+00:02:48.236 --> 00:02:50.739
+people with disabilities in certain areas?
+
+43
+00:02:51.840 --> 00:02:55.015
+To find more specific information
+about disability data,
+
+44
+00:02:55.015 --> 00:02:57.340
+we will scroll down to the summary table.
+
+45
+00:02:57.570 --> 00:03:02.611
+This is a little different than what we've
+seen before, but it's the same concept.
+
+46
+00:03:02.611 --> 00:03:07.037
+It tells us information about disability
+demographics, disability types,
+
+47
+00:03:07.037 --> 00:03:09.004
+and the ADA-PARC key indicators,
+
+48
+00:03:09.004 --> 00:03:12.570
+which are topics we've discussed
+in the National Data tab.
+
+49
+00:03:12.870 --> 00:03:17.780
+I will briefly review each category to
+help us understand how to read the data.
+
+50
+00:03:18.300 --> 00:03:21.179
+Let's start under Who
+Reports a Disability.
+
+51
+00:03:22.640 --> 00:03:25.979
+Let's start with the race
+and ethnicity category.
+
+52
+00:03:26.300 --> 00:03:31.335
+Each box provides the percent of people
+with disabilities in that specific race,
+
+53
+00:03:31.335 --> 00:03:36.119
+as well as the number of people with
+disabilities who identify as that race.
+
+54
+00:03:36.300 --> 00:03:41.285
+For example, 5.1% of Black people
+have a disability in Chicago,
+
+55
+00:03:41.285 --> 00:03:45.558
+which is about 137,000 Black
+people with disabilities.
+
+56
+00:03:45.558 --> 00:03:50.860
+This is a much higher number compared
+to any other race in Chicago.
+
+57
+00:03:51.830 --> 00:03:54.165
+Let's move on to the next category.
+
+58
+00:03:54.165 --> 00:03:58.369
+The U.S. Census tracks data based
+on the terms male and female.
+
+59
+00:03:58.620 --> 00:04:02.602
+Even though they may be outdated,
+these are the terms we will use,
+
+60
+00:04:02.602 --> 00:04:05.619
+because this is what the
+data's been collected on.
+
+61
+00:04:07.360 --> 00:04:11.734
+Next, you can find the percentage of people
+with disabilities in each age group.
+
+62
+00:04:11.734 --> 00:04:14.359
+I will let you explore
+this section on your own.
+
+63
+00:04:15.040 --> 00:04:18.720
+Lastly, let's scroll down and
+explore disability types.
+
+64
+00:04:18.720 --> 00:04:23.269
+There are different disability types
+that are tracked by the census.
+
+65
+00:04:23.390 --> 00:04:29.030
+There's hearing, vision, cognitive,
+ambulatory, self-care, and independent living.
+
+66
+00:04:29.150 --> 00:04:31.733
+These are all topics
+we've explored before,
+
+67
+00:04:31.733 --> 00:04:34.736
+so let's choose self-care
+disability in this case.
+
+68
+00:04:34.736 --> 00:04:39.240
+A self-care disability is when a person
+has difficulty bathing or dressing.
+
+69
+00:04:39.530 --> 00:04:44.388
+About 61,000 people in Chicago
+have a self-care disability.
+
+70
+00:04:44.388 --> 00:04:47.599
+So that's about 2.4% of the population.
+
+71
+00:04:47.910 --> 00:04:51.950
+Now, let's compare this to
+independent living disabilities.
+
+72
+00:04:51.950 --> 00:04:55.168
+There are about 123,000
+people with disability…
+
+73
+00:04:55.168 --> 00:04:58.455
+with independent living
+disabilities in Chicago.
+
+74
+00:04:58.455 --> 00:05:00.920
+That's about 4.6% of the population.
+
+75
+00:05:00.920 --> 00:05:04.549
+That's a higher percentage
+than self-care in Chicago.
+
+76
+00:05:05.170 --> 00:05:08.320
+Next, let's explore
+community participation.
+
+77
+00:05:10.130 --> 00:05:12.173
+The first category is insurance.
+
+78
+00:05:12.173 --> 00:05:16.324
+You can find data on how many
+people in each city have insurance,
+
+79
+00:05:16.324 --> 00:05:20.539
+have private or public insurance,
+or do not have insurance at all.
+
+80
+00:05:20.880 --> 00:05:23.814
+This data is divided
+by age groups as well,
+
+81
+00:05:23.814 --> 00:05:26.680
+so you can find very specific information.
+
+82
+00:05:26.950 --> 00:05:29.755
+You can also find
+information on education,
+
+83
+00:05:29.755 --> 00:05:34.583
+specifically how many people with
+disabilities have a high school diploma,
+
+84
+00:05:34.583 --> 00:05:35.888
+a bachelor's degree,
+
+85
+00:05:35.888 --> 00:05:40.129
+as well as the number of people
+who did not graduate high school.
+
+86
+00:05:40.880 --> 00:05:43.932
+Lastly, you can find data on
+the types of transportation
+
+87
+00:05:43.932 --> 00:05:46.330
+people with disabilities
+use to get to work.
+
+88
+00:05:47.210 --> 00:05:50.749
+Next, we're going to explore
+the work and economic category.
+
+89
+00:05:53.430 --> 00:05:57.072
+In this section, you can find
+information about employment.
+
+90
+00:05:57.072 --> 00:06:01.577
+So, you can find information about the
+number of people who are employed,
+
+91
+00:06:01.577 --> 00:06:03.429
+either part-time or full-time.
+
+92
+00:06:03.830 --> 00:06:08.320
+Unemployed, looking for work,
+or out of the labor force.
+
+93
+00:06:08.770 --> 00:06:13.840
+You can find information on the median
+earnings of residents over the age of 16,
+
+94
+00:06:14.280 --> 00:06:17.468
+You can find information on
+the number and percentage
+
+95
+00:06:17.468 --> 00:06:20.475
+of people who live below
+the federal poverty line,
+
+96
+00:06:20.475 --> 00:06:22.520
+broken up by different age groups.
+
+97
+00:06:22.810 --> 00:06:26.205
+As well as information on
+housing cost burdens for
+
+98
+00:06:26.205 --> 00:06:29.329
+people who are renters
+or who have a mortgage.
+
+99
+00:06:30.310 --> 00:06:34.150
+Lastly, you can find information
+in community living.
+
+100
+00:06:34.400 --> 00:06:38.412
+This will show you information on
+the percentage of people who have a
+
+101
+00:06:38.412 --> 00:06:42.366
+housing choice voucher and whose
+head of household has a disability,
+
+102
+00:06:42.366 --> 00:06:44.925
+as well as people who
+live in public housing
+
+103
+00:06:44.925 --> 00:06:47.309
+whose head of household has a disability.
+
+104
+00:06:47.770 --> 00:06:51.345
+Lastly, I want to show you how
+to change the city and the state
+
+105
+00:06:51.345 --> 00:06:54.579
+so that you can find information
+that's important to you.
+
+106
+00:06:54.760 --> 00:06:57.575
+You'll scroll back to the
+top, and under state,
+
+107
+00:06:57.575 --> 00:07:00.630
+you're gonna click on your
+state or your territory.
+
+108
+00:07:00.880 --> 00:07:03.800
+In this example, I'll
+click on Puerto Rico.
+
+109
+00:07:04.420 --> 00:07:06.300
+To the right of this is the city,
+
+110
+00:07:06.300 --> 00:07:09.320
+so you'll click on the city
+that you want to explore.
+
+111
+00:07:09.730 --> 00:07:12.340
+In this case, I'll focus on San Juan.
+
+112
+00:07:13.140 --> 00:07:16.756
+You know that a new map has
+been generated when you can see
+
+113
+00:07:16.756 --> 00:07:20.249
+that name reflected on the top
+left corner of the screen.
+
+114
+00:07:21.060 --> 00:07:22.892
+To download any of this information,
+
+115
+00:07:22.892 --> 00:07:26.710
+you can click on the download button
+on the top right corner of the screen.
+
+116
+00:07:27.020 --> 00:07:30.827
+In this video, we explored
+information on city data,
+
+117
+00:07:30.827 --> 00:07:35.879
+the key indicators, and how to explore
+the map. Thanks for tuning in!

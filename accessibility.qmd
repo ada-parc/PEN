@@ -1,0 +1,104 @@
+---
+title: "Accessibility"
+pagetitle: "PEN accessibility statement"
+description: "What we do to make PEN work for everyone, and how to tell us when it does not."
+---
+
+<!-- Layout classes (.a11y-*) live in assets/pen.scss under "Accessibility page".
+     Headings that should appear in "On this page" are written as markdown
+     (## ...); the cards and table are raw HTML, so their h3s stay out of it. -->
+
+::: {.a11y-lede}
+PEN is built for the disability community. Making it work for everyone is part
+of the job, not an extra.
+:::
+
+## Our goal {.a11y-goal}
+
+<p class="a11y-goal-mark" aria-hidden="true">AA<small>WCAG 2.2</small></p>
+
+<p class="a11y-big">PEN is built to meet WCAG 2.2, Level AA.</p>
+
+WCAG is the main international standard for accessible websites, and AA is the
+level most laws and organizations ask for. We treat it as the minimum, and we
+test against it.
+
+## What you can expect
+
+<p class="a11y-intro">Four things hold on every page, whichever way you use PEN.</p>
+
+<ul class="a11y-ways">
+<li>
+<h3>With a keyboard</h3>
+<p>Every page works with a keyboard alone. A thick outline always shows where you are.</p>
+<p>The keys you need are in the table below.</p>
+</li>
+<li>
+<h3>With a screen reader</h3>
+<p>Pages have clear headings and labeled sections, so you can jump to what you need.</p>
+<p>Use your screen reader's headings list or landmarks list to move around.</p>
+</li>
+<li>
+<h3>With zoom or large text</h3>
+<p>Zoom in up to 400% and every page still works, with no side-to-side scrolling.</p>
+<p>Text is large and has strong contrast with its background.</p>
+<p>The Display button, bottom left on every page, lets you choose dark or high contrast colors, larger text, an easy-to-read font, and more space between lines.</p>
+</li>
+<li>
+<h3>Progress and motion</h3>
+<p>Progress is always written in words, like "Completed". Color is never the only clue.</p>
+<p>Very little moves. If your device is set to reduce motion, we follow that. You can also turn motion down yourself in Display.</p>
+</li>
+</ul>
+
+## Keys you will use
+
+<p class="a11y-intro">You can do everything in PEN without a mouse.</p>
+
+<div class="a11y-keys">
+<table>
+<caption>What each key does in PEN.</caption>
+<thead><tr><th scope="col">To do this</th><th scope="col">Press</th></tr></thead>
+<tbody>
+<tr><th scope="row">Move to the next link or button</th><td><kbd>Tab</kbd></td></tr>
+<tr><th scope="row">Move to the previous one</th><td><kbd>Shift</kbd> + <kbd>Tab</kbd></td></tr>
+<tr><th scope="row">Follow a link or press a button</th><td><kbd>Enter</kbd></td></tr>
+<tr><th scope="row">Open or close a module summary</th><td><kbd>Space</kbd> or <kbd>Enter</kbd></td></tr>
+<tr><th scope="row">Mark a unit complete, or undo it</th><td><kbd>Space</kbd> or <kbd>Enter</kbd> on the button</td></tr>
+</tbody>
+</table>
+</div>
+
+## Videos
+
+<p class="a11y-intro">Every video added to PEN follows three rules.</p>
+
+<ul class="a11y-video">
+<li><h3>Captions</h3><p>Checked and corrected by a person, not left to auto-captions.</p></li>
+<li><h3>Transcript</h3><p>The full text is on the page, so you do not have to download it.</p></li>
+<li><h3>No autoplay</h3><p>Nothing plays until you start it, and the player works with a keyboard.</p></li>
+</ul>
+
+## For assistive technology users
+
+<details class="a11y-more">
+<summary>Technical details</summary>
+<ul>
+<li>Each page has one main heading, and headings never skip a level.</li>
+<li>The navigation, main content, and footer are marked as landmarks, so a screen reader can move between them in one step.</li>
+<li>"Mark unit complete" is a toggle button. Its pressed state is exposed, and a polite announcement says when progress is saved.</li>
+<li>Module summaries are native expandable sections, so they work with the keyboard and with screen readers.</li>
+<li>There is no separate "skip to content" link. The menu is short, and the landmarks already let you move past it.</li>
+<li>Lines of text are kept short so they are easier to follow.</li>
+</ul>
+</details>
+
+::: {.a11y-report}
+## Report a barrier {#report-a-barrier}
+
+<p class="a11y-big">If something on this site does not work for you, tell us. We treat it as a bug.</p>
+
+<p class="a11y-ask">Tell us which page, what you were using (browser, screen reader, or keyboard only), and what happened.</p>
+
+[Email us about a barrier](mailto:hammel@uic.edu?subject=PEN%20accessibility%20barrier&body=Page%3A%20%0ABrowser%20or%20assistive%20technology%3A%20%0AWhat%20happened%3A%20){.a11y-btn-inverse}
+:::

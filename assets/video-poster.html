@@ -1,0 +1,22 @@
+<!-- Reveals a unit video's poster frame only while the video has
+     not started, and hides it for good on first play. The poster ships
+     hidden in the HTML, so without JavaScript the native player is simply
+     uncovered. It is a mouse and touch convenience: the poster is
+     aria-hidden and not focusable, and keyboard and screen reader users
+     start the video from its native controls as before. -->
+<script>
+  document.querySelectorAll('[data-pen-poster]').forEach(function (poster) {
+    var video = poster.parentNode.querySelector('video');
+    if (!video) return;
+    function hide() { poster.classList.add('is-hidden'); }
+    video.addEventListener('play', hide);
+    video.addEventListener('seeking', hide);
+    poster.addEventListener('click', function () {
+      hide();
+      var p = video.play();
+      if (p && p.catch) p.catch(function () { poster.classList.remove('is-hidden'); });
+    });
+    // Back navigation can restore a video part way through; leave it uncovered.
+    if (video.paused && video.currentTime === 0) poster.classList.remove('is-hidden');
+  });
+</script>

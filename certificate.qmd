@@ -1,0 +1,61 @@
+---
+title: "Your certificate"
+pagetitle: "Certificate of completion · PEN"
+description: "Print or save your PEN certificate of completion."
+toc: false
+---
+
+<div data-pen-certificate-gate>
+
+Your certificate unlocks once you have completed Modules 1–3.
+
+<p data-pen-count-series class="meta-text">Loading your progress…</p>
+
+[Go to the modules](index.qmd#modules){.btn .btn-primary role="button"}
+
+</div>
+
+<div data-pen-certificate-body class="is-hidden">
+
+Congratulations, you've completed all three PEN modules. Type your name below,
+then print or save this page as a PDF to keep your certificate.
+
+```{=html}
+<div class="certificate-controls">
+  <div class="certificate-field">
+    <label for="pen-cert-name">Name for your certificate</label>
+    <input type="text" id="pen-cert-name" data-pen-name-input placeholder="Type your name" autocomplete="name" />
+  </div>
+  <button type="button" onclick="penPrintCertificate()" class="btn btn-primary">Print or save as PDF</button>
+</div>
+```
+
+::: {.certificate-sheet}
+::: {.certificate-inner}
+![](assets/brand/pen-badge.svg){.certificate-badge .pen-img-light alt=""}
+![](assets/brand/pen-badge-reversed.svg){.certificate-badge .pen-img-dark alt=""}
+
+<p class="certificate-eyebrow">Participation Equity Navigator</p>
+
+## Certificate of Completion
+
+<p class="certificate-body">This certifies that</p>
+
+<p class="certificate-name" data-pen-name-output>Your name here</p>
+
+<p class="certificate-body">has completed the three online modules of the PEN training,
+the companion course to the ADA-PARC project:</p>
+
+<ol class="certificate-modules">
+<li>Getting Started, ADA Insights</li>
+<li>Exploring ADA-PARC Website &amp; Data</li>
+<li>Making Sense of Data</li>
+</ol>
+
+<p class="certificate-date">Completed <span data-pen-date-output>…</span></p>
+
+<p class="certificate-note">This certificate is for the online portion of PEN. The in-person events complete the full training.</p>
+:::
+:::
+
+</div>

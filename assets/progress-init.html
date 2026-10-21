@@ -1,0 +1,362 @@
+<!--
+  PEN progress tracking.
+
+  Loaded on every page via `include-after-body` in _quarto.yml, right after
+  assets/pen-manifest.html (which defines window.penManifest, see
+  R/build_modules.R). Everything here stays in the visitor's own browser
+  (localStorage). No account, no network request, no analytics.
+  If storage is unavailable (private window, blocked), the site still
+  works, the controls just do not persist.
+
+  Unit ids are compound: "<module id>-<unit id>", e.g. "01-02" for Module
+  1's second unit. A module is complete when every id in
+  window.penManifest[moduleId] is done. The series is complete when every
+  tracked module is complete. (Module 4, Resources, has no units and is not
+  part of window.penManifest, so it is never part of this calculation.)
+
+  The script below is intentionally inlined rather than kept in a separate
+  .js file, so that a project subpath cannot break the resource URL. Edit
+  it here.
+-->
+<div id="pen-live" class="visually-hidden" aria-live="polite" role="status"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  var KEY = "pen:progress:v1";
+  var NAME_KEY = "pen:name:v1";
+  var live = document.getElementById("pen-live");
+  var manifest = window.penManifest || {};
+
+  function announce(msg) {
+    if (live) { live.textContent = ""; window.setTimeout(function () { live.textContent = msg; }, 30); }
+  }
+
+  function read() {
+    try {
+      var raw = window.localStorage.getItem(KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) { return {}; }
+  }
+
+  function write(state) {
+    try { window.localStorage.setItem(KEY, JSON.stringify(state)); return true; }
+    catch (e) { return false; }
+  }
+
+  function isDone(state, id) {
+    return Boolean(state[id] && state[id].done);
+  }
+
+  // A module is done when every unit id in its manifest entry is done.
+  function moduleDone(state, moduleId) {
+    var ids = manifest[moduleId] || [];
+    if (ids.length === 0) return false;
+    return ids.every(function (unitId) { return isDone(state, moduleId + "-" + unitId); });
+  }
+
+  function moduleProgress(state, moduleId) {
+    var ids = manifest[moduleId] || [];
+    var done = ids.filter(function (unitId) { return isDone(state, moduleId + "-" + unitId); }).length;
+    return { done: done, total: ids.length };
+  }
+
+  // The series is done when every tracked module in the manifest is done.
+  function seriesDone(state) {
+    var moduleIds = Object.keys(manifest);
+    if (moduleIds.length === 0) return false;
+    return moduleIds.every(function (mid) { return moduleDone(state, mid); });
+  }
+
+  function readName() {
+    try { return window.localStorage.getItem(NAME_KEY) || ""; } catch (e) { return ""; }
+  }
+
+  function writeName(name) {
+    try { window.localStorage.setItem(NAME_KEY, name); return true; } catch (e) { return false; }
+  }
+
+  // --- Unit page: the "mark complete" control -----------------------
+  function initToggle() {
+    var btn = document.querySelector("[data-pen-progress]");
+    if (!btn) return;
+    var id = btn.getAttribute("data-unit");
+    var title = btn.getAttribute("data-unit-title") || id;
+
+    // "Up next" panel (unit pages): shown while the unit is complete. It
+    // sits directly after the button so the next Tab reaches its link; focus
+    // is not moved, since the visitor may want to undo the toggle.
+    var after = document.querySelector("[data-pen-after-complete]");
+    var afterLabel = after && after.querySelector("[data-pen-after-label]");
+    var afterLink = after && after.querySelector("[data-pen-after-link]");
+    var afterDefault = after && {
+      label: afterLabel.textContent,
+      text: afterLink.textContent,
+      href: afterLink.getAttribute("href")
+    };
+
+    function paintAfter(done, state) {
+      if (!after) return;
+      after.classList.toggle("is-hidden", !done);
+      afterLabel.textContent = afterDefault.label;
+      afterLink.textContent = afterDefault.text;
+      afterLink.setAttribute("href", afterDefault.href);
+      if (!done || !after.hasAttribute("data-last-unit")) return;
+      // Last unit of a module: say when the module or the whole series is
+      // finished, and point at the certificate once it is unlocked.
+      var mid = id.split("-")[0];
+      if (seriesDone(state)) {
+        afterLabel.textContent = "You have completed the training.";
+        afterLink.textContent = "Get your certificate";
+        afterLink.setAttribute("href", afterLink.getAttribute("data-cert-href"));
+      } else if (moduleDone(state, mid)) {
+        afterLabel.textContent = "Every unit in this module is marked complete.";
+      }
+    }
+
+    function paint() {
+      var state = read();
+      var done = isDone(state, id);
+      paintAfter(done, state);
+      btn.setAttribute("aria-pressed", String(done));
+      btn.textContent = done
+        ? "Completed. Mark as not complete"
+        : "Mark unit complete";
+    }
+
+    btn.addEventListener("click", function () {
+      var state = read();
+      var done = !isDone(state, id);
+      if (done) { state[id] = { done: true, at: new Date().toISOString() }; }
+      else { delete state[id]; }
+      var saved = write(state);
+      paint();
+      if (!saved) {
+        announce("Your browser is not saving progress, so this will not be remembered.");
+      } else {
+        announce(done
+          ? title + " marked complete." + (afterLink ? " " + afterLink.textContent + " is the next link." : "")
+          : title + " marked as not complete.");
+      }
+    });
+
+    paint();
+  }
+
+  // --- Any page: fill in unit status text + counts ------------------
+  function initStatuses() {
+    var state = read();
+    var nodes = document.querySelectorAll("[data-pen-unit]");
+    Array.prototype.forEach.call(nodes, function (el) {
+      var id = el.getAttribute("data-pen-unit");
+      var done = isDone(state, id);
+      el.setAttribute("data-state", done ? "done" : "todo");
+      el.textContent = done ? "Completed" : "Not started";
+    });
+
+    // Module landing page: "N of M units complete"
+    var modCount = document.querySelector("[data-pen-count-module]");
+    if (modCount) {
+      var mid = modCount.getAttribute("data-pen-count-module");
+      var prog = moduleProgress(state, mid);
+      modCount.textContent = prog.done + " of " + prog.total + " units marked complete";
+      // The bar is a real progressbar for assistive tech (name, value and a
+      // plain-words valuetext); its ticks are decorative, one divider per
+      // unit boundary. Until this runs it stays aria-hidden.
+      var fill = document.querySelector("[data-pen-count-fill]");
+      var bar = fill && fill.parentNode;
+      if (bar) {
+        var txt = modCount.textContent;
+        fill.style.width = (prog.total ? Math.round(100 * prog.done / prog.total) : 0) + "%";
+        bar.setAttribute("role", "progressbar");
+        bar.setAttribute("aria-label", "Module progress");
+        bar.setAttribute("aria-valuemin", "0");
+        bar.setAttribute("aria-valuemax", String(prog.total));
+        bar.setAttribute("aria-valuenow", String(prog.done));
+        bar.setAttribute("aria-valuetext", txt);
+        bar.removeAttribute("aria-hidden");
+        if (!bar.querySelector(".module-progress-tick")) {
+          for (var t = 1; t < prog.total; t++) {
+            var tick = document.createElement("span");
+            tick.className = "module-progress-tick";
+            tick.setAttribute("aria-hidden", "true");
+            tick.style.left = (100 * t / prog.total) + "%";
+            bar.appendChild(tick);
+          }
+        }
+      }
+    }
+
+    // Home page: module cards show a status pill + overall series count
+    var moduleNodes = document.querySelectorAll("[data-pen-module]");
+    Array.prototype.forEach.call(moduleNodes, function (el) {
+      var mid = el.getAttribute("data-pen-module");
+      var prog = moduleProgress(state, mid);
+      var done = prog.total > 0 && prog.done === prog.total;
+      var started = prog.done > 0;
+      el.setAttribute("data-state", done ? "done" : (started ? "in-progress" : "todo"));
+      el.textContent = done ? "Completed" : (started ? (prog.done + " of " + prog.total + " complete") : "Not started");
+    });
+
+    var seriesCount = document.querySelector("[data-pen-count-series]");
+    if (seriesCount) {
+      var moduleIds = Object.keys(manifest);
+      var modulesDone = moduleIds.filter(function (mid) { return moduleDone(state, mid); }).length;
+      seriesCount.textContent = modulesDone + " of " + moduleIds.length + " modules complete";
+    }
+
+    // Home hero progress bar: share of all tracked units marked complete.
+    // Decorative echo of the count text above (aria-hidden in the markup).
+    var bar = document.querySelector("[data-pen-bar]");
+    if (bar) {
+      var totalUnits = 0, doneUnits = 0;
+      Object.keys(manifest).forEach(function (mid) {
+        var p = moduleProgress(state, mid);
+        totalUnits += p.total;
+        doneUnits += p.done;
+      });
+      bar.style.width = (totalUnits ? Math.round((doneUnits / totalUnits) * 100) : 0) + "%";
+    }
+
+    // Home hero primary button: "Start Module 1" until progress exists, then
+    // "Continue Module N" pointing at the first unfinished module, then the
+    // certificate once the series is done. The module hrefs are read off the
+    // tracker links so no path is hard-coded here.
+    var startBtn = document.querySelector("[data-pen-start]");
+    var startLabel = startBtn && startBtn.querySelector("[data-pen-start-label]");
+    if (startBtn && startLabel) {
+      var ids = Object.keys(manifest);
+      var anyDone = ids.some(function (mid) { return moduleProgress(state, mid).done > 0; });
+      var nextId = ids.filter(function (mid) { return !moduleDone(state, mid); })[0];
+      if (seriesDone(state)) {
+        var certLink = document.querySelector("[data-pen-certificate-ready] a");
+        if (certLink) {
+          startLabel.textContent = "Get your certificate";
+          startBtn.setAttribute("href", certLink.getAttribute("href"));
+        }
+      } else if (anyDone && nextId) {
+        var target = document.querySelector('[data-pen-module="' + nextId + '"]');
+        var targetLink = target && target.closest("a");
+        if (targetLink) {
+          startLabel.textContent = "Continue Module " + parseInt(nextId, 10);
+          startBtn.setAttribute("href", targetLink.getAttribute("href"));
+        }
+      }
+    }
+
+    // Home page / any page: show a "get your certificate" link once the
+    // whole series is done. Hidden by default in HTML; unhidden here.
+    var certLinks = document.querySelectorAll("[data-pen-certificate-ready]");
+    var ready = seriesDone(state);
+    Array.prototype.forEach.call(certLinks, function (el) {
+      el.hidden = !ready;
+    });
+    // Home progress card: the certificate link takes the count's place in the
+    // header. The count stays in the DOM, visually hidden, so "3 of 3 modules
+    // complete" is still announced and the card never changes height.
+    var countEl = document.querySelector("[data-pen-count-series]");
+    if (countEl) countEl.classList.toggle("visually-hidden", ready);
+  }
+
+  // --- Certificate page ------------------------------------------------
+  function initCertificate() {
+    var gate = document.querySelector("[data-pen-certificate-gate]");
+    var body = document.querySelector("[data-pen-certificate-body]");
+    if (!gate && !body) return;
+
+    var state = read();
+    var ready = seriesDone(state);
+
+    // Class-based, not the `hidden` attribute: Safari's print pipeline can
+    // paint a blank page for content whose `hidden` attribute was removed
+    // by script (the certificate sheet printed empty even though it showed
+    // fine on screen). A CSS class does not have this failure mode.
+    if (gate) gate.classList.toggle("is-hidden", ready);
+    if (body) body.classList.toggle("is-hidden", !ready);
+    if (!ready) return;
+
+    var nameInput = document.querySelector("[data-pen-name-input]");
+    var nameOut = document.querySelectorAll("[data-pen-name-output]");
+    var dateOut = document.querySelectorAll("[data-pen-date-output]");
+
+    function paintName() {
+      var name = readName() || "Your name here";
+      Array.prototype.forEach.call(nameOut, function (el) { el.textContent = name; });
+    }
+
+    var today = new Date();
+    var dateStr = today.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
+    Array.prototype.forEach.call(dateOut, function (el) { el.textContent = dateStr; });
+
+    if (nameInput) {
+      nameInput.value = readName();
+      nameInput.addEventListener("input", function () {
+        writeName(nameInput.value.trim());
+        paintName();
+      });
+    }
+    paintName();
+  }
+
+  // Called from the certificate page's print button. Deferring one paint
+  // past the click keeps the same Safari bug (see initCertificate) from
+  // printing a stale, pre-reveal snapshot of the certificate: this gives
+  // the browser a real render pass of the current DOM before entering the
+  // print pipeline, rather than calling window.print() synchronously.
+  window.penPrintCertificate = function () {
+    window.requestAnimationFrame(function () {
+      window.requestAnimationFrame(function () {
+        window.print();
+      });
+    });
+  };
+
+  // --- Reset control (on How to Use / Help) ------------------------
+  function initReset() {
+    var btn = document.querySelector("[data-pen-reset]");
+    if (!btn) return;
+    btn.addEventListener("click", function () {
+      if (!window.confirm("Clear your saved progress on this device? This cannot be undone.")) return;
+      try {
+        window.localStorage.removeItem(KEY);
+        window.localStorage.removeItem(NAME_KEY);
+      } catch (e) {}
+      initStatuses();
+      var toggle = document.querySelector("[data-pen-progress]");
+      if (toggle) {
+        toggle.setAttribute("aria-pressed", "false");
+        toggle.textContent = "Mark unit complete";
+      }
+      var afterPanel = document.querySelector("[data-pen-after-complete]");
+      if (afterPanel) afterPanel.classList.add("is-hidden");
+      announce("Saved progress cleared.");
+    });
+  }
+
+  window.penProgress = {
+    get: read,
+    moduleDone: function (mid) { return moduleDone(read(), mid); },
+    seriesDone: function () { return seriesDone(read()); },
+    reset: function () {
+      try {
+        window.localStorage.removeItem(KEY);
+        window.localStorage.removeItem(NAME_KEY);
+      } catch (e) {}
+    }
+  };
+
+  function initAll() {
+    initToggle();
+    initStatuses();
+    initCertificate();
+    initReset();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initAll);
+  } else {
+    initAll();
+  }
+})();
+</script>

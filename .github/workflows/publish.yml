@@ -1,0 +1,69 @@
+name: Publish site
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      # Pinned to the version the site is built and checked with locally.
+      # Change it on purpose, and re-check the site, when upgrading.
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          version: 1.4.537
+
+      # Needed only for R/build_modules.R (and the post-render hook).
+      # If the build ever stops using R, drop these steps.
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - name: Install R packages
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          packages: |
+            any::yaml
+            any::rmarkdown
+
+      # The module and unit pages are generated and gitignored. Quarto lists
+      # the pages to render before its pre-render hook runs, so on a fresh
+      # checkout the hook alone writes them too late and they are skipped.
+      # Generate them first; the hook then finds nothing to change.
+      - name: Generate module pages
+        run: Rscript R/build_modules.R
+
+      - name: Render
+        run: quarto render
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

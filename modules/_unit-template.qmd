@@ -1,0 +1,29 @@
+---
+title: "{{UNIT_TITLE}}"
+pagetitle: "{{UNIT_TITLE}} · Module {{NUMBER}}: {{MODULE_TITLE}} · PEN"
+description: "Part of Module {{NUMBER}}: {{MODULE_TITLE}}."
+hide-description: true
+toc: false
+---
+
+{{BREADCRUMB}}
+
+{{MEDIA}}
+
+```{=html}
+<div class="progress-control{{PC_CLASS}}">
+{{SLIDES_BTN}}
+<button type="button"
+        data-pen-progress
+        data-unit="{{ID}}"
+        data-unit-title="{{UNIT_TITLE}}"
+        aria-pressed="false">Mark unit complete</button>
+{{TRANSCRIPT_BTN}}
+</div>
+```
+
+{{AFTER_COMPLETE}}
+
+------------------------------------------------------------------------
+
+{{PAGER}}

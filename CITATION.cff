@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+message: "If you use or adapt the PEN training materials, please cite them as below."
+title: "PEN: Participation Equity Navigator"
+abstract: >
+  A self-paced training that teaches disability advocates how to read and use
+  the data on the ADA-PARC website. The training companion to the ADA
+  Participation Action Research Consortium (ADA-PARC).
+type: software
+authors:
+  - family-names: Heeneman
+    given-names: Colin
+  - family-names: Hammel
+    given-names: Joy
+  - family-names: Alimi
+    given-names: Elnaz
+  - family-names: Rothstein
+    given-names: Nikki
+  - family-names: Shumard
+    given-names: Emmalynne
+  - family-names: Merritt
+    given-names: Ariel
+  - name: "ADA-PARC project"
+    website: "https://adaparc.shinyapps.io/ADA_PARC/"
+license: CC-BY-4.0    # proposed, pending confirmation, see LICENSE
+keywords:
+  - ADA
+  - disability
+  - community integration
+  - data literacy

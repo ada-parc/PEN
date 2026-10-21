@@ -1,0 +1,162 @@
+<!-- Display settings, part 2 of 2: the button that stays on every
+     page, and the panel it opens. Part 1 (assets/display-init.html) has
+     already applied the saved choices in <head>; this file only lets the
+     reader change them.
+
+     Built in script, not markup, so a browser without script never sees a
+     button that does nothing. Not a modal: the page stays visible behind it,
+     because the point is to see a change as you make it. Escape closes it
+     and puts focus back on the button. It is the first element in <body>, so
+     it is the first Tab stop on every page. Styles: `.pen-display*` in
+     pen.scss. -->
+<script>
+(function () {
+  var D = window.penDisplay;
+  if (!D) return;
+  var root = document.documentElement;
+
+  var GROUPS = [
+    { name: 'theme', legend: 'Color theme', options: [
+      ['light', 'Light'], ['dark', 'Dark'], ['contrast', 'High contrast'], ['auto', 'Match my device']] },
+    { name: 'size', legend: 'Text size', options: [
+      ['100', 'Standard'], ['125', 'Large'], ['150', 'Extra large']] },
+    { name: 'font', legend: 'Font', options: [
+      ['pen', 'Standard'], ['easy', 'Easy to read']] },
+    { name: 'spacing', legend: 'Spacing between lines and letters', options: [
+      ['standard', 'Standard'], ['roomy', 'Roomy']] }
+  ];
+  var CHECKS = [
+    { name: 'underline', label: 'Underline all links' },
+    { name: 'motion', label: 'Reduce motion' }
+  ];
+  var DEFAULTS = { size: '100', font: 'pen', spacing: 'standard' };
+
+  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+
+  var html = '' +
+    '<button type="button" class="pen-display-button" id="pen-display-button"' +
+    ' aria-expanded="false" aria-controls="pen-display-panel" aria-label="Display settings">' +
+    '<svg aria-hidden="true" focusable="false" width="22" height="22" viewBox="0 0 24 24" fill="none"' +
+    ' stroke="currentColor" stroke-width="2.6" stroke-linecap="round">' +
+    '<path d="M3 7h10M17 7h4M3 17h4M11 17h10"/><circle cx="15" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/></svg>' +
+    '<span>Display</span></button>' +
+    '<div class="pen-display-panel" id="pen-display-panel" role="dialog" aria-labelledby="pen-display-title" tabindex="-1" hidden>' +
+    '<div class="pen-display-head"><p class="pen-display-title" id="pen-display-title">Display settings</p>' +
+    '<button type="button" class="pen-display-close">Close</button></div>' +
+    '<form class="pen-display-form" onsubmit="return false">';
+
+  GROUPS.forEach(function (g) {
+    html += '<fieldset class="pen-display-group pen-display-group-' + g.name + '"><legend>' + esc(g.legend) + '</legend>' +
+      '<div class="pen-display-options">';
+    g.options.forEach(function (o) {
+      html += '<label class="pen-display-opt"><input type="radio" name="' + g.name + '" value="' + o[0] + '">' +
+        '<span>' + esc(o[1]) + '</span></label>';
+    });
+    html += '</div></fieldset>';
+  });
+
+  html += '<div class="pen-display-checks">';
+  CHECKS.forEach(function (c) {
+    html += '<label class="pen-display-check"><input type="checkbox" name="' + c.name + '"><span>' + esc(c.label) + '</span></label>';
+  });
+  html += '</div></form>' +
+    '<div class="pen-display-foot"><button type="button" class="pen-display-reset">Reset to defaults</button>' +
+    '<p class="pen-display-note" role="status" aria-live="polite" id="pen-display-note">Saved in this browser only.</p></div>' +
+    '</div>';
+
+  var host = document.createElement('div');
+  host.className = 'pen-display';
+  host.innerHTML = html;
+  // First in the document, so it is the first Tab stop on every page: a reader
+  // who needs bigger text should not have to cross the whole page to reach it.
+  // It is position: fixed, so where it sits in the markup does not move it.
+  document.body.insertBefore(host, document.body.firstChild);
+
+  var button = host.querySelector('.pen-display-button');
+  var panel = host.querySelector('.pen-display-panel');
+  var form = host.querySelector('form');
+  var note = host.querySelector('.pen-display-note');
+  var state = D.read();
+
+  // Put the form in step with the stored choices. Where nothing is stored,
+  // show what the page is actually using (including a device that asked for
+  // more contrast).
+  function sync() {
+    var shownTheme = state.theme || D.resolveTheme(undefined);
+    setRadio('theme', shownTheme);
+    setRadio('size', state.size || DEFAULTS.size);
+    setRadio('font', state.font || DEFAULTS.font);
+    setRadio('spacing', state.spacing || DEFAULTS.spacing);
+    form.elements.underline.checked = !!state.underline;
+    form.elements.motion.checked = !!state.motion;
+  }
+  function setRadio(name, value) {
+    var list = form.querySelectorAll('input[name="' + name + '"]');
+    for (var i = 0; i < list.length; i++) list[i].checked = (list[i].value === value);
+  }
+
+  // Theme changes repaint everything at once; skip the 0.15s color
+  // transitions so nothing visibly lags behind the choice.
+  function commit(message) {
+    root.classList.add('pen-switching');
+    D.apply(state);
+    var saved = D.write(state);
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { root.classList.remove('pen-switching'); });
+    });
+    var kept = Object.keys(state).length > 0;
+    note.textContent = message + (!saved ? ' This browser is blocking storage, so it applies to this visit only.' : (kept ? ' Saved in this browser only.' : ''));
+  }
+
+  form.addEventListener('change', function (e) {
+    var t = e.target, n = t.name;
+    if (n === 'underline' || n === 'motion') {
+      if (t.checked) state[n] = true; else delete state[n];
+      commit(n === 'underline' ? (t.checked ? 'Links underlined.' : 'Links back to standard.') : (t.checked ? 'Motion reduced.' : 'Motion back to standard.'));
+      return;
+    }
+    if (n === 'theme') state.theme = t.value;
+    else if (t.value === DEFAULTS[n]) delete state[n];
+    else state[n] = t.value;
+    var label = t.parentNode.querySelector('span').textContent;
+    commit(label + '.');
+  });
+
+  host.querySelector('.pen-display-reset').addEventListener('click', function () {
+    state = {};
+    commit('Reset to defaults.');
+    sync();
+  });
+
+  function open() {
+    panel.hidden = false;
+    button.setAttribute('aria-expanded', 'true');
+    panel.focus();
+  }
+  function close(returnFocus) {
+    panel.hidden = true;
+    button.setAttribute('aria-expanded', 'false');
+    if (returnFocus) button.focus();
+  }
+  button.addEventListener('click', function () { if (panel.hidden) open(); else close(true); });
+  host.querySelector('.pen-display-close').addEventListener('click', function () { close(true); });
+  document.addEventListener('keydown', function (e) {
+    if ((e.key === 'Escape' || e.key === 'Esc') && !panel.hidden) { close(true); }
+  });
+
+  // Another tab changed the choices: follow it.
+  window.addEventListener('storage', function (e) {
+    if (e.key === D.key || e.key === null) { state = D.read(); D.apply(state); sync(); }
+  });
+  // "Match my device" and the contrast default track the device live.
+  ['(prefers-color-scheme: dark)', '(prefers-contrast: more)'].forEach(function (q) {
+    try {
+      var mq = window.matchMedia(q);
+      var h = function () { D.apply(state); sync(); };
+      if (mq.addEventListener) mq.addEventListener('change', h); else if (mq.addListener) mq.addListener(h);
+    } catch (err) { /* older browser: applies on next load */ }
+  });
+
+  sync();
+})();
+</script>

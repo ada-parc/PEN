@@ -1,0 +1,860 @@
+WEBVTT
+
+1
+00:00:02.040 --> 00:00:07.130
+Welcome back. We've explored a
+lot of data together so far.
+
+2
+00:00:07.240 --> 00:00:10.436
+In the National Data tab,
+we looked at demographics,
+
+3
+00:00:10.436 --> 00:00:14.739
+community living and participation,
+and work and economic information.
+
+4
+00:00:15.140 --> 00:00:20.740
+In the City Data tab, we zoomed in to see
+similar information at the local level.
+
+5
+00:00:21.210 --> 00:00:24.869
+These tabs showed us
+numbers in percentages.
+
+6
+00:00:25.060 --> 00:00:28.411
+They told us how many
+people with disabilities
+
+7
+00:00:28.411 --> 00:00:31.179
+fit into certain categories or topics.
+
+8
+00:00:31.490 --> 00:00:34.029
+Now, we're gonna build
+on that information and
+
+9
+00:00:34.029 --> 00:00:36.789
+knowledge to explore
+something a little different.
+
+10
+00:00:37.270 --> 00:00:41.720
+Instead of just counting people with
+disabilities, we're going to look at scores.
+
+11
+00:00:41.920 --> 00:00:46.622
+These scores grade states on how well
+people with disabilities are doing.
+
+12
+00:00:46.622 --> 00:00:48.232
+We call these scorecards.
+
+13
+00:00:48.232 --> 00:00:52.870
+Now, let's navigate to the Scorecards
+tab at the top corner of the page.
+
+14
+00:00:53.890 --> 00:00:56.100
+Let's click on National Scorecard.
+
+15
+00:00:58.080 --> 00:01:01.444
+A scorecard is ADA-PARC's
+way of ranking states.
+
+16
+00:01:01.444 --> 00:01:06.139
+It shows how well people with
+disabilities are doing in each state.
+
+17
+00:01:06.290 --> 00:01:07.638
+Think of it like a grade.
+
+18
+00:01:07.638 --> 00:01:11.089
+States with higher scores are
+doing better at making sure people
+
+19
+00:01:11.089 --> 00:01:14.379
+with disabilities can participate
+equally in their community.
+
+20
+00:01:15.690 --> 00:01:18.892
+It's a quick way to find
+which states are leaders,
+
+21
+00:01:18.892 --> 00:01:21.069
+and which states need improvement.
+
+22
+00:01:21.620 --> 00:01:26.597
+Let's look at the national scorecards.
+Here, there are three scorecards.
+
+23
+00:01:26.597 --> 00:01:29.500
+Community participation, Community Living.
+
+24
+00:01:29.830 --> 00:01:31.649
+And work and economics.
+
+25
+00:01:32.240 --> 00:01:35.430
+Additionally, you can find
+scorecards on each state.
+
+26
+00:01:36.670 --> 00:01:39.884
+In a previous video, we
+looked at national data,
+
+27
+00:01:39.884 --> 00:01:43.099
+and there were a lot of
+topics in each category.
+
+28
+00:01:43.340 --> 00:01:47.396
+In community participation, we
+looked at health insurance coverage,
+
+29
+00:01:47.396 --> 00:01:52.240
+high school graduation rates, having a
+college degree, and access to technology.
+
+30
+00:01:52.690 --> 00:01:57.082
+To create a scorecard, we take all
+of these individual pieces of data,
+
+31
+00:01:57.082 --> 00:01:59.780
+like health insurance
+and graduation rates.
+
+32
+00:01:59.960 --> 00:02:02.889
+Then, we combine them into one score.
+
+33
+00:02:03.500 --> 00:02:08.870
+States where people with disabilities do
+well across more topics get higher scores.
+
+34
+00:02:09.449 --> 00:02:12.495
+States where people with
+disabilities do not
+
+35
+00:02:12.495 --> 00:02:15.680
+do as well in multiple
+areas get lower scores.
+
+36
+00:02:16.220 --> 00:02:21.478
+We're basically adding up outcomes
+across all these different areas.
+
+37
+00:02:21.478 --> 00:02:27.199
+These scorecards help us compare
+disability data easily in between states.
+
+38
+00:02:28.190 --> 00:02:30.981
+So instead of looking at 20 different data
+
+39
+00:02:30.981 --> 00:02:33.905
+points like we did in
+the National Data tab,
+
+40
+00:02:33.905 --> 00:02:39.420
+you can find which states are doing well
+overall at a glance in the Scorecards tab.
+
+41
+00:02:39.730 --> 00:02:42.040
+Let's go over what these scores mean.
+
+42
+00:02:42.540 --> 00:02:44.090
+Let's scroll down.
+
+43
+00:02:44.810 --> 00:02:49.860
+Each scorecard has a map and a key that
+tells you exactly what these colors mean.
+
+44
+00:02:50.900 --> 00:02:56.599
+These keys change based on each category,
+like community participation and living.
+
+45
+00:02:57.120 --> 00:03:02.954
+However, they all have the same
+four key categories: poor, subpar,
+
+46
+00:03:02.954 --> 00:03:08.699
+good, and excellent, which you can
+find at the bottom of the map.
+
+47
+00:03:09.560 --> 00:03:11.355
+We want to see darker colors.
+
+48
+00:03:11.355 --> 00:03:15.439
+This represents higher opportunities
+for people with disabilities.
+
+49
+00:03:16.280 --> 00:03:19.759
+Now that we understand
+what scorecards are.
+
+50
+00:03:19.920 --> 00:03:22.989
+Let's explore the Community
+Participation Scorecard.
+
+51
+00:03:23.760 --> 00:03:27.502
+The Community Participation
+Score is a state average of all
+
+52
+00:03:27.502 --> 00:03:31.117
+of the variables in the Community
+Participation category,
+
+53
+00:03:31.117 --> 00:03:35.620
+such as access to insurance,
+transportation, technology, and education.
+
+54
+00:03:36.090 --> 00:03:40.720
+We want to see that states have opportunities
+to participate in the community.
+
+55
+00:03:41.080 --> 00:03:43.060
+Let's look at the map and its key.
+
+56
+00:03:43.550 --> 00:03:46.232
+As we said, each map has four categories,
+
+57
+00:03:46.232 --> 00:03:49.305
+ranging from poor, subpar,
+good, and excellent.
+
+58
+00:03:49.305 --> 00:03:53.164
+And just like before, darker
+colors mean more of something.
+
+59
+00:03:53.164 --> 00:03:56.565
+In this case, darker colors
+means a higher score and
+
+60
+00:03:56.565 --> 00:03:59.770
+more opportunity to
+participate in the community.
+
+61
+00:04:01.990 --> 00:04:05.725
+This means that people with
+disabilities are doing better in those
+
+62
+00:04:05.725 --> 00:04:09.233
+darker states when it comes to
+participating in the community.
+
+63
+00:04:09.233 --> 00:04:11.157
+We can see that in the West Coast,
+
+64
+00:04:11.157 --> 00:04:15.740
+there are several states that earn the
+highest score for community participation.
+
+65
+00:04:15.960 --> 00:04:21.254
+We can see that comparatively in the
+South there are more lighter colors,
+
+66
+00:04:21.254 --> 00:04:23.140
+like in Texas for example.
+
+67
+00:04:23.580 --> 00:04:26.436
+So we know that there are
+fewer opportunities for
+
+68
+00:04:26.436 --> 00:04:29.409
+community participation
+compared to the West Coast.
+
+69
+00:04:29.980 --> 00:04:34.160
+To find more specific information, we
+can scroll down to the data tables.
+
+70
+00:04:35.740 --> 00:04:39.770
+In each data table, it'll tell you
+the ranking on the left-hand side.
+
+71
+00:04:39.920 --> 00:04:44.729
+Next to that, it's tier, so
+those different key categories.
+
+72
+00:04:44.910 --> 00:04:51.179
+the state and the community participation
+score. So this will be the overall score.
+
+73
+00:04:51.380 --> 00:04:55.569
+of those categories to the
+right of that. So it's average.
+
+74
+00:04:56.390 --> 00:05:01.349
+And this is ranked from the highest state
+or territory all the way to the lowest.
+
+75
+00:05:01.349 --> 00:05:04.410
+You can explore this
+information on your own time.
+
+76
+00:05:05.110 --> 00:05:06.620
+Below this table.
+
+77
+00:05:07.190 --> 00:05:09.812
+we can see the top and bottom performers.
+
+78
+00:05:09.812 --> 00:05:13.073
+So you can see the top 5
+highest performers and the
+
+79
+00:05:13.073 --> 00:05:16.206
+top bottom performers in
+community participation,
+
+80
+00:05:16.206 --> 00:05:19.979
+and what the range is between
+the top and bottom performer.
+
+81
+00:05:20.780 --> 00:05:24.361
+Below this, we can see the
+average score by census region,
+
+82
+00:05:24.361 --> 00:05:28.560
+so the Northeast, West, Midwest,
+and South, like we compared before.
+
+83
+00:05:29.250 --> 00:05:34.039
+Below, you can see the definitions of
+some of these terms that we've reviewed.
+
+84
+00:05:34.510 --> 00:05:37.579
+Alright, let's scroll
+all the way to the top.
+
+85
+00:05:38.130 --> 00:05:40.240
+And let's change the category.
+
+86
+00:05:40.910 --> 00:05:43.300
+To do so, you'll go under Category.
+
+87
+00:05:43.980 --> 00:05:48.940
+And you'll click on Community Living.
+And then next you'll click on Generate.
+
+88
+00:05:49.400 --> 00:05:51.960
+Sometimes, these scorecards can take
+
+89
+00:05:52.080 --> 00:05:57.178
+15 to 25 seconds to generate. That's
+because there's a lot of data.
+
+90
+00:05:57.178 --> 00:05:59.460
+So hang tight in the meantime.
+
+91
+00:06:00.070 --> 00:06:03.444
+While we're waiting, we can go
+over how to download a page.
+
+92
+00:06:03.444 --> 00:06:06.647
+Next to that generate button,
+you can click on download.
+
+93
+00:06:06.647 --> 00:06:09.049
+So this way you can take this information.
+
+94
+00:06:10.310 --> 00:06:12.609
+Alright, we can scroll down.
+
+95
+00:06:12.730 --> 00:06:16.341
+At the top of each page, it'll give
+you a brief look on who is the
+
+96
+00:06:16.341 --> 00:06:20.500
+highest score out of the states and
+territories, and who's the lowest score.
+
+97
+00:06:21.950 --> 00:06:24.481
+Alright, so let's look
+at community living.
+
+98
+00:06:24.481 --> 00:06:27.542
+Community living represents
+the level of opportunity
+
+99
+00:06:27.542 --> 00:06:32.369
+for people with disabilities to live in
+the community, rather than an institution.
+
+100
+00:06:32.950 --> 00:06:36.792
+Previously, we discussed that
+there are two types of living.
+
+101
+00:06:36.792 --> 00:06:42.170
+Living in the community, so living at home
+or a non-institutionalized group quarter.
+
+102
+00:06:42.340 --> 00:06:47.079
+Or, in an institution, which can be a
+nursing home or correctional facility.
+
+103
+00:06:47.710 --> 00:06:50.118
+Since higher scores mean good outcomes,
+
+104
+00:06:50.118 --> 00:06:54.439
+this scorecard shows us where more
+people are living in the community.
+
+105
+00:06:54.760 --> 00:06:57.870
+We want to see that people
+with disabilities have greater
+
+106
+00:06:57.870 --> 00:07:01.470
+opportunities to live in the
+community rather than an institution.
+
+107
+00:07:01.930 --> 00:07:04.514
+So in this map, we can
+see that once again,
+
+108
+00:07:04.514 --> 00:07:08.540
+the western region has more darker
+colors and higher opportunities,
+
+109
+00:07:08.540 --> 00:07:11.365
+and the southern region
+have lighter colors and
+
+110
+00:07:11.365 --> 00:07:14.069
+lower opportunities to
+live in the community.
+
+111
+00:07:14.500 --> 00:07:19.039
+Take a look at the key below the map, and
+it'll tell you the exact specific ranges.
+
+112
+00:07:19.250 --> 00:07:23.410
+One thing to note is that
+scores range from 0 to 100.
+
+113
+00:07:24.050 --> 00:07:25.760
+In this specific map,
+
+114
+00:07:25.760 --> 00:07:31.949
+we can see that the highest performing
+state is 79.2 and the lowest is 24.8.
+
+115
+00:07:33.100 --> 00:07:34.200
+Okay.
+
+116
+00:07:34.460 --> 00:07:37.508
+We have that same data table
+that you can take a look at.
+
+117
+00:07:37.508 --> 00:07:40.930
+I'm going to show you how to find
+a specific state or territory.
+
+118
+00:07:40.930 --> 00:07:43.443
+So in this top box, we're
+going to click on it,
+
+119
+00:07:43.443 --> 00:07:46.330
+and we're going to type the
+state that we want to see,
+
+120
+00:07:46.330 --> 00:07:47.934
+and then it's going to pop up.
+
+121
+00:07:47.934 --> 00:07:51.410
+That way, you don't have to spend
+time looking through the table.
+
+122
+00:07:52.700 --> 00:07:56.271
+I encourage you to look through
+this information on your own time,
+
+123
+00:07:56.271 --> 00:07:58.219
+and explore the state that you live.
+
+124
+00:07:59.660 --> 00:08:01.543
+Okay, let's scroll to the top.
+
+125
+00:08:01.543 --> 00:08:05.434
+We're going to do the same thing
+and start to look at work and
+
+126
+00:08:05.434 --> 00:08:09.450
+economics by clicking under category
+and generate the scorecard.
+
+127
+00:08:10.200 --> 00:08:12.323
+So I'm going to get
+started talking about work
+
+128
+00:08:12.323 --> 00:08:14.400
+and economics while we
+wait for this to load.
+
+129
+00:08:15.040 --> 00:08:17.566
+So remember from the national data tab,
+
+130
+00:08:17.566 --> 00:08:22.100
+work and economics includes things
+like living below the poverty line,
+
+131
+00:08:22.100 --> 00:08:25.339
+being employed, and not
+being burdened by housing.
+
+132
+00:08:25.920 --> 00:08:28.126
+Since higher scores mean good outcomes,
+
+133
+00:08:28.126 --> 00:08:32.369
+we're measuring where people with
+disabilities are doing well economically.
+
+134
+00:08:32.610 --> 00:08:37.690
+We can see that Utah has the highest score,
+so they're doing the best economically,
+
+135
+00:08:37.690 --> 00:08:39.098
+whereas in Puerto Rico,
+
+136
+00:08:39.098 --> 00:08:43.934
+people with disabilities have the lowest
+opportunities to do well economically.
+
+137
+00:08:43.934 --> 00:08:45.770
+Let's scroll down to this map.
+
+138
+00:08:46.330 --> 00:08:49.850
+We can see that a new heat
+map has been generated.
+
+139
+00:08:50.050 --> 00:08:53.695
+Overall, just looking at it, I can
+see that there's a lot more states
+
+140
+00:08:53.695 --> 00:08:57.235
+that are represented by these darker
+colors, which is a good thing.
+
+141
+00:08:57.235 --> 00:08:59.349
+This means that there's more people with
+
+142
+00:08:59.349 --> 00:09:01.779
+disabilities doing well
+overall, economically.
+
+143
+00:09:03.120 --> 00:09:04.742
+Alright, we can scroll down,
+
+144
+00:09:04.742 --> 00:09:08.161
+and I encourage you to look
+through the data table and find
+
+145
+00:09:08.161 --> 00:09:11.290
+any states or territories
+that are interesting to you.
+
+146
+00:09:12.540 --> 00:09:16.003
+Okay, we have one last topic to discuss.
+
+147
+00:09:16.003 --> 00:09:20.679
+Let's scroll to the top and
+click on State Scorecards.
+
+148
+00:09:22.120 --> 00:09:25.679
+Right now, it's currently
+auto-generated to look at Illinois,
+
+149
+00:09:25.679 --> 00:09:29.939
+but to change it, you'll click on State
+or Territory, you can look up the
+
+150
+00:09:30.070 --> 00:09:34.789
+area that you're interested in, and
+then click on Generate Scorecard.
+
+151
+00:09:38.330 --> 00:09:40.249
+We'll wait for this to load.
+
+152
+00:09:45.150 --> 00:09:46.583
+Alright, there we go.
+
+153
+00:09:46.583 --> 00:09:52.040
+At the top of each page, there is a scale
+that shows the state score out of 100.
+
+154
+00:09:52.540 --> 00:09:55.726
+Below that, it shows the ranking of each
+
+155
+00:09:55.726 --> 00:09:59.310
+state in each category
+and the overall score.
+
+156
+00:09:59.690 --> 00:10:03.919
+So, to find more specific data in each
+category, we can scroll down below.
+
+157
+00:10:06.420 --> 00:10:09.625
+We can find information
+about community living.
+
+158
+00:10:09.625 --> 00:10:12.897
+So we can find Illinois
+score and then below it,
+
+159
+00:10:12.897 --> 00:10:17.193
+it'll show us the US average for
+community living, which is 50.
+
+160
+00:10:17.193 --> 00:10:19.306
+So we can see that in Illinois,
+
+161
+00:10:19.306 --> 00:10:23.329
+they rank they have a lower
+score compared to other states.
+
+162
+00:10:24.380 --> 00:10:28.424
+And then you can find specific
+information about community living,
+
+163
+00:10:28.424 --> 00:10:30.569
+as well as community participation,
+
+164
+00:10:30.569 --> 00:10:33.939
+work and economics, and then
+we have the score summary.
+
+165
+00:10:33.939 --> 00:10:37.370
+So this just gives you all of
+those scores in one place.
+
+166
+00:10:38.770 --> 00:10:42.710
+And below, you can find some
+definitions of these categories.
+
+167
+00:10:44.030 --> 00:10:45.960
+Let's scroll back to the top.
+
+168
+00:10:46.670 --> 00:10:49.819
+Let's click on New to
+Scorecard, Start Here.
+
+169
+00:10:50.180 --> 00:10:54.691
+So this is going to provide you
+information about what scorecards are,
+
+170
+00:10:54.691 --> 00:11:00.039
+how they're generated and built, how we
+calculate that data, and what they measure.
+
+171
+00:11:02.210 --> 00:11:04.733
+So, let's recap what we've covered.
+
+172
+00:11:04.733 --> 00:11:08.409
+In the National Data tab,
+we explored demographics,
+
+173
+00:11:08.409 --> 00:11:12.661
+community living and participation,
+and work and economics.
+
+174
+00:11:12.661 --> 00:11:16.770
+In the City Data, we zoomed
+in to find local information.
+
+175
+00:11:16.920 --> 00:11:20.769
+Now, in Scorecards, we've learned
+how to find state rankings and
+
+176
+00:11:20.769 --> 00:11:25.040
+compare how well people with disabilities
+are doing across the country.
+
+177
+00:11:25.440 --> 00:11:28.942
+You've learned how to read
+heat maps, interpret tables,
+
+178
+00:11:28.942 --> 00:11:33.016
+and understand what the data means
+for people with disabilities.
+
+179
+00:11:33.016 --> 00:11:34.290
+So, congratulations!
+
+180
+00:11:34.290 --> 00:11:38.555
+You've now learned everything you
+need to use the ADA-PARC website.
+
+181
+00:11:38.555 --> 00:11:40.720
+Stay tuned for videos on Module 3.

@@ -1,0 +1,69 @@
+---
+title: "[Module 4]{.module-eyebrow} Resources"
+pagetitle: "Module 4: Resources · PEN"
+description: "Links and downloads to keep using the ADA-PARC data after you finish PEN. Module 4 has no units and is not required for your certificate."
+---
+
+<nav class="pen-breadcrumb" aria-label="Breadcrumb">
+<ol>
+<li><a href="../index.qmd">Home</a></li>
+<li aria-current="page">Module 4</li>
+</ol>
+</nav>
+
+## Resource Padlet
+
+<p class="padlet-fallback"><a href="https://padlet.com/ershum/ada-parc-resources-s0249b660yoh9741j1b3" target="_blank" rel="noopener">Open the full Resource Padlet<span class="visually-hidden"> (opens in a new tab)</span></a></p>
+
+<div class="padlet-embed">
+<iframe src="https://padlet.com/embed/s0249b660yoh9741j1b3" title="ADA-PARC Resource Padlet" loading="lazy" allow="camera;microphone;geolocation;display-capture;clipboard-write"></iframe>
+</div>
+
+## Resources by category
+
+The same links as the Padlet, in a simple list. Each category opens and
+closes on its own.
+
+<div class="faq-list link-list">
+
+<details>
+<summary><span>ADA-PARC<span class="link-count"> 1 link</span></span></summary>
+
+<ul>
+<li><a href="https://adaparc.shinyapps.io/ADA_PARC/#section-home" target="_blank" rel="noopener">ADA-PARC data homepage<span class="visually-hidden"> (opens in a new tab)</span></a><span class="link-desc">Start here to explore the ADA-PARC data.</span></li>
+</ul>
+
+</details>
+
+<details>
+<summary><span>General disability demographic information<span class="link-count"> 2 links</span></span></summary>
+
+<ul>
+<li><a href="https://www.census.gov/programs-surveys/acs/data.html" target="_blank" rel="noopener">American Community Survey (ACS) data<span class="visually-hidden"> (opens in a new tab)</span></a><span class="link-desc">U.S. Census Bureau tables and downloads on disability and other demographics.</span></li>
+<li><a href="https://data.cdc.gov/browse?category=500+Cities+%26+Places&amp;q=&amp;sortBy=relevance&amp;pageSize=20&amp;page=1" target="_blank" rel="noopener">CDC PLACES data<span class="visually-hidden"> (opens in a new tab)</span></a><span class="link-desc">Local health data for cities, counties, and neighborhoods from the CDC.</span></li>
+</ul>
+
+</details>
+
+<details>
+<summary><span>Disability housing information<span class="link-count"> 1 link</span></span></summary>
+
+<ul>
+<li><a href="https://www.hud.gov/researchers" target="_blank" rel="noopener">HUD resources for researchers<span class="visually-hidden"> (opens in a new tab)</span></a><span class="link-desc">Housing data and reports from the U.S. Department of Housing and Urban Development.</span></li>
+</ul>
+
+</details>
+
+</div>
+
+## Look up a term
+
+Definitions for words used throughout PEN live in the
+[glossary on the Help page](../help.qmd#glossary).
+
+------------------------------------------------------------------------
+
+<nav class="pager" aria-label="Module navigation">
+<a class="pager-link pager-prev" href="module-03.qmd"><span class="pager-arrow" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="pager-text"><span class="pager-label">Previous module</span><span class="pager-title">Module 3: Making Sense of Data</span></span></a>
+<a class="pager-link pager-next" href="../index.qmd"><span class="pager-text"><span class="pager-label">Back to the start</span><span class="pager-title">Home</span></span><span class="pager-arrow" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+</nav>

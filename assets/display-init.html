@@ -1,0 +1,83 @@
+<!-- Display settings, part 1 of 2. Runs in <head>, before first
+     paint, so a reader's saved theme and text size are in place before any
+     content shows. No flash of the wrong theme.
+
+     Reads one localStorage key, `pen:display:v1`, beside the progress key. It
+     holds only display choices (no name, no progress). Same promise as the
+     rest of the site: nothing is sent anywhere. If storage is blocked or
+     holds junk, the page renders in the defaults.
+
+     It sets attributes on <html>; the CSS in tokens.css and pen.scss does the
+     rest. The panel itself is assets/display-settings.html. -->
+<script>
+(function () {
+  var KEY = 'pen:display:v1';
+  var ALLOWED = {
+    theme: ['light', 'dark', 'contrast', 'auto'],
+    size: ['100', '125', '150'],
+    font: ['pen', 'easy'],
+    spacing: ['standard', 'roomy']
+  };
+  var root = document.documentElement;
+
+  function media(q) {
+    try { return !!(window.matchMedia && window.matchMedia(q).matches); } catch (e) { return false; }
+  }
+
+  // The stored choices, validated. A missing key means "use the default".
+  function read() {
+    var out = {};
+    try {
+      var raw = window.localStorage.getItem(KEY);
+      var o = raw ? JSON.parse(raw) : null;
+      if (o && typeof o === 'object') {
+        ['theme', 'size', 'font', 'spacing'].forEach(function (k) {
+          if (typeof o[k] === 'string' && ALLOWED[k].indexOf(o[k]) !== -1) out[k] = o[k];
+        });
+        if (o.underline === true) out.underline = true;
+        if (o.motion === true) out.motion = true;
+      }
+    } catch (e) { /* storage blocked or unreadable: defaults */ }
+    return out;
+  }
+
+  // Light is the default. The one exception is a device that has asked for
+  // more contrast: that is an explicit request, so honor it until the reader
+  // chooses otherwise. Dark never applies unless the reader asks for it.
+  function resolveTheme(choice) {
+    if (choice === 'dark' || choice === 'contrast' || choice === 'light') return choice;
+    if (media('(prefers-contrast: more)')) return 'contrast';
+    if (choice === 'auto' && media('(prefers-color-scheme: dark)')) return 'dark';
+    return 'light';
+  }
+
+  function apply(s) {
+    root.setAttribute('data-pen-theme', resolveTheme(s.theme));
+    root.setAttribute('data-pen-size', s.size || '100');
+    root.setAttribute('data-pen-font', s.font || 'pen');
+    root.setAttribute('data-pen-spacing', s.spacing || 'standard');
+    root.setAttribute('data-pen-underline', s.underline ? 'on' : 'off');
+    root.setAttribute('data-pen-motion', s.motion ? 'reduce' : 'default');
+  }
+
+  function write(s) {
+    try {
+      if (Object.keys(s).length) window.localStorage.setItem(KEY, JSON.stringify(s));
+      else window.localStorage.removeItem(KEY);
+      return true;
+    } catch (e) { return false; }
+  }
+
+  apply(read());
+
+  // Shared with the panel. Nothing else on the site touches these.
+  window.penDisplay = {
+    key: KEY,
+    allowed: ALLOWED,
+    read: read,
+    apply: apply,
+    write: write,
+    resolveTheme: resolveTheme
+  };
+})();
+</script>

@@ -1,0 +1,100 @@
+---
+title: "Help"
+pagetitle: "PEN help and glossary"
+description: "Answers to common questions, how to report a problem, and the PEN glossary."
+---
+
+
+## Common questions {#faq}
+
+::: {.faq-list}
+
+<details>
+<summary>How long does PEN take?</summary>
+
+Plan on about two hours of video across Modules 1–3: Module 1 is about 57
+minutes, Module 2 about 51, and Module 3 about 14. Add time to pause, take
+notes, and try the ADA-PARC site yourself. It is self-paced: you can stop after
+any unit and pick up where you left off.
+
+</details>
+
+<details>
+<summary>Do I have to do the modules in order?</summary>
+
+No, nothing is locked. We suggest going from Module 1 to Module 3, because
+each one builds on the one before it. Module 4 is a Resources page you can
+use any time.
+
+</details>
+
+<details>
+<summary>How do I change the colors or text size?</summary>
+
+Use the **Display** button at the bottom left of any page. You can choose a
+dark or high contrast theme, larger text, an easy-to-read font, more space
+between lines, underlined links, and less motion. Your choices are saved only
+in this browser, like your progress. **Reset to defaults** puts everything back.
+
+</details>
+
+<details>
+<summary>Where is my progress saved?</summary>
+
+Only in the browser you are using right now. There is no account and
+nothing is sent to us. That means:
+
+- Your progress **will not follow you** to another device or browser.
+- **Clearing your browser data**, or using a private window, erases it.
+
+If you switch devices, you can mark the units you already finished as
+complete again.
+
+</details>
+
+<details>
+<summary>How do I get my certificate?</summary>
+
+Mark every unit in Modules 1–3 complete, and your
+[certificate](certificate.qmd) unlocks. Type your name, then print it or save
+it as a PDF.
+
+Because your progress lives only in this browser, **save the PDF as soon as it
+unlocks**.
+
+</details>
+
+<details>
+<summary>Is there a test or quiz?</summary>
+
+No. You will get a separate goal-setting worksheet to fill out and send back by
+email. See [How to use PEN](how-to-use.qmd).
+
+</details>
+
+<details>
+<summary>Can I use PEN with a screen reader or keyboard only?</summary>
+
+Yes. The site is built to work with both. Read the
+[accessibility statement](accessibility.qmd) for details, and tell us if
+anything gets in your way.
+
+</details>
+
+:::
+
+## Something not working? {#report}
+
+::: {.pen-note}
+If a page, video, or control does not work for you, we treat it as a bug.
+Tell us which page, what you were using (browser, screen reader, or keyboard
+only), and what happened.
+:::
+
+[Email us about a problem](mailto:hammel@uic.edu?subject=PEN%20site%20issue&body=Page%3A%20%0ABrowser%20or%20assistive%20technology%3A%20%0AWhat%20happened%3A%20){.btn .btn-primary role="button"}
+
+## Glossary {#glossary}
+
+Definitions for the terms used throughout PEN and the ADA-PARC site.
+
+<a class="btn btn-primary" role="button" href="assets/downloads/glossary.html" target="_blank" rel="noopener">Open the glossary<span class="visually-hidden"> (opens in a new tab)</span></a>

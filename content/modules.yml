@@ -1,0 +1,218 @@
+# =============================================================================
+# PEN content spine (modules)
+# -----------------------------------------------------------------------------
+# This file is the single source of truth for the module and unit pages.
+# Editing a block here and running `Rscript R/build_modules.R` (or just
+# `quarto render`, which runs it as a pre-render step) regenerates:
+#   modules/module-XX.qmd          the module landing page
+#   modules/module-XX-unit-YY.qmd  one page per unit
+#   assets/pen-manifest.html       module -> unit id map, used by the
+#                                   progress script and the certificate
+#                                   page to know when a module/the whole
+#                                   series is complete
+#
+# DO NOT hand-edit modules/module-*.qmd or assets/pen-manifest.html. They
+# are overwritten on every build.
+#
+# There are exactly 3 tracked modules here. There is no quiz or test.
+# Module 4 ("Resources") is a separate, hand-authored page
+# (modules/module-04.qmd). It is not generated from this file and has no
+# units, so it is not part of progress tracking or the certificate gate.
+#
+# Fields (module level)
+#   id            two-digit string, also the URL slug number and progress key
+#   title         plain-language module title
+#   slug          kept for reference; page URL is modules/module-XX.html
+#   status        draft | review | published   (shown as a banner while != published)
+#   summary       1-2 sentences, used on the home page's module card and at
+#                 the top of the module landing page
+#   objectives    list of "you will be able to…" statements
+#   adaparc_pages list of { label, url, description (optional) } links the module sends trainees to
+#   activity      a task that sends the trainee to the live site for their own place
+#                 (kept for reference; not rendered on any page)
+#   terms         glossary terms this module uses (must exist in help.qmd)
+#                 (kept for reference; not rendered on any page)
+#   no_slides     true = module has no slide decks: hides the unit slide buttons and
+#                 the landing-page "Slides Download" section
+#   downloads     list of { label, href }, handout, printable, etc.
+#   units         the clickable list within the module (see below)
+#
+# Fields (unit level)
+#   id       two-digit string, unique within the module
+#   title    plain-language title (matches the source slides where possible)
+#   video    optional path to a self-hosted .mp4 (e.g. videos/module_1/x.mp4);
+#            renders a native player under a poster frame showing the title
+#            and length. A unit with neither `video` nor `videos` shows an
+#            empty placeholder frame.
+#   duration the video's length as "m:ss" (e.g. "9:54"), required when `video`
+#            is set. Shown on the poster frame and in the player's label. Not
+#            read from the file at build time, so the build needs no video
+#            tooling.
+#   videos   optional list, for a unit recorded as several videos (still one
+#            unit, one "Mark unit complete"). Each entry: title, video (.mp4),
+#            duration ("m:ss"), captions (.vtt, shown by default), transcript
+#            (.txt, paragraphs split by blank lines; shown on the page below
+#            its player). Make both with `python3 -I scripts/prepare_captions.py`
+#            from the raw exports. More than one entry gets "Part N of M"
+#            headings and a jump list; one entry gets neither. Replaces
+#            `video`/`duration`/`transcript` for that unit.
+#   slides   optional path to the downloadable .pptx (under assets/downloads/).
+#            Shown as a button on the unit page and listed on the module
+#            landing page. Omitted or "TBD" renders a disabled button.
+#   transcript optional path to a transcript file. Omitted or "TBD" renders
+#            a disabled button on the unit page.
+#   summary  optional one-line description shown on the module landing page
+# =============================================================================
+
+- id: "01"
+  title: "Getting Started, ADA Insights"
+  slug: getting-started-ada-insights
+  status: published
+  summary: >
+    A plain-language foundation in the ADA: where it came from, what it covers,
+    its five titles, and what it requires, before you look at any data.
+  objectives:
+    - "Place the ADA in its historical context and explain why it was needed"
+    - "Describe the ADA's overall purpose in your own words"
+    - "Name the ADA's five titles and what each one covers"
+    - "Summarize what the ADA requires of covered entities"
+  adaparc_pages:
+    - label: "ADA-PARC home"
+      description: "The data you will learn to use."
+      url: "https://adaparc.shinyapps.io/ADA_PARC/"
+    - label: "ADA.gov"
+      description: "Official ADA law and guides."
+      url: "https://www.ada.gov/"
+    - label: "ADA National Network"
+      description: "Free ADA help and fact sheets."
+      url: "https://adata.org/"
+  activity: >
+    Open the ADA-PARC site, pick your state, and write down one number that
+    surprised you. Bring it to the next module.
+  terms: [ADA, Five Titles, integration mandate, Olmstead, ADA-PARC]
+  downloads: []
+  units:
+    - id: "01"
+      title: "ADA History"
+      video: videos/module_1/History_of_ADA.mp4
+      slides: assets/downloads/module_1/01-ADA-History.pptx
+      duration: "9:54"
+    - id: "02"
+      title: "Overview of the ADA"
+      video: videos/module_1/Overview_of_the_ADA.mp4
+      slides: assets/downloads/module_1/02-Overview-of-the-ADA.pptx
+      duration: "14:28"
+    - id: "03"
+      title: "ADA Five Titles"
+      video: videos/module_1/ADA_5_titles.mp4
+      slides: assets/downloads/module_1/03-ADA-Five-Titles.pptx
+      duration: "19:15"
+    - id: "04"
+      title: "ADA Requirements"
+      video: videos/module_1/ADA_Requirements.mp4
+      slides: assets/downloads/module_1/04-ADA-Requirements.pptx
+      duration: "13:33"
+
+- id: "02"
+  title: "Exploring ADA-PARC Website & Data"
+  slug: exploring-ada-parc-website-and-data
+  status: published
+  summary: >
+    How the ADA-PARC site is organized: national data, city-level data, and
+    scorecards, so you can find a specific number without a guide.
+  objectives:
+    - "Locate national-level disability data on the ADA-PARC site"
+    - "Locate city-level (metro area) data and say how it differs from national data"
+    - "Read an ADA-PARC scorecard and say what it is comparing"
+  adaparc_pages:
+    - label: "ADA-PARC home"
+      url: "https://adaparc.shinyapps.io/ADA_PARC/"
+  activity: >
+    Find the same measure at the national level and for your own city or metro
+    area, and note which is higher and by how much.
+  terms: [national data, city data, metropolitan statistical area, scorecard]
+  no_slides: true   # units are screen-recorded demos of the ADA-PARC site; no decks
+  downloads: []
+  units:
+    - id: "01"
+      title: "National Data"
+      # One unit, four recordings, watched in this order.
+      videos:
+        - title: "Demographics"
+          video: "videos/module_2/M2 Demographics Video 2026.mp4"
+          captions: assets/captions/module_2/demographics.vtt
+          transcript: transcripts/module_2/demographics.txt
+          duration: "8:08"
+        - title: "Community Living"
+          video: "videos/module_2/M2 Community Living Video 2026.mp4"
+          captions: assets/captions/module_2/community-living.vtt
+          transcript: transcripts/module_2/community-living.txt
+          duration: "8:40"
+        - title: "Community Participation"
+          video: "videos/module_2/M2 Community Participation Video 2026.mp4"
+          captions: assets/captions/module_2/community-participation.vtt
+          transcript: transcripts/module_2/community-participation.txt
+          duration: "6:50"
+        - title: "Work and Economics"
+          video: "videos/module_2/M2 Work and Economics Video 2026.mp4"
+          captions: assets/captions/module_2/work-and-economics.vtt
+          transcript: transcripts/module_2/work-and-economics.txt
+          duration: "7:58"
+    - id: "02"
+      title: "City Data"
+      videos:
+        - title: "City Data"
+          video: "videos/module_2/M2 City Data Video 2026.mp4"
+          captions: assets/captions/module_2/city-data.vtt
+          transcript: transcripts/module_2/city-data.txt
+          duration: "7:38"
+    - id: "03"
+      title: "Scorecards"
+      videos:
+        - title: "Scorecards"
+          video: "videos/module_2/M2 Scorecards Video 2026.mp4"
+          captions: assets/captions/module_2/scorecards.vtt
+          transcript: transcripts/module_2/scorecards.txt
+          duration: "11:44"
+
+- id: "03"
+  title: "Making Sense of Data"
+  slug: making-sense-of-data
+  status: published
+  summary: >
+    Data literacy for advocacy: what disability data can and can't tell you,
+    reading numbers versus percentages, and interpreting scorecards responsibly.
+  objectives:
+    - "Explain what a disability-data measure is actually counting"
+    - "Tell the difference between a raw number and a percentage, and when each matters"
+    - "Name at least one limitation of national-level data"
+    - "Read a scorecard without over-claiming what it shows"
+  adaparc_pages:
+    - label: "ADA-PARC home"
+      url: "https://adaparc.shinyapps.io/ADA_PARC/"
+  activity: >
+    Pick one measure and write both its raw count and its percentage for your
+    state. Note which version you'd use in a one-sentence advocacy claim, and why.
+  terms: [rate, count, percentage, national data, scorecard]
+  downloads: []
+  units:
+    - id: "01"
+      title: "Understanding Data on Disability"
+      video: videos/module_3/Understanding_Data_on_Disability.mp4
+      slides: assets/downloads/module_3/01-Understanding-Data-on-Disability.pptx
+      duration: "2:53"
+    - id: "02"
+      title: "Making Sense of Numbers vs. Percentages"
+      video: videos/module_3/Numbers_vs_Percentages.mp4
+      slides: assets/downloads/module_3/02-Numbers-vs-Percentages.pptx
+      duration: "2:59"
+    - id: "03"
+      title: "Limitations of National Data"
+      video: videos/module_3/Limitations_of_National_Data.mp4
+      slides: assets/downloads/module_3/03-Limitations-of-National-Data.pptx
+      duration: "4:53"
+    - id: "04"
+      title: "How to Make Sense of Scorecards"
+      video: videos/module_3/Making_Sense_of_Scorecards.mp4
+      slides: assets/downloads/module_3/04-Making-Sense-of-Scorecards.pptx
+      duration: "3:20"
