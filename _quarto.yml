@@ -29,9 +29,9 @@ website:
   description: >
     Participation Equity Navigator. The training companion to the ADA-PARC
     project.
-  site-url: https://pen.example.org/
-  # ^ Placeholder. Set to the GitHub Pages address for testing, then to the
-  #   final domain once it is confirmed. It feeds sitemap.xml and robots.txt.
+  site-url: https://ada-parc.github.io/PEN/
+  # ^ The GitHub Pages test address. Change to the final domain once it is
+  #   confirmed. It feeds sitemap.xml and robots.txt.
   # Simplified small-size mark (no clip/band detail), not the full badge.
   # PNG fallbacks + apple-touch-icon are linked in assets/icons.html.
   favicon: assets/brand/pen-favicon.svg
