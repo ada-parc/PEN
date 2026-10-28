@@ -23,6 +23,9 @@ project:
     - "assets/brand/**"
     - "assets/captions/**"
     - "videos/**"
+    # Stand-in for the navigator check-in form (assets/checkin-init.html)
+    # until the real one exists. Demo only.
+    - "demo/**"
 
 website:
   title: "PEN"
@@ -178,7 +181,9 @@ format:
       - assets/breadcrumb-margin.html
       - assets/back-to-top.html
       - assets/pen-manifest.html
+      - assets/navigator-init.html
       - assets/progress-init.html
+      - assets/checkin-init.html
       - assets/video-poster.html
       - assets/display-settings.html
     grid:

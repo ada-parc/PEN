@@ -1,0 +1,104 @@
+<!doctype html>
+<!--
+  DEMO ONLY. A stand-in for the navigator check-in form (REDCap or similar,
+  decision 3.2), so the check-in flow in assets/checkin-init.html can be
+  shown end to end. Nothing is sent anywhere: Submit just returns to PEN with
+  ?checkin=<item>&code=<code>, which is what the real form's "on submit"
+  redirect should do. Replace FORM in checkin-init.html when the real form
+  exists, then delete this folder (and its entry under `resources` in
+  _quarto.yml).
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Navigator check-in (demo form)</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #EEF1F4; color: #1F2933; font: 18px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  .demo { background: #FFF4C2; border-bottom: 2px solid #8A6D00; padding: 10px 16px; text-align: center; font-weight: 700; }
+  main { max-width: 40rem; margin: 32px auto 64px; padding: 0 16px; }
+  .card { background: #fff; border: 1px solid #C5CDD5; border-radius: 6px; padding: 28px 28px 24px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  .sub { margin: 0 0 24px; color: #3E4C59; }
+  .field { margin: 0 0 18px; }
+  label { display: block; font-weight: 700; margin-bottom: 6px; }
+  input, textarea { width: 100%; font: inherit; padding: 10px 12px; border: 1px solid #7B8794; border-radius: 4px; background: #fff; color: inherit; }
+  input[readonly] { background: #F5F7FA; }
+  textarea { min-height: 6rem; }
+  .hint { font-size: 0.9rem; color: #3E4C59; margin-top: 4px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin-top: 8px; }
+  button { font: inherit; font-weight: 700; color: #fff; background: #2D5C88; border: 2px solid #2D5C88; border-radius: 4px; padding: 10px 22px; min-height: 44px; cursor: pointer; }
+  button:hover, button:focus-visible { background: #1D3F60; text-decoration: underline; }
+  a { color: #2D5C88; }
+  :focus-visible { outline: 3px solid #B5651D; outline-offset: 2px; }
+  .error { background: #FDECEA; border: 1px solid #B42318; padding: 12px 16px; border-radius: 4px; }
+</style>
+</head>
+<body>
+<p class="demo">Demo form. It stands in for the real check-in survey and sends nothing.</p>
+<main>
+  <div class="card" id="card">
+    <h1>PEN navigator check-in</h1>
+    <p class="sub">Confirm the details below, then submit.</p>
+    <form id="form" novalidate>
+      <div class="field">
+        <label for="code">Navigator code</label>
+        <input id="code" name="code" readonly>
+      </div>
+      <div class="field">
+        <label for="item-label">Completed</label>
+        <input id="item-label" readonly aria-describedby="item-hint">
+        <p class="hint" id="item-hint">Filled in from PEN.</p>
+      </div>
+      <div class="field">
+        <label for="date">Date</label>
+        <input id="date" name="date" readonly>
+      </div>
+      <div class="field">
+        <label for="note">Anything to tell the PEN team? (optional)</label>
+        <textarea id="note" name="note"></textarea>
+      </div>
+      <div class="actions">
+        <button type="submit">Submit</button>
+        <a id="back" href="#">Cancel and go back to PEN</a>
+      </div>
+    </form>
+  </div>
+</main>
+<script>
+(function () {
+  "use strict";
+  var p = new URLSearchParams(window.location.search);
+  var code = p.get("code") || "";
+  var item = p.get("item") || "";
+  var ret = p.get("return") || "";
+  var back = null;
+  // Only ever send people back to PEN itself.
+  try {
+    var u = new URL(ret, window.location.href);
+    if (u.origin === window.location.origin) back = u;
+  } catch (e) {}
+  var okItem = /^(module-\d{2}|certificate)$/.test(item);
+  if (!back || !okItem || !/^N-\d{3}-\d$/.test(code)) {
+    document.getElementById("card").innerHTML = '<p class="error">This check-in link is missing its details. Go back to PEN and use the check-in button again.</p>';
+    return;
+  }
+  var label = item === "certificate" ? "Certificate" : "Module " + parseInt(item.slice(7), 10);
+  document.getElementById("code").value = code;
+  document.getElementById("item-label").value = label;
+  document.getElementById("date").value = new Date().toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
+  document.getElementById("back").setAttribute("href", back.href);
+  document.title = label + " check-in (demo form)";
+  document.getElementById("form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    back.searchParams.set("checkin", item);
+    back.searchParams.set("code", code);
+    window.location.assign(back.href);
+  });
+})();
+</script>
+</body>
+</html>

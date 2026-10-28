@@ -8,6 +8,20 @@ For each video listed in VIDEOS below this reads the raw .vtt export and writes:
     assets/captions/<module>/<slug>.vtt      cleaned captions (for <track>)
     transcripts/<module>/<slug>.txt          transcript paragraphs (blank-line separated)
 
+Modules in TRANSCRIPT_ONLY get the transcript and no caption file: their
+videos have captions burned into the picture, so a <track> would show a
+second set on screen. Their raw .vtt is a speech-to-text draft made with
+whisper.cpp (there is no authored export), named after the .mp4:
+
+    whisper-cli -m ~/.cache/whisper/ggml-large-v3-turbo.bin -l en -ovtt \
+        -f <audio.wav> -of videos/<module>/<mp4 stem>
+
+(the .wav is the video's audio as 16 kHz mono, from ffmpeg). Add `-mc 0` if
+a draft gets stuck repeating one line (History_of_ADA did). Speech-to-text
+also sometimes doubles a word or a whole sentence, so for these modules a
+word or sentence repeated back to back is dropped (see dedupe). Those drafts
+need a proofread against the video before they are final.
+
 What "cleaned" means (and nothing more):
   * the "ADA-PARC:" speaker prefix on every cue is dropped (one narrator);
   * a short, explicit list of unambiguous mishearings is fixed (FIXES);
@@ -39,17 +53,35 @@ VIDEOS = {
         ("M2 City Data Transcript 2026", "city-data"),
         ("M2 Scorecards Transcript 2026", "scorecards"),
     ],
+    "module_1": [
+        ("History_of_ADA", "history-of-ada"),
+        ("Overview_of_the_ADA", "overview-of-the-ada"),
+        ("ADA_5_titles", "ada-five-titles"),
+        ("ADA_Requirements", "ada-requirements"),
+    ],
+    "module_3": [
+        ("Understanding_Data_on_Disability", "understanding-data-on-disability"),
+        ("Numbers_vs_Percentages", "numbers-vs-percentages"),
+        ("Limitations_of_National_Data", "limitations-of-national-data"),
+        ("Making_Sense_of_Scorecards", "making-sense-of-scorecards"),
+    ],
 }
+
+# Captions burned into the video: transcript only, no caption track.
+TRANSCRIPT_ONLY = {"module_1", "module_3"}
 
 # Unambiguous fixes only: (pattern, replacement). The site is "ADA-PARC".
 FIXES = [
     (r"\bADAPARC\b", "ADA-PARC"),
     (r"\bADA Park's\b", "ADA-PARC's"),
+    (r"\bADA Park\b", "ADA-PARC"),
     (r"\bADA-part\b", "ADA-PARC"),
     (r"\bwork in economics\b", "work and economics"),
     (r"\bworking economics\b", "work and economics"),
     (r"\bgroup corridor\b", "group quarter"),
     (r"generate a map, A data table", "generate a map, a data table"),
+    (r"\bSCUPA\b", "SCUBA"),
+    (r"\bREHAB Act\b", "Rehab Act"),
 ]
 
 MAX_LINE = 42
@@ -139,6 +171,29 @@ def caption_cues(cues):
     return out
 
 
+def dedupe(cues):
+    """Drop speech-to-text doubling: a word repeated back to back ("the the";
+    "that that" and "had had" can be real, so they stay) and a sentence
+    repeated back to back. Used only for TRANSCRIPT_ONLY modules."""
+    out, last, prev_word = [], None, ""
+    for a, b, text in cues:
+        text = re.sub(r"\b(?!(?:that|had)\b)(\w+) \1\b", r"\1", text, flags=re.I)
+        # The same doubling across two cues: "... the" / "the ..."
+        first = re.match(r"(\w+)\s+", text)
+        if first and first.group(1).lower() == prev_word and prev_word not in ("that", "had"):
+            text = text[first.end():]
+        tail = re.search(r"(\w+)\W*$", text)
+        prev_word = tail.group(1).lower() if tail and not re.search(r"[.?!]\W*$", text) else ""
+        kept = []
+        for sent in sentences(text):
+            if sent.strip().lower() != (last or "").lower():
+                kept.append(sent)
+            last = sent.strip()
+        if kept:
+            out.append((a, b, " ".join(kept)))
+    return out
+
+
 def paragraphs(cues, target=380):
     """Pack cue text into readable paragraphs, breaking only at sentence ends."""
     paras, cur = [], ""
@@ -156,19 +211,24 @@ def main():
     for module, items in VIDEOS.items():
         cap_dir = ROOT / "assets" / "captions" / module
         txt_dir = ROOT / "transcripts" / module
-        cap_dir.mkdir(parents=True, exist_ok=True)
         txt_dir.mkdir(parents=True, exist_ok=True)
         for stem, slug in items:
             src = ROOT / "videos" / module / f"{stem}.vtt"
             if not src.exists():
                 sys.exit(f"missing {src}")
             cues = read_cues(src)
+            if module in TRANSCRIPT_ONLY:
+                cues = dedupe(cues)
+            (txt_dir / f"{slug}.txt").write_text("\n\n".join(paragraphs(cues)) + "\n", encoding="utf-8")
+            if module in TRANSCRIPT_ONLY:
+                print(f"{module}/{slug}: {len(cues)} cues -> transcript only")
+                continue
+            cap_dir.mkdir(parents=True, exist_ok=True)
             caps = caption_cues(cues)
             body = "\n\n".join(
                 f"{i}\n{fmt(a)} --> {fmt(b)}\n{t}" for i, (a, b, t) in enumerate(caps, 1)
             )
             (cap_dir / f"{slug}.vtt").write_text("WEBVTT\n\n" + body + "\n", encoding="utf-8")
-            (txt_dir / f"{slug}.txt").write_text("\n\n".join(paragraphs(cues)) + "\n", encoding="utf-8")
             longest = max(len(t.replace("\n", " ")) for _, _, t in caps)
             print(f"{module}/{slug}: {len(cues)} cues -> {len(caps)} captions (longest {longest} chars)")
 

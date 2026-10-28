@@ -20,6 +20,7 @@ toc: false
 <div class="hero-actions">
 [<span data-pen-start-label>Start Module 1</span> <svg viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>](modules/module-01.qmd){.hero-btn .hero-btn-primary data-pen-start="true"}
 [How the training works](how-to-use.qmd){.hero-btn .hero-btn-secondary}
+[Skip ahead to Resources <svg viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true" focusable="false"><path d="M5 6l6 6-6 6M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"/></svg>](modules/module-04.qmd){.hero-btn .hero-btn-tertiary}
 </div>
 :::
 

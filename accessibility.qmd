@@ -64,7 +64,6 @@ test against it.
 <tr><th scope="row">Move to the previous one</th><td><kbd>Shift</kbd> + <kbd>Tab</kbd></td></tr>
 <tr><th scope="row">Follow a link or press a button</th><td><kbd>Enter</kbd></td></tr>
 <tr><th scope="row">Open or close a module summary</th><td><kbd>Space</kbd> or <kbd>Enter</kbd></td></tr>
-<tr><th scope="row">Mark a unit complete, or undo it</th><td><kbd>Space</kbd> or <kbd>Enter</kbd> on the button</td></tr>
 </tbody>
 </table>
 </div>
@@ -86,7 +85,9 @@ test against it.
 <ul>
 <li>Each page has one main heading, and headings never skip a level.</li>
 <li>The navigation, main content, and footer are marked as landmarks, so a screen reader can move between them in one step.</li>
-<li>"Mark unit complete" is a toggle button. Its pressed state is exposed, and a polite announcement says when progress is saved.</li>
+<li>You mark each unit complete yourself with the <strong>Mark unit complete</strong> button under its video, once you have watched the video or read the transcript, so watching is never required. Focus then moves to the words <strong>Unit complete</strong>, and a polite announcement says so.</li>
+<li>When a video ends, the page moves to that button and puts focus on it. Nothing is completed for you.</li>
+<li>If you opened the site from a navigator link, a bar under the menu says so in words and shows your code. Its notices are announced, and <strong>Turn off</strong> asks before it acts, with <strong>Keep it on</strong> as the first choice. When a navigator finishes a module, a full-screen check-in opens as a dialog: focus starts on its main button, and Escape or <strong>I'll do it later</strong> closes it. The bar also says in words how many check-ins are done, and each step on the home page progress list is written out ("Units done", "Check in now", "Checked in").</li>
 <li>Module summaries are native expandable sections, so they work with the keyboard and with screen readers.</li>
 <li>There is no separate "skip to content" link. The menu is short, and the landmarks already let you move past it.</li>
 <li>Lines of text are kept short so they are easier to follow.</li>

@@ -229,7 +229,7 @@ parse_duration <- function(d) {
 # which breaks their flex layout.
 url_path <- function(p) gsub(" ", "%20", html_esc(p), fixed = TRUE)
 
-build_player <- function(video, title, duration = NULL, captions = NULL) {
+build_player <- function(video, title, duration = NULL, captions = NULL, part = 1) {
   dur <- parse_duration(duration)
   poster <- paste0(
     "<div class=\"video-poster is-hidden\" data-pen-poster aria-hidden=\"true\">\n",
@@ -245,13 +245,13 @@ build_player <- function(video, title, duration = NULL, captions = NULL) {
   sprintf(
     paste0(
       "<div class=\"video-embed has-video\">\n",
-      "<video controls preload=\"metadata\" playsinline aria-label=\"%s\">\n",
+      "<video controls preload=\"metadata\" playsinline data-pen-part=\"%d\" aria-label=\"%s\">\n",
       "<source src=\"../%s\" type=\"video/mp4\">\n%s",
       "<p>Your browser cannot play this video. ",
       "<a href=\"../%s\">Download it instead</a>.</p>\n",
       "</video>\n%s</div>"
     ),
-    label, url_path(video), track, url_path(video), poster
+    as.integer(part), label, url_path(video), track, url_path(video), poster
   )
 }
 
@@ -268,7 +268,7 @@ build_transcript <- function(path, title) {
     "<summary>Transcript<span class=\"visually-hidden\"> for %s</span></summary>\n%s\n",
     "</details>\n</div>"),
     html_esc(title),
-    paste(sprintf("<p>%s</p>", html_esc(oneline(paras))), collapse = "\n"))
+    paste(sprintf("<p>%s</p>", html_esc(vapply(paras, oneline, character(1)))), collapse = "\n"))
 }
 
 # A unit made of several videos (units are one idea, even when it took more
@@ -311,7 +311,7 @@ build_videos <- function(videos) {
       if (n > 1) sprintf(" aria-labelledby=\"part-%d\"", k) else "", ">\n",
       if (n > 1) sprintf("<h2 class=\"unit-part-title\" id=\"part-%d\"><span class=\"unit-part-count\">Part %d of %d</span> %s</h2>\n",
                          k, k, n, html_esc(v$title)) else "",
-      build_player(v$video, v$title, v$duration, v$captions), "\n",
+      build_player(v$video, v$title, v$duration, v$captions, part = k), "\n",
       if (is_set(v$transcript)) paste0(build_transcript(v$transcript, v$title), "\n") else "",
       "</section>")
   }, character(1))
@@ -324,8 +324,8 @@ build_media <- function(video = NULL, title = "", duration = NULL, videos = NULL
   if (length(videos) > 0) return(build_videos(videos))
   if (!is.null(video) && !identical(video, "TBD")) {
     # Self-hosted video: native HTML5 player (keyboard accessible, no
-    # third-party script). No captions here: this single-video path is the
-    # Module 1 shape; a unit with captions uses `videos:` instead.
+    # third-party script). No captions or transcript here; a unit with
+    # either uses `videos:` instead (even for one video).
     return(paste0("```{=html}\n", build_player(video, title, duration), "\n```"))
   }
   "<div class=\"video-embed is-placeholder\"></div>"
@@ -419,13 +419,14 @@ build_breadcrumb <- function(crumbs) {
          paste(items, collapse = "\n"), "\n</ol>\n</nav>")
 }
 
-# Revealed by assets/progress-init.html once the unit is marked complete.
-# Ships hidden. The link is the next unit when there is one; on a module's
+# The "Up next" part of a completed unit, inside the "Mark unit complete"
+# box (shown by assets/progress-init.html once the unit is marked complete).
+# The link is the next unit when there is one; on a module's
 # last unit it points at the module overview, and the script swaps in the
 # certificate link instead when the whole series is done (data-cert-href).
 build_after_complete <- function(label, title, href, last) {
   sprintf(paste0(
-    "<div class=\"after-complete is-hidden\" data-pen-after-complete%s>\n",
+    "<div class=\"after-complete\" data-pen-after-complete%s>\n",
     "<p class=\"after-complete-label\" data-pen-after-label>%s</p>\n",
     "<a class=\"btn btn-primary\" href=\"%s\" data-pen-after-link ",
     "data-cert-href=\"../certificate.html\">%s</a>\n",
@@ -522,16 +523,20 @@ for (i in seq_len(n)) {
 
     # Units whose videos carry their own on-page transcripts (below each
     # player) drop the "Read transcript" button: it would only point at a
-    # placeholder, and the third grid cell goes with it (.is-two-up).
+    # placeholder.
     inline_transcripts <- any(vapply(u$videos %||% list(), function(v) is_set(v$transcript), logical(1)))
 
     # Modules flagged `no_slides` (each unit is a live demo of the ADA-PARC
-    # site) get no slides button or landing-page section. Without it the
-    # control row is two columns (button + transcript) or just the button.
+    # site) get no slides button or landing-page section. The resource row
+    # sits under the "Mark unit complete" box and is left out entirely when
+    # it would be empty.
     no_slides <- isTRUE(mod$no_slides)
-    pc_class <- if (no_slides) {
-      if (inline_transcripts) " is-solo" else " is-two-up-end"
-    } else if (inline_transcripts) " is-two-up" else ""
+    resource_btns <- c(
+      if (no_slides) NULL else build_resource_button("slides", u$slides, oneline(u$title)),
+      if (inline_transcripts) NULL else build_resource_button("transcript", u$transcript, oneline(u$title))
+    )
+    progress_control <- if (length(resource_btns) == 0) "" else
+      paste0("<div class=\"progress-control\">\n", paste(resource_btns, collapse = "\n"), "\n</div>")
 
     upage <- fill(unit_tpl, list(
       ID           = paste0(mid, "-", uid),
@@ -541,9 +546,7 @@ for (i in seq_len(n)) {
       UNIT_TOTAL   = as.integer(m),
       UNIT_TITLE   = oneline(u$title %||% sprintf("Unit %s", uid)),
       MEDIA        = build_media(u$video, u$title, u$duration, u$videos),
-      PC_CLASS     = pc_class,
-      SLIDES_BTN   = if (no_slides) "" else build_resource_button("slides", u$slides, oneline(u$title)),
-      TRANSCRIPT_BTN = if (inline_transcripts) "" else build_resource_button("transcript", u$transcript, oneline(u$title)),
+      PROGRESS_CONTROL = progress_control,
       BREADCRUMB   = build_breadcrumb(ucrumbs),
       AFTER_COMPLETE = after,
       PAGER        = build_pager("Unit navigation", uprev, unext)

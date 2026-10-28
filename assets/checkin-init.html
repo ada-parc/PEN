@@ -1,0 +1,308 @@
+<!--
+  PEN navigator check-ins (the "check-in button" recording option).
+
+  Navigator mode only (assets/navigator-init.html). A navigator checks in
+  once per module: a short form, outside the site, with their code and the
+  module filled in. There is no separate certificate check-in: once every
+  module's check-in is in, the team counts the certificate as earned, and the
+  last card says so. Submitting it sends them
+  back here with ?checkin=<item>&code=<code>, and the site marks that check-in
+  recorded.
+
+  - When a navigator marks the last unit of a module complete, a full-screen
+    card asks them to check in ("I'll do it later" closes it).
+  - Until it is done, the check-in waits on the module page and the
+    certificate page, and shows in the navigator bar on every page. On the
+    home page, "Your progress" becomes a navigator tracker: each module as
+    "Units done" then "Check in".
+
+  It listens for the `pen:record` events from assets/progress-init.html (an
+  event with `live: true` comes from a unit just marked complete; catch-up
+  events on page load never open the card). Saved per code in
+  localStorage `pen:checkin:v1` as { code: { "module-02": iso, ... } }.
+
+  FORM is the check-in form. For now it is demo/checkin.html, a stand-in for
+  the real form (REDCap or similar, decision 3.2); swap the URL when that
+  exists, and have its "on submit" redirect go to the `return` address with
+  ?checkin=<item>&code=<code> added. Styles: `.pen-checkin*` in pen.scss.
+  Loaded via `include-after-body` in _quarto.yml, after progress-init.html.
+-->
+<script>
+(function () {
+  "use strict";
+
+  var KEY = "pen:checkin:v1";
+  var RECORD_KEY = "pen:record:v1";
+  var manifest = window.penManifest || {};
+  var modules = Object.keys(manifest);
+
+  // Site root, from the logo link ("./index.html" or "../index.html").
+  var brand = document.querySelector(".navbar-brand");
+  var ROOT = brand ? (brand.getAttribute("href") || "").replace(/index\.html$/, "") : "";
+  var FORM = ROOT + "demo/checkin.html";
+
+  function nav() {
+    var n = window.penNav;
+    return n && n.active && n.code ? n.code : null;
+  }
+  function readJSON(key) {
+    try { return JSON.parse(window.localStorage.getItem(key) || "{}") || {}; } catch (e) { return {}; }
+  }
+  function checkins(code) { return readJSON(KEY)[code] || {}; }
+  function markRecorded(code, item) {
+    var all = readJSON(KEY);
+    all[code] = all[code] || {};
+    all[code][item] = all[code][item] || new Date().toISOString();
+    try { window.localStorage.setItem(KEY, JSON.stringify(all)); } catch (e) {}
+  }
+  // An item is due once its pen:record event has fired for this code.
+  function fired(code) { return readJSON(RECORD_KEY)[code] || {}; }
+  function itemKeys() { return modules.map(function (m) { return "module-" + m; }); }
+  function isItem(item) { return itemKeys().indexOf(item) !== -1; }
+  function status(code, item) {
+    if (checkins(code)[item]) return "recorded";
+    return fired(code)[item] ? "due" : "later";
+  }
+  function label(item) { return "Module " + parseInt(item.slice(7), 10); }
+  // Module check-ins still to do, other than `except`.
+  function otherDue(code, except) {
+    return itemKeys().filter(function (k) { return k !== except && status(code, k) === "due"; });
+  }
+  function seriesDone() { return Boolean(window.penProgress && window.penProgress.seriesDone()); }
+  function allRecorded(code) {
+    return itemKeys().every(function (k) { return status(code, k) === "recorded"; });
+  }
+  function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;"); }
+
+  function formHref(code, item) {
+    var back = window.location.href.split("#")[0].split("?")[0];
+    return FORM + "?code=" + encodeURIComponent(code) + "&item=" + encodeURIComponent(item) +
+      "&return=" + encodeURIComponent(back);
+  }
+  var ARROW = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+  function checkinBtn(code, item, cls) {
+    var name = "Check in " + label(item);
+    return '<a class="pen-checkin-btn' + (cls ? " " + cls : "") + '" href="' + esc(formHref(code, item)) + '">' +
+      name + ARROW + '<span class="visually-hidden"> (opens the check-in form)</span></a>';
+  }
+  function kicker(code, text) {
+    return '<p class="pen-checkin-kicker">' + text + ' <span aria-hidden="true">&middot;</span> <span class="pen-checkin-code">' + esc(code) + "</span></p>";
+  }
+
+  // --- The full-screen card ---------------------------------------------
+  var dialog = null;
+  function openCard(html) {
+    if (!dialog) {
+      dialog = document.createElement("dialog");
+      dialog.className = "pen-checkin-card";
+      dialog.setAttribute("aria-labelledby", "pen-checkin-title");
+      document.body.appendChild(dialog);
+      dialog.addEventListener("click", function (e) {
+        if (e.target.closest("[data-pen-checkin-close]")) dialog.close();
+      });
+      dialog.addEventListener("close", paintAll);
+    }
+    dialog.innerHTML = '<div class="pen-checkin-inner">' + html + "</div>";
+    if (typeof dialog.showModal === "function") {
+      if (!dialog.open) dialog.showModal();
+      var first = dialog.querySelector(".pen-checkin-btn, button");
+      if (first) first.focus();
+    }
+  }
+
+  function moduleCount(mid) { return (manifest[mid] || []).length; }
+
+  function dueCard(code, item) {
+    // The check-in that finishes the set also stands for the certificate.
+    var others = otherDue(code, item);
+    var certNote = !seriesDone() ? "" : others.length === 0
+      ? '<p class="pen-checkin-note"><strong>This is your last check-in.</strong> It also records your certificate.</p>'
+      : '<p class="pen-checkin-note">Your certificate is recorded once all your module check-ins are in. Still to do after this one: ' +
+        others.map(label).join(", ") + ".</p>";
+    openCard(kicker(code, "Navigator check-in") +
+      '<h2 id="pen-checkin-title">You finished ' + label(item) + "</h2>" +
+      '<ol class="pen-checkin-steps">' +
+      '<li class="is-done"><span class="pen-checkin-n" aria-hidden="true">&#10003;</span>All ' + moduleCount(item.slice(7)) + " units complete</li>" +
+      '<li class="is-now"><span class="pen-checkin-n" aria-hidden="true">2</span>Check in with the PEN team</li></ol>' +
+      "<p>As a navigator, you check in once per module. It is a short form with your code and the module already filled in. Submit it, and you will come back here.</p>" +
+      certNote +
+      '<div class="pen-checkin-actions">' + checkinBtn(code, item) +
+      '<button type="button" class="pen-checkin-later" data-pen-checkin-close>I\u2019ll do it later</button></div>' +
+      '<p class="pen-checkin-small">Doing it later? It stays in the navigator bar and on the module page until it is done.</p>');
+  }
+
+  function recordedCard(code, item) {
+    var body, actions;
+    var close = '<button type="button" class="pen-checkin-later" data-pen-checkin-close>Close</button>';
+    var others = otherDue(code, item);
+    var next = modules[modules.indexOf(item.slice(7)) + 1];
+    if (seriesDone() && allRecorded(code)) {
+      body = "<p>That was your last check-in. Your certificate is recorded too. Thank you.</p>";
+      actions = '<a class="pen-checkin-btn" href="' + ROOT + 'certificate.html">Go to your certificate</a>' + close;
+    } else if (others.length) {
+      body = "<p>Still to do: " + others.map(label).join(", ") + " check-in.</p>";
+      actions = checkinBtn(code, others[0]) + close;
+    } else if (next) {
+      body = "<p>Your next check-in comes when you finish Module " + parseInt(next, 10) + ".</p>";
+      actions = '<a class="pen-checkin-btn" href="' + ROOT + "modules/module-" + next + '.html">Go to Module ' + parseInt(next, 10) + "</a>" + close;
+    } else {
+      body = "<p>Thank you.</p>";
+      actions = close;
+    }
+    openCard(kicker(code, "Navigator check-in") +
+      '<h2 id="pen-checkin-title">' + label(item) + " recorded</h2>" +
+      '<p class="pen-checkin-ok"><span aria-hidden="true">&#10003;</span> The PEN team has your ' + label(item) + " check-in.</p>" +
+      body + '<div class="pen-checkin-actions">' + actions + "</div>");
+  }
+
+  // --- Reminders on the page --------------------------------------------
+  function clearReminders() {
+    Array.prototype.forEach.call(document.querySelectorAll("[data-pen-checkin-ui]"), function (el) { el.remove(); });
+  }
+  function reminder(code, item) {
+    return '<section class="pen-checkin-remind" data-pen-checkin-ui aria-labelledby="pen-checkin-remind-' + item + '">' +
+      kicker(code, "Navigator check-in") +
+      '<h2 id="pen-checkin-remind-' + item + '">' + label(item) + " check-in still to do</h2>" +
+      "<p>A short form for the PEN team, with your code already filled in.</p>" + checkinBtn(code, item) + "</section>";
+  }
+  // --- Home page: the navigator version of "Your progress" -------------
+  // Each module row shows two steps, "Units done" then "Check in", the head
+  // carries the code and a "checked in" count, and a footer says the last
+  // check-in unlocks the certificate. Turning navigator mode off restores
+  // the plain tracker.
+  var TICK = '<span aria-hidden="true">&#10003;</span> ';
+  var SEAL = '<svg class="pen-track-seal" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="9" r="6"/><path d="M8.5 13.8 7 22l5-2.6 5 2.6-1.5-8.2"/></svg>';
+  function modulesDone() {
+    return modules.filter(function (m) { return window.penProgress && window.penProgress.moduleDone(m); }).length;
+  }
+  function checkedIn(code) {
+    return itemKeys().filter(function (k) { return status(code, k) === "recorded"; }).length;
+  }
+  function paintTracker(code) {
+    var prog = document.querySelector(".hero-progress");
+    if (!prog) return;
+    var countEl = prog.querySelector("[data-pen-count-series]");
+    if (countEl && !countEl.hasAttribute("data-pen-plain")) countEl.setAttribute("data-pen-plain", countEl.textContent);
+    var pills = prog.querySelectorAll("[data-pen-module]");
+    prog.classList.toggle("is-navigator", Boolean(code));
+    Array.prototype.forEach.call(pills, function (pill) { pill.hidden = Boolean(code); });
+    if (!code) {
+      if (countEl) countEl.textContent = countEl.getAttribute("data-pen-plain");
+      return;
+    }
+    if (countEl) countEl.textContent = modulesDone() + " of " + modules.length + " complete, " + checkedIn(code) + " checked in";
+    var head = prog.querySelector(".hero-progress-head h2");
+    if (head) head.insertAdjacentHTML("afterend", '<p class="pen-track-code" data-pen-checkin-ui>Navigator <span aria-hidden="true">&middot;</span> <span class="pen-checkin-code">' + esc(code) + "</span></p>");
+    Array.prototype.forEach.call(pills, function (pill) {
+      var mid = pill.getAttribute("data-pen-module");
+      var done = pill.getAttribute("data-state") === "done";
+      var st = status(code, "module-" + mid);
+      var units = done
+        ? '<span class="pen-step is-units is-done">' + TICK + "Units done</span>"
+        : '<span class="pen-step is-units">' + esc(pill.textContent) + "</span>";
+      var check = st === "recorded" ? '<span class="pen-step is-check is-done">' + TICK + "Checked in</span>"
+        : st === "due" ? '<span class="pen-step is-check is-due">Check in now</span>'
+        : '<span class="pen-step is-check">Check in</span>';
+      pill.insertAdjacentHTML("afterend", '<span class="pen-steps" data-pen-checkin-ui>' + units +
+        '<span class="pen-step-line" aria-hidden="true"></span><span class="visually-hidden">, then </span>' + check + "</span>");
+    });
+    var list = prog.querySelector(".hero-modules");
+    var all = checkedIn(code) === modules.length;
+    if (list) list.insertAdjacentHTML("beforeend", '<p class="pen-track-cert' + (all ? " is-done" : "") + '" data-pen-checkin-ui>' + SEAL +
+      (all ? "<span><strong>Certificate unlocked.</strong> Every module is checked in.</span>"
+           : "<span><strong>Certificate</strong> is unlocked with your last module check-in.</span>") + "</p>");
+  }
+
+  // --- The navigator bar under the menu: check-ins at a glance ----------
+  function paintBar(code) {
+    var statusEl = document.querySelector(".pen-nav-status");
+    var off = statusEl && statusEl.querySelector(".pen-nav-off");
+    if (!off) return;
+    var due = itemKeys().filter(function (k) { return status(code, k) === "due"; });
+    var n = checkedIn(code);
+    var dot = '<span class="pen-nav-dot" aria-hidden="true" data-pen-checkin-ui>&middot;</span>';
+    var html = n === modules.length
+      ? '<span class="pen-nav-ck" data-pen-checkin-ui>' + TICK + "All check-ins done</span>" + dot
+      : '<span class="pen-nav-ck' + (due.length ? " has-due" : "") + '" data-pen-checkin-ui>Checked in ' + n + " of " + modules.length + "</span>" + dot;
+    if (due.length) {
+      html += '<a class="pen-nav-ck-btn" data-pen-checkin-ui href="' + esc(formHref(code, due[0])) + '">Check in ' + label(due[0]) +
+        '<span class="visually-hidden"> (opens the check-in form)</span></a>' + dot;
+    }
+    off.insertAdjacentHTML("beforebegin", html);
+    try { window.dispatchEvent(new Event("resize")); } catch (e) {}
+  }
+
+  function paintAll() {
+    clearReminders();
+    var code = nav();
+    paintTracker(code);
+    if (!code) return;
+    paintBar(code);
+    // Module page.
+    var count = document.querySelector("[data-pen-count-module]");
+    var progress = document.querySelector(".module-progress");
+    if (count && progress) {
+      var item = "module-" + count.getAttribute("data-pen-count-module");
+      if (status(code, item) === "due") progress.insertAdjacentHTML("afterend", reminder(code, item));
+    }
+    // Certificate page.
+    var cert = document.querySelector("[data-pen-certificate-body]");
+    if (cert && !cert.classList.contains("is-hidden")) {
+      var missing = otherDue(code, null);
+      if (missing.length) {
+        cert.insertAdjacentHTML("afterbegin",
+          '<section class="pen-checkin-remind" data-pen-checkin-ui aria-labelledby="pen-checkin-cert-title">' +
+          kicker(code, "Navigator check-in") +
+          '<h2 id="pen-checkin-cert-title">' + (missing.length === 1 ? "One check-in" : missing.length + " check-ins") + " still to do</h2>" +
+          "<p>Your certificate is recorded for the PEN team once every module check-in is in.</p>" +
+          '<div class="pen-checkin-row">' + missing.map(function (k) { return checkinBtn(code, k); }).join("") + "</div></section>");
+      }
+    }
+  }
+
+  // --- Coming back from the form ----------------------------------------
+  var returned = null;
+  try {
+    var params = new URLSearchParams(window.location.search);
+    if (params.has("checkin")) {
+      var item = params.get("checkin");
+      var code = window.penNav && window.penNav.normalize ? window.penNav.normalize(params.get("code")) : null;
+      if (code && code === nav() && isItem(item)) {
+        markRecorded(code, item);
+        returned = item;
+      }
+      params.delete("checkin");
+      params.delete("code");
+      var qs = params.toString();
+      window.history.replaceState(window.history.state, "", window.location.pathname + (qs ? "?" + qs : "") + window.location.hash);
+    }
+  } catch (e) {}
+
+  // --- A module just finished -------------------------------------------
+  var pending = [];
+  var timer = null;
+  window.addEventListener("pen:record", function (e) {
+    var d = e.detail || {};
+    if (!d.live || !nav() || d.code !== nav() || d.type !== "module") return;
+    pending.push("module-" + d.module);
+    window.clearTimeout(timer);
+    timer = window.setTimeout(function () {
+      var item = pending[0];
+      pending = [];
+      if (item && status(nav(), item) === "due") dueCard(nav(), item);
+      paintAll();
+    }, 0);
+  });
+  window.addEventListener("pen:navchange", function () {
+    if (dialog && dialog.open && !nav()) dialog.close();
+    paintAll();
+  });
+
+  function init() {
+    paintAll();
+    if (returned) recordedCard(nav(), returned);
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();
+</script>

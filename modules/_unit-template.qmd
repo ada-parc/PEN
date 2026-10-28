@@ -11,18 +11,24 @@ toc: false
 {{MEDIA}}
 
 ```{=html}
-<div class="progress-control{{PC_CLASS}}">
-{{SLIDES_BTN}}
-<button type="button"
-        data-pen-progress
-        data-unit="{{ID}}"
-        data-unit-title="{{UNIT_TITLE}}"
-        aria-pressed="false">Mark unit complete</button>
-{{TRANSCRIPT_BTN}}
+<section class="unit-complete"
+   data-pen-progress
+   data-unit="{{ID}}"
+   data-unit-title="{{UNIT_TITLE}}"
+   data-state="todo"
+   aria-labelledby="unit-complete-title">
+<div class="unit-complete-todo" data-pen-todo>
+<h2 class="unit-complete-title" id="unit-complete-title">Finished this unit?</h2>
+<p data-pen-todo-text>Once you have watched the video or read the transcript, mark the unit complete.</p>
+<button type="button" class="unit-complete-btn" data-pen-complete>Mark unit complete</button>
 </div>
-```
-
+<div class="unit-complete-done is-hidden" data-pen-done>
+<p class="unit-complete-label" tabindex="-1" data-pen-done-label><span aria-hidden="true">&#10003;</span> Unit complete</p>
 {{AFTER_COMPLETE}}
+</div>
+</section>
+{{PROGRESS_CONTROL}}
+```
 
 ------------------------------------------------------------------------
 
