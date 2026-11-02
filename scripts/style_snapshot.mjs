@@ -43,7 +43,8 @@ function pages(root) {
   const walk = (d, rel) => {
     for (const f of readdirSync(d)) {
       const p = join(d, f);
-      if (f === 'site_libs' || f === 'videos' || f === 'assets') continue;
+      // demo/ holds the stand-in check-in form, not a PEN page.
+      if (f === 'site_libs' || f === 'videos' || f === 'assets' || f === 'demo') continue;
       if (statSync(p).isDirectory()) walk(p, rel + f + '/');
       else if (f.endsWith('.html')) out.push(rel + f);
     }
