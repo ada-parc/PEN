@@ -12,8 +12,15 @@
         bar is current, and the dropdown never is. On Module 1 to 3 pages and
         their unit pages, mark the Modules toggle active and the matching
         menu row current: aria-current="page" on the module's own page,
-        "true" (current within the set) on one of its unit pages. -->
+        "true" (current within the set) on one of its unit pages.
+     4. Name the two navigation landmarks so a screen reader's landmark list
+        tells them apart: the main menu, and the "On this page" contents
+        (named by its own heading). -->
 <script>
+  var mainNav = document.querySelector('nav.navbar');
+  if (mainNav && !mainNav.hasAttribute('aria-label')) mainNav.setAttribute('aria-label', 'Main');
+  var toc = document.getElementById('TOC');
+  if (toc && document.getElementById('toc-title')) toc.setAttribute('aria-labelledby', 'toc-title');
   document.querySelectorAll('.navbar-brand-logo').forEach(function (a) {
     a.setAttribute('tabindex', '-1');
     a.setAttribute('aria-hidden', 'true');

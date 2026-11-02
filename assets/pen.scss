@@ -1688,8 +1688,10 @@ body {
     align-items: center;
     gap: 0.75rem;
     min-height: 2.75rem;
+    max-width: 100%;
     margin-top: 0.9rem;
     padding: 0.55rem 1rem 0.55rem 0.65rem;
+    > span { min-width: 0; }
     border: 3px solid var(--pen-on-accent);
     border-radius: 10px;
     background: var(--cert-bg);
@@ -1761,6 +1763,17 @@ body {
     .step-tag { justify-self: start; margin-bottom: 0.5rem; }
     .step-card { margin-left: 1.5rem; }
     .step-card::before { display: none; }
+  }
+  // 320px with large text: the card and its certificate button run out of
+  // room, so the card gives back its indent and the button drops the seal
+  // and may hyphenate "certificate".
+  @media (max-width: 400px) {
+    .step-card { margin-left: 0.5rem; padding-inline: 0.9rem; }
+    .cert-link { padding-inline: 0.75rem; }
+    .cert-link .cert-seal { display: none; }
+    .cert-link .cert-label { hyphens: auto; overflow-wrap: break-word; }
+    :root[data-pen-size="125"] & .cert-arrow,
+    :root[data-pen-size="150"] & .cert-arrow { display: none; }
   }
 }
 
@@ -1923,7 +1936,9 @@ body {
   li:first-child { border-top: 0; padding-top: 0; }
   li a { font-weight: 700; }
   .link-desc { display: block; margin-top: 0.15rem; }
-  summary .link-count { margin-left: 0.35rem; font-size: 0.85em; font-weight: 400; color: var(--pen-ink-soft); white-space: nowrap; }
+  // inline-block so the count can drop to its own line instead of
+  // pushing past the edge at large text sizes.
+  summary .link-count { display: inline-block; margin-left: 0.35rem; font-size: 0.85em; font-weight: 400; color: var(--pen-ink-soft); white-space: nowrap; }
 }
 // Poster frame over a unit's video until it first plays. Shows
 // the unit title and length on the navy field so the player is not a black
@@ -1999,6 +2014,7 @@ body {
   .unit-complete-todo,
   .unit-complete-done {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     justify-items: center;
     gap: 0.9rem;
   }
@@ -2012,6 +2028,7 @@ body {
   p { margin: 0; max-width: 32rem; }
 
   .unit-complete-btn {
+    max-width: 100%;
     font-family: inherit;
     font-size: 1.1rem;
     font-weight: 700;
@@ -2053,6 +2070,12 @@ body {
     gap: 0.75rem;
   }
   .after-complete-label { font-weight: 600; }
+
+  // Phones at large text sizes: give the content the width the padding took.
+  @media (max-width: 640px) {
+    padding: 1.25rem 1rem;
+    .unit-complete-btn { padding-inline: 1rem; }
+  }
 }
 
 // Slides (and, for units without an on-page transcript, a transcript
@@ -2983,6 +3006,9 @@ body {
 
     &::-webkit-details-marker { display: none; }
     &::marker { content: ""; }
+    // The title span may wrap; without this it keeps its one-line width
+    // (min-width: auto) and pushes past the edge at large text sizes.
+    > span { min-width: 0; }
 
     // White chevron (inline SVG, pen-white) centred on a navy circle. Points
     // down when closed, up when open. Decorative.
@@ -3820,8 +3846,6 @@ kbd {
   .pen-nav .pen-nav-long { display: none; }
 }
 
-// "Turn off navigator mode?" A real modal (<dialog>): the choice stops
-// recording, so it asks before acting. Keep it on is the first focus.
 // Navigator check-ins (assets/checkin-init.html). Navy is the colour of the
 // one thing a navigator does for the PEN team, so a check-in never looks
 // like the brick "Mark unit complete" on the same page.
@@ -4082,6 +4106,8 @@ dialog.pen-checkin-card {
   .pen-nav .pen-nav-status:has(.pen-nav-ck-btn) .pen-nav-dot { display: none; }
 }
 
+// "Turn off navigator mode?" A real modal (<dialog>): the choice stops
+// recording, so it asks before acting. Keep it on is the first focus.
 .pen-nav-dialog {
   width: min(28rem, calc(100vw - 2rem));
   padding: 1.5rem;

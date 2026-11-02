@@ -21,15 +21,34 @@
   events on page load never open the card). Saved per code in
   localStorage `pen:checkin:v1` as { code: { "module-02": iso, ... } }.
 
-  FORM is the check-in form. For now it is demo/checkin.html, a stand-in for
-  the real form (REDCap or similar, decision 3.2); swap the URL when that
-  exists, and have its "on submit" redirect go to the `return` address with
-  ?checkin=<item>&code=<code> added. Styles: `.pen-checkin*` in pen.scss.
+  SETTINGS, at the top of the script, holds everything that changes when the
+  real form (REDCap or similar, How PEN Works decisions consent-tool and
+  checkin-contents) replaces the stand-in demo/checkin.html: its address, the
+  names of the fields PEN fills in, where Submit sends people back to, and
+  whether the demo shows the optional note box. Whatever the form, its "on
+  submit" redirect must land on a PEN page with ?checkin=<item>&code=<code>
+  added. Styles: `.pen-checkin*` in pen.scss.
   Loaded via `include-after-body` in _quarto.yml, after progress-init.html.
 -->
 <script>
 (function () {
   "use strict";
+
+  // --- Settings: the only part to edit when the real form exists -------
+  var SETTINGS = {
+    // The check-in form: a path from the site root, or a full https:// address.
+    form: "demo/checkin.html",
+    // Address parameters PEN adds to the form link. REDCap pre-fills a field
+    // from a parameter with that field's name, so match these to the form.
+    // Set returnTo to "" if the form's redirect is fixed in the form itself.
+    fields: { code: "code", item: "item", returnTo: "return" },
+    // Where Submit sends people: "same page" (back where they left), or a
+    // path from the site root such as "index.html" for one fixed page.
+    returnTo: "same page",
+    // The optional "Anything to tell the PEN team?" box. This switch drives
+    // the demo form only; in a real form, add or leave out that field.
+    noteBox: true
+  };
 
   var KEY = "pen:checkin:v1";
   var RECORD_KEY = "pen:record:v1";
@@ -39,7 +58,8 @@
   // Site root, from the logo link ("./index.html" or "../index.html").
   var brand = document.querySelector(".navbar-brand");
   var ROOT = brand ? (brand.getAttribute("href") || "").replace(/index\.html$/, "") : "";
-  var FORM = ROOT + "demo/checkin.html";
+  var DEMO = "demo/checkin.html";
+  var FORM = /^https?:\/\//.test(SETTINGS.form) ? SETTINGS.form : ROOT + SETTINGS.form;
 
   function nav() {
     var n = window.penNav;
@@ -74,10 +94,16 @@
   }
   function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;"); }
 
+  function returnAddress() {
+    if (SETTINGS.returnTo === "same page") return window.location.href.split("#")[0].split("?")[0];
+    try { return new URL(ROOT + SETTINGS.returnTo, window.location.href).href; } catch (e) { return ""; }
+  }
   function formHref(code, item) {
-    var back = window.location.href.split("#")[0].split("?")[0];
-    return FORM + "?code=" + encodeURIComponent(code) + "&item=" + encodeURIComponent(item) +
-      "&return=" + encodeURIComponent(back);
+    var f = SETTINGS.fields;
+    var q = [f.code + "=" + encodeURIComponent(code), f.item + "=" + encodeURIComponent(item)];
+    if (f.returnTo) q.push(f.returnTo + "=" + encodeURIComponent(returnAddress()));
+    if (SETTINGS.form === DEMO && !SETTINGS.noteBox) q.push("note=off");
+    return FORM + (FORM.indexOf("?") === -1 ? "?" : "&") + q.join("&");
   }
   var ARROW = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
   function checkinBtn(code, item, cls) {

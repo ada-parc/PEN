@@ -26,6 +26,9 @@
   var PARAM = "nav";
   var CHECK_DIGIT = true;
   var CONTACT = "mailto:hammel@uic.edu?subject=PEN%20navigator%20link";
+  // Site root from the logo link ("./index.html" or "../index.html").
+  var brandLink = document.querySelector(".navbar-brand");
+  var HELP = (brandLink ? (brandLink.getAttribute("href") || "").replace(/index\.html$/, "") : "") + "help.html#navigator";
 
   var DAMM = [
     [0, 3, 1, 7, 5, 9, 8, 6, 4, 2],
@@ -185,7 +188,7 @@
       dialog.setAttribute("aria-labelledby", "pen-nav-dialog-title");
       dialog.setAttribute("aria-describedby", "pen-nav-dialog-text");
       dialog.innerHTML = '<p class="pen-nav-dialog-title" id="pen-nav-dialog-title">Turn off navigator mode?</p>' +
-        '<p id="pen-nav-dialog-text">Your progress stays. Your completions will no longer be recorded.</p>' +
+        '<p id="pen-nav-dialog-text">Your progress stays, but check-ins stop. To turn it back on later, open your personal navigator link again.</p>' +
         '<div class="pen-nav-dialog-actions">' +
         '<button type="button" class="pen-nav-dialog-keep" autofocus>Keep it on</button>' +
         '<button type="button" class="pen-nav-dialog-confirm">Turn off</button></div>';
@@ -197,7 +200,7 @@
       dialog.addEventListener("cancel", function () { window.setTimeout(keep, 0); });
     }
     if (typeof dialog.showModal === "function") dialog.showModal();
-    else if (window.confirm("Turn off navigator mode? Your progress stays. Your completions will no longer be recorded.")) turnOff();
+    else if (window.confirm("Turn off navigator mode? Your progress stays, but check-ins stop. To turn it back on later, open your personal navigator link again.")) turnOff();
   }
 
   function turnOff() {
@@ -207,7 +210,8 @@
     window.penNav.code = null;
     window.penNav.active = false;
     paintStatus();
-    showNotice("Navigator mode is off. Your progress stays.");
+    showNotice("Navigator mode is off. Your progress stays. To turn it back on, open your personal navigator link again. " +
+      '<a href="' + HELP + '">How navigator mode works</a>');
     noticeEl.focus();
     changed(previous);
   }
