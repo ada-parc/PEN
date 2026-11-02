@@ -47,15 +47,15 @@ nothing is sent to us. That means:
 - Your progress **will not follow you** to another device or browser.
 - **Clearing your browser data**, or using a private window, erases it.
 
-If you switch devices, you can mark the units you already finished as
-complete again.
+If you switch devices, use **Mark unit complete** again on the units you
+already did to get them back.
 
 </details>
 
 <details>
 <summary>How do I get my certificate?</summary>
 
-Mark every unit in Modules 1–3 complete, and your
+Finish every unit in Modules 1–3, and your
 [certificate](certificate.qmd) unlocks. Type your name, then print it or save
 it as a PDF.
 
@@ -78,6 +78,49 @@ email. See [How to use PEN](how-to-use.qmd).
 Yes. The site is built to work with both. Read the
 [accessibility statement](accessibility.qmd) for details, and tell us if
 anything gets in your way.
+
+</details>
+
+:::
+
+## Navigator mode {#navigator}
+
+This part is only for PEN navigators. If the PEN team did not send you a
+personal navigator link, you can skip it.
+
+::: {.faq-list}
+
+<details>
+<summary>What is navigator mode?</summary>
+
+Your personal link turns on navigator mode in the browser you open it in. A
+bar under the menu shows **Navigator mode** and your code. When you finish a
+module, PEN asks you to check in: a short form for the PEN team, with your
+code and the module already filled in.
+
+</details>
+
+<details>
+<summary>I turned navigator mode off. How do I turn it back on?</summary>
+
+Open your personal navigator link again, from the email the PEN team sent you.
+Navigator mode comes back on right away. Your progress and the check-ins you
+already sent are still there.
+
+Lost the email? [Email the PEN team](mailto:hammel@uic.edu?subject=PEN%20navigator%20link)
+and we will send your link again.
+
+</details>
+
+<details>
+<summary>I am using a new device or browser.</summary>
+
+Navigator mode, like your progress, is saved only in the browser you use. Open
+your personal navigator link once in the new browser to turn it on there. Use
+**Mark unit complete** again on the units you already did to get your
+progress back. The new browser does not know which modules you already
+checked in, so it may ask again. Checking in twice is fine: the PEN team
+counts each module once.
 
 </details>
 

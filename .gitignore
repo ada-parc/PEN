@@ -23,6 +23,9 @@
 *.webm
 *.avi
 
+# Navigator roster made by scripts/navigator_codes.py. Not site content.
+navigator-codes*.csv
+
 # R
 .Rproj.user/
 .Rhistory

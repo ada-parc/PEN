@@ -18,44 +18,115 @@ Your certificate unlocks once you have completed Modules 1–3.
 <div data-pen-certificate-body class="is-hidden">
 
 Congratulations, you've completed all three PEN modules. Type your name below,
-then print or save this page as a PDF to keep your certificate.
+choose a layout, then print or save this page as a PDF to keep your certificate.
 
 ```{=html}
+<!-- Certificate type: Cinzel (engraved capitals), Cormorant Garamond (name,
+     date), EB Garamond (sentences). Used on the certificate sheet only; the
+     page around it stays in Bitter. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Cormorant+Garamond:ital,wght@1,600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap">
+
 <div class="certificate-controls">
   <div class="certificate-field">
     <label for="pen-cert-name">Name for your certificate</label>
     <input type="text" id="pen-cert-name" data-pen-name-input placeholder="Type your name" autocomplete="name" />
   </div>
+  <fieldset class="certificate-layout">
+    <legend>Layout</legend>
+    <label><input type="radio" name="pen-cert-layout" value="landscape" data-pen-cert-layout checked> Landscape</label>
+    <label><input type="radio" name="pen-cert-layout" value="portrait" data-pen-cert-layout> Portrait</label>
+  </fieldset>
   <button type="button" onclick="penPrintCertificate()" class="btn btn-primary">Print or save as PDF</button>
 </div>
+
+<div class="cert-stage" data-pen-cert-stage>
+<div class="cert-paper is-landscape" data-pen-cert-paper>
+
+<!-- Shared pattern and corner art. Kept in its own always-rendered SVG:
+     a pattern inside an SVG that is display:none does not paint. -->
+<svg class="cert-defs" width="0" height="0" aria-hidden="true" focusable="false">
+  <defs>
+    <pattern id="cert-ring-h" width="11" height="22" patternUnits="userSpaceOnUse"><circle class="cert-hair" cx="5.5" cy="11" r="9.5"/></pattern>
+    <pattern id="cert-ring-v" width="22" height="11" patternUnits="userSpaceOnUse"><circle class="cert-hair" cx="11" cy="5.5" r="9.5"/></pattern>
+    <g id="cert-corner">
+      <rect class="cert-corner-out" x="-13" y="-13" width="26" height="26" transform="rotate(45)"/>
+      <rect class="cert-corner-in" x="-7" y="-7" width="14" height="14" transform="rotate(45)"/>
+    </g>
+  </defs>
+</svg>
+
+<svg class="cert-frame cert-frame-landscape" viewBox="0 0 1056 816" aria-hidden="true" focusable="false">
+  <defs>
+    <clipPath id="cert-band-l"><path clip-rule="evenodd" d="M34 34H1022V782H34Z M56 56V760H1000V56Z"/></clipPath>
+  </defs>
+  <rect class="cert-rule-heavy" x="26" y="26" width="1004" height="764"/>
+  <g clip-path="url(#cert-band-l)">
+    <rect x="34" y="34" width="988" height="22" fill="url(#cert-ring-h)"/>
+    <rect x="34" y="760" width="988" height="22" fill="url(#cert-ring-h)"/>
+    <rect x="34" y="34" width="22" height="748" fill="url(#cert-ring-v)"/>
+    <rect x="1000" y="34" width="22" height="748" fill="url(#cert-ring-v)"/>
+  </g>
+  <rect class="cert-rule-thin" x="34" y="34" width="988" height="748"/>
+  <rect class="cert-rule-thin" x="56" y="56" width="944" height="704"/>
+  <rect class="cert-rule-accent" x="64" y="64" width="928" height="688"/>
+  <use href="#cert-corner" x="45" y="45"/><use href="#cert-corner" x="1011" y="45"/>
+  <use href="#cert-corner" x="45" y="771"/><use href="#cert-corner" x="1011" y="771"/>
+</svg>
+
+<svg class="cert-frame cert-frame-portrait" viewBox="0 0 816 1056" aria-hidden="true" focusable="false">
+  <defs>
+    <clipPath id="cert-band-p"><path clip-rule="evenodd" d="M34 34H782V1022H34Z M56 56V1000H760V56Z"/></clipPath>
+  </defs>
+  <rect class="cert-rule-heavy" x="26" y="26" width="764" height="1004"/>
+  <g clip-path="url(#cert-band-p)">
+    <rect x="34" y="34" width="748" height="22" fill="url(#cert-ring-h)"/>
+    <rect x="34" y="1000" width="748" height="22" fill="url(#cert-ring-h)"/>
+    <rect x="34" y="34" width="22" height="988" fill="url(#cert-ring-v)"/>
+    <rect x="760" y="34" width="22" height="988" fill="url(#cert-ring-v)"/>
+  </g>
+  <rect class="cert-rule-thin" x="34" y="34" width="748" height="988"/>
+  <rect class="cert-rule-thin" x="56" y="56" width="704" height="944"/>
+  <rect class="cert-rule-accent" x="64" y="64" width="688" height="928"/>
+  <use href="#cert-corner" x="45" y="45"/><use href="#cert-corner" x="771" y="45"/>
+  <use href="#cert-corner" x="45" y="1011"/><use href="#cert-corner" x="771" y="1011"/>
+</svg>
+
+<div class="cert-content">
+  <p class="cert-org">Participation Equity Navigator &middot; ADA-PARC</p>
+  <h2 class="cert-title"><span class="cert-title-main">Certificate</span> <span class="cert-title-sub">of Completion</span></h2>
+  <svg class="cert-flourish" width="260" height="16" viewBox="0 0 260 16" aria-hidden="true" focusable="false">
+    <path class="cert-flourish-line" d="M0 8H104M156 8H260"/>
+    <path class="cert-flourish-mark" d="M112 8L120 2L128 8L120 14Z M132 8L140 2L148 8L140 14Z"/>
+  </svg>
+  <p class="cert-certifies">This certifies that</p>
+  <p class="cert-name" data-pen-name-output>Your name here</p>
+  <p class="cert-statement">has completed the three online modules of the PEN training, <em>Getting Started, ADA Insights</em>; <em>Exploring ADA-PARC Website &amp; Data</em>; and <em>Making Sense of Data</em>.</p>
+  <div class="cert-bottom">
+    <div class="cert-sig cert-signer">
+      <div class="cert-sig-space"></div>
+      <div class="cert-sig-line"><p class="cert-sig-name">Joy Hammel</p><p class="cert-sig-label">Principal Investigator, ADA-PARC</p></div>
+    </div>
+    <svg class="cert-seal" viewBox="0 0 190 210" aria-hidden="true" focusable="false">
+      <defs><path id="cert-seal-text" d="M95 95 m-56 0 a56 56 0 1 1 112 0 a56 56 0 1 1 -112 0"/></defs>
+      <path class="cert-ribbon" d="M66 140L46 206L66 194L78 210L92 150Z M124 140L144 206L124 194L112 210L98 150Z"/>
+      <polygon class="cert-scallop" points="179.0,95.0 170.7,101.6 177.7,109.6 168.4,114.7 173.9,123.7 163.9,127.1 167.7,137.0 157.3,138.6 159.3,149.0 148.7,148.7 149.0,159.3 138.6,157.3 137.0,167.7 127.1,163.9 123.7,173.9 114.7,168.4 109.6,177.7 101.6,170.7 95.0,179.0 88.4,170.7 80.4,177.7 75.3,168.4 66.3,173.9 62.9,163.9 53.0,167.7 51.4,157.3 41.0,159.3 41.3,148.7 30.7,149.0 32.7,138.6 22.3,137.0 26.1,127.1 16.1,123.7 21.6,114.7 12.3,109.6 19.3,101.6 11.0,95.0 19.3,88.4 12.3,80.4 21.6,75.3 16.1,66.3 26.1,62.9 22.3,53.0 32.7,51.4 30.7,41.0 41.3,41.3 41.0,30.7 51.4,32.7 53.0,22.3 62.9,26.1 66.3,16.1 75.3,21.6 80.4,12.3 88.4,19.3 95.0,11.0 101.6,19.3 109.6,12.3 114.7,21.6 123.7,16.1 127.1,26.1 137.0,22.3 138.6,32.7 149.0,30.7 148.7,41.3 159.3,41.0 157.3,51.4 167.7,53.0 163.9,62.9 173.9,66.3 168.4,75.3 177.7,80.4 170.7,88.4"/>
+      <circle class="cert-seal-ring" cx="95" cy="95" r="70"/>
+      <circle class="cert-seal-face" cx="95" cy="95" r="44"/>
+      <circle class="cert-seal-inner" cx="95" cy="95" r="40"/>
+      <text class="cert-seal-text"><textPath href="#cert-seal-text" textLength="346" lengthAdjust="spacing">PEN &#183; ONLINE TRAINING &#183; COMPLETE &#183;</textPath></text>
+      <image href="assets/brand/pen-badge.svg" x="70" y="70" width="50" height="50"/>
+    </svg>
+    <div class="cert-sig cert-when">
+      <p class="cert-date-val" data-pen-date-output>…</p>
+      <div class="cert-sig-line"><p class="cert-sig-label">Date completed</p></div>
+    </div>
+  </div>
+  <p class="cert-foot">Covers the online portion of PEN. The in-person training completes it.</p>
+  <p class="cert-foot cert-foot-code" data-pen-nav-only hidden>Navigator code <span class="cert-code" data-pen-nav-code></span></p>
+</div>
+
+</div>
+</div>
 ```
-
-::: {.certificate-sheet}
-::: {.certificate-inner}
-![](assets/brand/pen-badge.svg){.certificate-badge .pen-img-light alt=""}
-![](assets/brand/pen-badge-reversed.svg){.certificate-badge .pen-img-dark alt=""}
-
-<p class="certificate-eyebrow">Participation Equity Navigator</p>
-
-## Certificate of Completion
-
-<p class="certificate-body">This certifies that</p>
-
-<p class="certificate-name" data-pen-name-output>Your name here</p>
-
-<p class="certificate-body">has completed the three online modules of the PEN training,
-the companion course to the ADA-PARC project:</p>
-
-<ol class="certificate-modules">
-<li>Getting Started, ADA Insights</li>
-<li>Exploring ADA-PARC Website &amp; Data</li>
-<li>Making Sense of Data</li>
-</ol>
-
-<p class="certificate-date">Completed <span data-pen-date-output>…</span></p>
-
-<p class="certificate-note">This certificate is for the online portion of PEN. The in-person events complete the full training.</p>
-:::
-:::
 
 </div>

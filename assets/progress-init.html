@@ -26,6 +26,8 @@
 
   var KEY = "pen:progress:v1";
   var NAME_KEY = "pen:name:v1";
+  var RECORD_KEY = "pen:record:v1";
+  var LAYOUT_KEY = "pen:certlayout:v1";
   var live = document.getElementById("pen-live");
   var manifest = window.penManifest || {};
 
@@ -77,17 +79,33 @@
     try { window.localStorage.setItem(NAME_KEY, name); return true; } catch (e) { return false; }
   }
 
-  // --- Unit page: the "mark complete" control -----------------------
-  function initToggle() {
-    var btn = document.querySelector("[data-pen-progress]");
-    if (!btn) return;
-    var id = btn.getAttribute("data-unit");
-    var title = btn.getAttribute("data-unit-title") || id;
+  // --- Unit page: "Mark unit complete" ---------------------------------
+  // Every unit ends with a "Finished this unit?" box and one button. The
+  // visitor marks the unit complete themselves, once they have watched its
+  // video(s) or read the transcript; nothing completes on its own, and a
+  // completed unit cannot be un-marked. When a video ends, the page scrolls
+  // to the button. Saved as state[id] = { done, at, via: "button" }. Units
+  // completed by the earlier automatic rule ({ via: "video" | "transcript" })
+  // stay complete.
+  var repaintUnit = null;
 
-    // "Up next" panel (unit pages): shown while the unit is complete. It
-    // sits directly after the button so the next Tab reaches its link; focus
-    // is not moved, since the visitor may want to undo the toggle.
-    var after = document.querySelector("[data-pen-after-complete]");
+  function initUnit() {
+    var box = document.querySelector("[data-pen-progress]");
+    if (!box) return;
+    var id = box.getAttribute("data-unit");
+    var title = box.getAttribute("data-unit-title") || id;
+    var todo = box.querySelector("[data-pen-todo]");
+    var todoText = box.querySelector("[data-pen-todo-text]");
+    var btn = box.querySelector("[data-pen-complete]");
+    var doneBox = box.querySelector("[data-pen-done]");
+    var doneLabel = box.querySelector("[data-pen-done-label]");
+    var videos = document.querySelectorAll("video[data-pen-part]");
+    var total = videos.length;
+
+    // "Up next", inside the completed box. On a module's last unit it says
+    // when the module or the whole series is finished, and points at the
+    // certificate once it is unlocked.
+    var after = box.querySelector("[data-pen-after-complete]");
     var afterLabel = after && after.querySelector("[data-pen-after-label]");
     var afterLink = after && after.querySelector("[data-pen-after-link]");
     var afterDefault = after && {
@@ -96,51 +114,69 @@
       href: afterLink.getAttribute("href")
     };
 
-    function paintAfter(done, state) {
+    function paintAfter(state) {
       if (!after) return;
-      after.classList.toggle("is-hidden", !done);
       afterLabel.textContent = afterDefault.label;
       afterLink.textContent = afterDefault.text;
       afterLink.setAttribute("href", afterDefault.href);
-      if (!done || !after.hasAttribute("data-last-unit")) return;
-      // Last unit of a module: say when the module or the whole series is
-      // finished, and point at the certificate once it is unlocked.
+      if (!after.hasAttribute("data-last-unit")) return;
       var mid = id.split("-")[0];
       if (seriesDone(state)) {
         afterLabel.textContent = "You have completed the training.";
         afterLink.textContent = "Get your certificate";
         afterLink.setAttribute("href", afterLink.getAttribute("data-cert-href"));
       } else if (moduleDone(state, mid)) {
-        afterLabel.textContent = "Every unit in this module is marked complete.";
+        afterLabel.textContent = "Every unit in this module is complete.";
       }
     }
+
+    todoText.textContent = total > 1
+      ? "Once you have watched all " + total + " videos or read their transcripts, mark the unit complete."
+      : total === 1
+        ? "Once you have watched the video or read the transcript, mark the unit complete."
+        : "Once you have worked through this unit, mark it complete.";
 
     function paint() {
       var state = read();
       var done = isDone(state, id);
-      paintAfter(done, state);
-      btn.setAttribute("aria-pressed", String(done));
-      btn.textContent = done
-        ? "Completed. Mark as not complete"
-        : "Mark unit complete";
+      box.setAttribute("data-state", done ? "done" : "todo");
+      todo.classList.toggle("is-hidden", done);
+      doneBox.classList.toggle("is-hidden", !done);
+      if (done) paintAfter(state);
     }
 
-    btn.addEventListener("click", function () {
+    function complete() {
       var state = read();
-      var done = !isDone(state, id);
-      if (done) { state[id] = { done: true, at: new Date().toISOString() }; }
-      else { delete state[id]; }
+      if (isDone(state, id)) return;
+      state[id] = { done: true, at: new Date().toISOString(), via: "button" };
       var saved = write(state);
       paint();
+      // The button just pressed is gone; put focus on what replaced it.
+      doneLabel.focus();
       if (!saved) {
         announce("Your browser is not saving progress, so this will not be remembered.");
-      } else {
-        announce(done
-          ? title + " marked complete." + (afterLink ? " " + afterLink.textContent + " is the next link." : "")
-          : title + " marked as not complete.");
+        return;
       }
+      announce(title + " complete." + (afterLink ? " " + afterLink.textContent + " is the next link." : ""));
+      syncRecords(true);
+    }
+
+    // A video reached its end: bring the button into view (and focus it),
+    // without completing anything.
+    function showButton() {
+      if (isDone(read(), id)) return;
+      var still = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (document.fullscreenElement && document.exitFullscreen) { try { document.exitFullscreen(); } catch (e) {} }
+      box.scrollIntoView({ behavior: still ? "auto" : "smooth", block: "center" });
+      btn.focus({ preventScroll: true });
+    }
+
+    btn.addEventListener("click", complete);
+    Array.prototype.forEach.call(videos, function (video) {
+      video.addEventListener("ended", showButton);
     });
 
+    repaintUnit = paint;
     paint();
   }
 
@@ -160,7 +196,7 @@
     if (modCount) {
       var mid = modCount.getAttribute("data-pen-count-module");
       var prog = moduleProgress(state, mid);
-      modCount.textContent = prog.done + " of " + prog.total + " units marked complete";
+      modCount.textContent = prog.done + " of " + prog.total + " units complete";
       // The bar is a real progressbar for assistive tech (name, value and a
       // plain-words valuetext); its ticks are decorative, one divider per
       // unit boundary. Until this runs it stays aria-hidden.
@@ -206,7 +242,7 @@
       seriesCount.textContent = modulesDone + " of " + moduleIds.length + " modules complete";
     }
 
-    // Home hero progress bar: share of all tracked units marked complete.
+    // Home hero progress bar: share of all tracked units complete.
     // Decorative echo of the count text above (aria-hidden in the markup).
     var bar = document.querySelector("[data-pen-bar]");
     if (bar) {
@@ -285,9 +321,85 @@
       Array.prototype.forEach.call(nameOut, function (el) { el.textContent = name; });
     }
 
-    var today = new Date();
-    var dateStr = today.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
+    // The date the training was finished: the last unit completed in any
+    // tracked module, not the day the page is opened.
+    var last = "";
+    Object.keys(manifest).forEach(function (mid) {
+      (manifest[mid] || []).forEach(function (unitId) {
+        var at = state[mid + "-" + unitId] && state[mid + "-" + unitId].at;
+        if (typeof at === "string" && at > last) last = at;
+      });
+    });
+    var finished = last ? new Date(last) : new Date();
+    if (isNaN(finished.getTime())) finished = new Date();
+    var dateStr = finished.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
     Array.prototype.forEach.call(dateOut, function (el) { el.textContent = dateStr; });
+
+    // Navigator code: shown only in navigator mode, gone if it is turned off.
+    function paintNav() {
+      var nav = window.penNav;
+      var on = Boolean(nav && nav.active && nav.code);
+      Array.prototype.forEach.call(document.querySelectorAll("[data-pen-nav-only]"), function (el) { el.hidden = !on; });
+      Array.prototype.forEach.call(document.querySelectorAll("[data-pen-nav-code]"), function (el) { el.textContent = on ? nav.code : ""; });
+    }
+    paintNav();
+    window.addEventListener("pen:navchange", paintNav);
+
+    // Layout (landscape or portrait), remembered on this device. The sheet is
+    // laid out at real paper size and scaled to the column on screen; print
+    // gets a matching @page size with no margin.
+    var stage = document.querySelector("[data-pen-cert-stage]");
+    var paper = document.querySelector("[data-pen-cert-paper]");
+    var radios = document.querySelectorAll("[data-pen-cert-layout]");
+    var pageRule = document.createElement("style");
+    document.head.appendChild(pageRule);
+
+    // A long name wraps; if the sheet then overflows, step the name size
+    // down (to no smaller than 30px) until everything fits inside the border.
+    function fitName() {
+      var content = paper.querySelector(".cert-content");
+      var nameEl = paper.querySelector(".cert-name");
+      if (!content || !nameEl) return;
+      nameEl.style.fontSize = "";
+      var size = parseFloat(window.getComputedStyle(nameEl).fontSize);
+      while (content.scrollHeight > content.clientHeight + 1 && size > 30) {
+        size -= 2;
+        nameEl.style.fontSize = size + "px";
+      }
+    }
+
+    function fit() {
+      if (!stage || !paper || !stage.clientWidth) return;
+      fitName();
+      var scale = Math.min(1, stage.clientWidth / paper.offsetWidth);
+      paper.style.transform = "scale(" + scale + ")";
+      stage.style.height = (paper.offsetHeight * scale) + "px";
+    }
+
+    function setLayout(layout) {
+      if (layout !== "portrait") layout = "landscape";
+      if (paper) {
+        paper.classList.toggle("is-portrait", layout === "portrait");
+        paper.classList.toggle("is-landscape", layout === "landscape");
+      }
+      Array.prototype.forEach.call(radios, function (r) { r.checked = r.value === layout; });
+      pageRule.textContent = "@page { size: letter " + layout + "; margin: 0; }";
+      fit();
+    }
+
+    var savedLayout = "landscape";
+    try { savedLayout = window.localStorage.getItem(LAYOUT_KEY) || "landscape"; } catch (e) {}
+    setLayout(savedLayout);
+    Array.prototype.forEach.call(radios, function (r) {
+      r.addEventListener("change", function () {
+        if (!r.checked) return;
+        setLayout(r.value);
+        try { window.localStorage.setItem(LAYOUT_KEY, r.value); } catch (e) {}
+      });
+    });
+    window.addEventListener("resize", fit);
+    if (nameInput) nameInput.addEventListener("input", fit);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
 
     if (nameInput) {
       nameInput.value = readName();
@@ -323,13 +435,7 @@
         window.localStorage.removeItem(NAME_KEY);
       } catch (e) {}
       initStatuses();
-      var toggle = document.querySelector("[data-pen-progress]");
-      if (toggle) {
-        toggle.setAttribute("aria-pressed", "false");
-        toggle.textContent = "Mark unit complete";
-      }
-      var afterPanel = document.querySelector("[data-pen-after-complete]");
-      if (afterPanel) afterPanel.classList.add("is-hidden");
+      if (repaintUnit) repaintUnit();
       announce("Saved progress cleared.");
     });
   }
@@ -346,11 +452,77 @@
     }
   };
 
+  // --- Recording hook (navigator mode only) ---------------------------
+  // When a navigator finishes a module, and when the certificate unlocks
+  // (the last module finishes, not when it is printed), this calls
+  // window.penRecord(event) and fires a `pen:record` event on window:
+  //   { type: "module", module: "02", code: "N-014-9", at: <ISO time> }
+  //   { type: "certificate", code: "N-014-9", at: <ISO time> }
+  // `at` is when the module (or the last module) was finished. Each event
+  // fires once per code: pen:record:v1 keeps { code: { "module-02": iso,
+  // certificate: iso } } with the time it fired. Resetting progress keeps
+  // that list, so finishing a module again never records it twice. It also
+  // catches up on every page load, so modules finished before the navigator
+  // link was opened, or while navigator mode was off, are sent too.
+  // `live` is true on events from a unit just marked complete, false on
+  // catch-up. penRecord does nothing yet; assets/checkin-init.html listens
+  // for `pen:record` and shows the navigator check-in. Public visitors never
+  // reach any of this.
+  window.penRecord = window.penRecord || function () {};
+
+  function readRecords() {
+    try { return JSON.parse(window.localStorage.getItem(RECORD_KEY) || "{}") || {}; }
+    catch (e) { return {}; }
+  }
+
+  // The latest `at` among a module's units; now if none is saved.
+  function finishedAt(state, mid) {
+    var latest = "";
+    (manifest[mid] || []).forEach(function (unitId) {
+      var at = state[mid + "-" + unitId] && state[mid + "-" + unitId].at;
+      if (typeof at === "string" && at > latest) latest = at;
+    });
+    return latest || new Date().toISOString();
+  }
+
+  // `live` is true when the visitor just completed a unit (the check-in
+  // card may open); events caught up on page load are not live.
+  function syncRecords(live) {
+    var nav = window.penNav;
+    if (!nav || !nav.active || !nav.code) return;
+    var state = read();
+    var records = readRecords();
+    var mine = records[nav.code] || {};
+    var due = [];
+    var last = "";
+    Object.keys(manifest).forEach(function (mid) {
+      if (!moduleDone(state, mid)) return;
+      var at = finishedAt(state, mid);
+      if (at > last) last = at;
+      if (!mine["module-" + mid]) due.push({ key: "module-" + mid, event: { type: "module", module: mid, code: nav.code, at: at } });
+    });
+    if (seriesDone(state) && !mine.certificate) {
+      due.push({ key: "certificate", event: { type: "certificate", code: nav.code, at: last } });
+    }
+    if (!due.length) return;
+    // Mark them first, so a failing handler can never send one twice.
+    var now = new Date().toISOString();
+    due.forEach(function (d) { mine[d.key] = now; });
+    records[nav.code] = mine;
+    try { window.localStorage.setItem(RECORD_KEY, JSON.stringify(records)); } catch (e) {}
+    due.forEach(function (d) { d.event.live = Boolean(live); });
+    due.forEach(function (d) {
+      try { window.penRecord(d.event); } catch (e) {}
+      try { window.dispatchEvent(new CustomEvent("pen:record", { detail: d.event })); } catch (e) {}
+    });
+  }
+
   function initAll() {
-    initToggle();
+    initUnit();
     initStatuses();
     initCertificate();
     initReset();
+    syncRecords(false);
   }
 
   if (document.readyState === "loading") {

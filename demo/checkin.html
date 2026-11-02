@@ -1,0 +1,252 @@
+<!doctype html>
+<!--
+  DEMO ONLY. A stand-in for the navigator check-in form (REDCap or similar,
+  How PEN Works decisions consent-tool and checkin-contents), so the check-in
+  flow in assets/checkin-init.html can be shown end to end. Nothing is sent
+  anywhere: Submit just returns to PEN with ?checkin=<item>&code=<code>,
+  which is what the real form's "on submit" redirect should do.
+
+  It reads the parameters checkin-init.html adds with its default SETTINGS
+  (code, item, return, and note=off to hide the note box). When the real form
+  exists, point SETTINGS.form at it, then delete this folder and its entry
+  under `resources` in _quarto.yml.
+
+  Colors and type come from ../assets/tokens.css, so the page follows the
+  canon palette and the reader's saved Display theme. No raw hex here.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Navigator check-in (demo form)</title>
+<script>
+  // The reader's Display theme and text size (assets/display-init.html).
+  (function () {
+    try {
+      var o = JSON.parse(localStorage.getItem("pen:display:v1") || "{}") || {};
+      var t = o.theme;
+      if (t === "auto") t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      if (["light", "dark", "contrast"].indexOf(t) === -1) t = matchMedia("(prefers-contrast: more)").matches ? "contrast" : "light";
+      document.documentElement.setAttribute("data-pen-theme", t);
+      if (["125", "150"].indexOf(o.size) !== -1) document.documentElement.style.fontSize = (19 * o.size / 100) + "px";
+    } catch (e) {}
+  })();
+</script>
+<link rel="stylesheet" href="../assets/tokens.css">
+<style>
+  :root { font-size: 19px; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--pen-bg);
+    color: var(--pen-ink);
+    font-family: var(--pen-font-serif);
+    font-size: var(--pen-text-base);
+    line-height: 1.55;
+  }
+
+  /* The navy band, as on PEN itself. */
+  .band { background: var(--pen-band); color: var(--pen-on-band); }
+  .band-inner {
+    max-width: 44rem;
+    margin: 0 auto;
+    padding: 0.9rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+  }
+  .band img { width: 3rem; height: 3rem; flex: none; }
+  .band p { margin: 0; line-height: 1.25; }
+  .band-name { font-weight: 800; font-size: var(--pen-text-lede); }
+  .nowrap { white-space: nowrap; }
+  .band-sub { color: var(--pen-on-band-soft); font-size: var(--pen-text-sm); }
+
+  main { max-width: 44rem; margin: 0 auto; padding: 1.75rem 1.25rem 4rem; display: grid; gap: 1.25rem; }
+
+  /* Says in words that this is a stand-in. */
+  .demo {
+    margin: 0;
+    padding: 0.75rem 1rem;
+    border: 2px dashed var(--pen-rule);
+    border-radius: 8px;
+    font-size: var(--pen-text-sm);
+  }
+
+  .card {
+    background: var(--pen-surface);
+    border: 2px solid var(--pen-rule);
+    border-top: 14px solid var(--pen-chrome);
+    border-radius: 12px;
+    padding: 1.75rem 1.75rem 2rem;
+    display: grid;
+    gap: 1.4rem;
+  }
+  .kicker {
+    margin: 0;
+    font-size: var(--pen-text-xs);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .kicker .code { letter-spacing: 0.02em; text-transform: none; white-space: nowrap; }
+  h1 { margin: 0.2rem 0 0; font-size: var(--pen-text-h2); line-height: 1.15; text-wrap: balance; }
+  .lede { margin: 0; }
+
+  /* The three filled-in details, read only. */
+  .facts {
+    margin: 0;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    border: 2px solid var(--pen-rule);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .facts dt, .facts dd { margin: 0; padding: 0.7rem 1rem; border-top: 1px solid var(--pen-rule-faint); }
+  .facts dt:first-of-type, .facts dt:first-of-type + dd { border-top: 0; }
+  .facts dt { font-weight: 700; background: var(--pen-bg); }
+  .facts dd { font-weight: 600; overflow-wrap: anywhere; }
+  .facts-note { margin: -0.8rem 0 0; font-size: var(--pen-text-sm); }
+
+  form { display: grid; gap: 1.4rem; }
+  label { display: block; font-weight: 700; }
+  .hint { margin: 0.15rem 0 0.5rem; font-size: var(--pen-text-sm); }
+  textarea {
+    width: 100%;
+    min-height: 7rem;
+    font: inherit;
+    color: var(--pen-ink);
+    background: var(--pen-surface);
+    border: 2px solid var(--pen-rule);
+    border-radius: 8px;
+    padding: 0.7rem 0.9rem;
+    resize: vertical;
+  }
+
+  .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.5rem; }
+  .submit {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font: inherit;
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--pen-on-chrome);
+    background: var(--pen-chrome);
+    border: 2px solid var(--pen-chrome);
+    border-radius: 8px;
+    padding: 0.8rem 1.5rem;
+    min-height: 3rem;
+    cursor: pointer;
+    transition: background-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .submit svg { flex: none; transition: transform 0.15s ease; }
+  .submit:hover, .submit:focus-visible {
+    background: var(--pen-chrome-hover);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 0 var(--pen-accent);
+  }
+  .submit:hover svg, .submit:focus-visible svg { transform: translateX(3px); }
+  .submit:active { transform: none; box-shadow: none; }
+  a { color: var(--pen-link); font-weight: 700; text-underline-offset: 0.2em; }
+  a:hover { color: var(--pen-link-hover); }
+  :focus-visible { outline: 3px solid var(--pen-focus); outline-offset: 3px; }
+  textarea:focus-visible { outline-offset: 2px; }
+
+  .error { border-top-color: var(--pen-accent); }
+  .error h1 { font-size: var(--pen-text-h3); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .submit, .submit svg { transition: none; }
+    .submit:hover, .submit:focus-visible { transform: none; }
+  }
+  @media (max-width: 520px) {
+    .card { padding: 1.4rem 1.1rem 1.6rem; }
+    h1 { font-size: var(--pen-text-h3); }
+    .facts { grid-template-columns: 1fr; }
+    .facts dd { border-top: 0; padding-top: 0; }
+    .actions { flex-direction: column; align-items: stretch; }
+    .submit { justify-content: center; }
+  }
+</style>
+</head>
+<body>
+<header class="band">
+  <div class="band-inner">
+    <img src="../assets/brand/pen-badge-reversed.svg" alt="">
+    <div>
+      <p class="band-name">PEN navigator <span class="nowrap">check-in</span></p>
+      <p class="band-sub">Participation Equity Navigator</p>
+    </div>
+  </div>
+</header>
+<main>
+  <p class="demo"><strong>Demo form.</strong> It stands in for the real check-in form so the steps can be tried. Nothing you enter is sent or saved.</p>
+  <div class="card" id="card">
+    <div>
+      <p class="kicker">Navigator check-in <span aria-hidden="true">&middot;</span> <span class="code" id="kicker-code"></span></p>
+      <h1 id="title">Check in</h1>
+    </div>
+    <p class="lede">PEN filled in your details. Check they are right, then submit.</p>
+    <dl class="facts">
+      <dt>Navigator code</dt><dd id="code"></dd>
+      <dt>Finished</dt><dd id="item-label"></dd>
+      <dt>Date</dt><dd id="date"></dd>
+    </dl>
+    <p class="facts-note">Something wrong? Go back to PEN and use the check-in button again.</p>
+    <form id="form" novalidate>
+      <div id="note-field">
+        <label for="note">Anything to tell the PEN team?</label>
+        <p class="hint" id="note-hint">Optional. A question, a problem, or something that helped.</p>
+        <textarea id="note" name="note" aria-describedby="note-hint"></textarea>
+      </div>
+      <div class="actions">
+        <button type="submit" class="submit">Submit check-in<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        <a id="back" href="#">Go back to PEN without checking in</a>
+      </div>
+    </form>
+  </div>
+</main>
+<script>
+(function () {
+  "use strict";
+  var p = new URLSearchParams(window.location.search);
+  var code = p.get("code") || "";
+  var item = p.get("item") || "";
+  var ret = p.get("return") || "";
+  var back = null;
+  // Only ever send people back to PEN itself.
+  try {
+    var u = new URL(ret, window.location.href);
+    if (u.origin === window.location.origin) back = u;
+  } catch (e) {}
+  if (!back || !/^module-\d{2}$/.test(item) || !/^N-\d{3}-\d$/.test(code)) {
+    var card = document.getElementById("card");
+    card.classList.add("error");
+    card.innerHTML = '<h1>This check-in link is missing its details</h1>' +
+      "<p>Go back to PEN and use the check-in button again.</p>";
+    return;
+  }
+  var label = "Module " + parseInt(item.slice(7), 10);
+  document.getElementById("kicker-code").textContent = code;
+  document.getElementById("code").textContent = code;
+  document.getElementById("item-label").textContent = label;
+  document.getElementById("title").textContent = label + " check-in";
+  document.getElementById("date").textContent = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+  document.getElementById("back").setAttribute("href", back.href);
+  if (p.get("note") === "off") document.getElementById("note-field").remove();
+  document.title = label + " check-in (demo form)";
+  document.getElementById("form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    back.searchParams.set("checkin", item);
+    back.searchParams.set("code", code);
+    window.location.assign(back.href);
+  });
+})();
+</script>
+</body>
+</html>

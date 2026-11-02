@@ -49,11 +49,12 @@
 #            read from the file at build time, so the build needs no video
 #            tooling.
 #   videos   optional list, for a unit recorded as several videos (still one
-#            unit, one "Mark unit complete"). Each entry: title, video (.mp4),
+#            unit; it completes once every video has been watched). Each entry: title, video (.mp4),
 #            duration ("m:ss"), captions (.vtt, shown by default), transcript
 #            (.txt, paragraphs split by blank lines; shown on the page below
 #            its player). Make both with `python3 -I scripts/prepare_captions.py`
-#            from the raw exports. More than one entry gets "Part N of M"
+#            from the raw exports. Modules 1 and 3 have captions burned into
+#            the picture, so their entries set a transcript and no captions. More than one entry gets "Part N of M"
 #            headings and a jump list; one entry gets neither. Replaces
 #            `video`/`duration`/`transcript` for that unit.
 #   slides   optional path to the downloadable .pptx (under assets/downloads/).
@@ -94,24 +95,36 @@
   units:
     - id: "01"
       title: "ADA History"
-      video: videos/module_1/History_of_ADA.mp4
       slides: assets/downloads/module_1/01-ADA-History.pptx
-      duration: "9:54"
+      videos:
+        - title: "ADA History"
+          video: videos/module_1/History_of_ADA.mp4
+          duration: "9:54"
+          transcript: transcripts/module_1/history-of-ada.txt
     - id: "02"
       title: "Overview of the ADA"
-      video: videos/module_1/Overview_of_the_ADA.mp4
       slides: assets/downloads/module_1/02-Overview-of-the-ADA.pptx
-      duration: "14:28"
+      videos:
+        - title: "Overview of the ADA"
+          video: videos/module_1/Overview_of_the_ADA.mp4
+          duration: "14:28"
+          transcript: transcripts/module_1/overview-of-the-ada.txt
     - id: "03"
       title: "ADA Five Titles"
-      video: videos/module_1/ADA_5_titles.mp4
       slides: assets/downloads/module_1/03-ADA-Five-Titles.pptx
-      duration: "19:15"
+      videos:
+        - title: "ADA Five Titles"
+          video: videos/module_1/ADA_5_titles.mp4
+          duration: "19:15"
+          transcript: transcripts/module_1/ada-five-titles.txt
     - id: "04"
       title: "ADA Requirements"
-      video: videos/module_1/ADA_Requirements.mp4
       slides: assets/downloads/module_1/04-ADA-Requirements.pptx
-      duration: "13:33"
+      videos:
+        - title: "ADA Requirements"
+          video: videos/module_1/ADA_Requirements.mp4
+          duration: "13:33"
+          transcript: transcripts/module_1/ada-requirements.txt
 
 - id: "02"
   title: "Exploring ADA-PARC Website & Data"
@@ -198,21 +211,33 @@
   units:
     - id: "01"
       title: "Understanding Data on Disability"
-      video: videos/module_3/Understanding_Data_on_Disability.mp4
       slides: assets/downloads/module_3/01-Understanding-Data-on-Disability.pptx
-      duration: "2:53"
+      videos:
+        - title: "Understanding Data on Disability"
+          video: videos/module_3/Understanding_Data_on_Disability.mp4
+          duration: "2:53"
+          transcript: transcripts/module_3/understanding-data-on-disability.txt
     - id: "02"
       title: "Making Sense of Numbers vs. Percentages"
-      video: videos/module_3/Numbers_vs_Percentages.mp4
       slides: assets/downloads/module_3/02-Numbers-vs-Percentages.pptx
-      duration: "2:59"
+      videos:
+        - title: "Making Sense of Numbers vs. Percentages"
+          video: videos/module_3/Numbers_vs_Percentages.mp4
+          duration: "2:59"
+          transcript: transcripts/module_3/numbers-vs-percentages.txt
     - id: "03"
       title: "Limitations of National Data"
-      video: videos/module_3/Limitations_of_National_Data.mp4
       slides: assets/downloads/module_3/03-Limitations-of-National-Data.pptx
-      duration: "4:53"
+      videos:
+        - title: "Limitations of National Data"
+          video: videos/module_3/Limitations_of_National_Data.mp4
+          duration: "4:53"
+          transcript: transcripts/module_3/limitations-of-national-data.txt
     - id: "04"
       title: "How to Make Sense of Scorecards"
-      video: videos/module_3/Making_Sense_of_Scorecards.mp4
       slides: assets/downloads/module_3/04-Making-Sense-of-Scorecards.pptx
-      duration: "3:20"
+      videos:
+        - title: "How to Make Sense of Scorecards"
+          video: videos/module_3/Making_Sense_of_Scorecards.mp4
+          duration: "3:20"
+          transcript: transcripts/module_3/making-sense-of-scorecards.txt
