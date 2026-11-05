@@ -4,8 +4,15 @@
   A navigator opens the site from a personal link, e.g. ...?nav=N-014-7.
   This script reads that code, checks it, keeps it in the visitor's own
   browser (localStorage key `pen:nav:v1`), and removes it from the address
-  bar so it is not bookmarked or shared by accident. A public visitor
-  never has a code and sees nothing from this file.
+  bar so it is not bookmarked or shared by accident.
+
+  The bar under the menu is always there, so a visitor can always tell which
+  mode they are in. Navigator mode: "Navigator mode", the code, and check-in
+  status. Public view: "Public view" and a "Navigator? Get back in" button
+  that opens a drawer. The drawer takes the code (same check as the link) or
+  emails the PEN team. There is deliberately no way to leave navigator mode
+  from the page: navigators and public visitors are not expected to share a
+  browser.
 
   Codes are "N-", three digits, and one check digit (the Damm algorithm,
   which catches every single wrong digit and every swap of two neighbouring
@@ -16,7 +23,8 @@
   assets/progress-init.html, so window.penNav is ready for it. The bar is
   placed inside #quarto-header, under the navbar, before Quarto measures the
   header, so page content still starts below it. Styles: `.pen-nav*` in
-  pen.scss. Nothing here sends anything anywhere.
+  pen.scss. Nothing here sends anything anywhere; the email link only opens
+  the visitor's own email app.
 -->
 <script>
 (function () {
@@ -26,6 +34,8 @@
   var PARAM = "nav";
   var CHECK_DIGIT = true;
   var CONTACT = "mailto:hammel@uic.edu?subject=PEN%20navigator%20link";
+  // Same address, with the message started for them.
+  var HELPMAIL = CONTACT + "&body=" + encodeURIComponent("I lost my navigator link or code.\n\nMy name:\n");
   // Site root from the logo link ("./index.html" or "../index.html").
   var brandLink = document.querySelector(".navbar-brand");
   var HELP = (brandLink ? (brandLink.getAttribute("href") || "").replace(/index\.html$/, "") : "") + "help.html#navigator";
@@ -110,8 +120,7 @@
     key: KEY,
     code: code,
     active: Boolean(code),
-    normalize: normalize,
-    off: function () { turnOff(); }
+    normalize: normalize
   };
 
   function changed(previous) {
@@ -121,6 +130,10 @@
   }
 
   // --- The bar under the navbar ---------------------------------------
+  // Always in the page, in both states, so the visitor can always tell which
+  // mode they are in. Navigator mode: a strong status line with the code.
+  // Public view: a quiet line with a way back in (a drawer that takes the
+  // code, plus an email to the team). Below them: a notice line and the drawer.
   var header = document.getElementById("quarto-header");
   if (!header) return;
   var bar = document.createElement("div");
@@ -129,27 +142,38 @@
   bar.setAttribute("aria-label", "Navigator mode");
   header.appendChild(bar);
 
-  // Two parts: the status line (only in navigator mode) and a notice line
-  // that is always in the page, so screen readers announce what lands in it.
+  var FIELD_ID = "pen-nav-code-input";
+  var ERR_ID = "pen-nav-code-error";
+  var DRAWER_ID = "pen-nav-drawer";
+
+  // The notice line is always in the page so screen readers announce what
+  // lands in it. The drawer is only built when someone opens it.
   bar.innerHTML = '<div class="pen-nav-status" hidden></div>' +
     '<div class="pen-nav-notice" role="status" tabindex="-1" hidden></div>';
   var statusEl = bar.querySelector(".pen-nav-status");
   var noticeEl = bar.querySelector(".pen-nav-notice");
-  var dialog = null;
+  var drawerEl = null;
+
+  function toggleBtn() { return statusEl.querySelector(".pen-nav-toggle"); }
 
   function paintStatus() {
     if (window.penNav.active) {
+      closeDrawer(false);
+      statusEl.className = "pen-nav-status is-navigator";
       statusEl.innerHTML = '<p class="pen-nav-label">' +
-        '<strong>Navigator<span class="pen-nav-long"> mode</span></strong>' +
-        '<span class="pen-nav-dot pen-nav-long" aria-hidden="true">\u00b7</span>' +
-        '<span class="pen-nav-code">' + esc(window.penNav.code) + '</span></p>' +
-        '<span class="pen-nav-dot" aria-hidden="true">\u00b7</span>' +
-        '<button type="button" class="pen-nav-off">Turn off</button>';
-      statusEl.querySelector(".pen-nav-off").addEventListener("click", confirmOff);
+        '<strong class="pen-nav-badge">Navigator<span class="pen-nav-long"> mode</span></strong>' +
+        '<span class="pen-nav-code">' + esc(window.penNav.code) + '</span></p>';
     } else {
-      statusEl.innerHTML = "";
+      statusEl.className = "pen-nav-status is-public";
+      statusEl.innerHTML = '<p class="pen-nav-label"><strong class="pen-nav-public">Public view</strong>' +
+        '</p>' +
+        '<button type="button" class="pen-nav-toggle" aria-expanded="false" aria-controls="' + DRAWER_ID + '">' +
+        '<span class="pen-nav-toggle-text">Navigator? Get back in</span></button>';
+      toggleBtn().addEventListener("click", function () {
+        if (drawerEl && !drawerEl.hidden) closeDrawer(true); else openDrawer();
+      });
     }
-    statusEl.hidden = !window.penNav.active;
+    statusEl.hidden = false;
     fit();
   }
 
@@ -168,52 +192,108 @@
     noticeEl.innerHTML = "";
     noticeEl.hidden = true;
     fit();
-    var off = statusEl.querySelector(".pen-nav-off");
+    var back = toggleBtn();
     var main = document.querySelector("main");
-    if (off) off.focus();
+    if (back) back.focus();
     else if (main) { main.setAttribute("tabindex", "-1"); main.focus(); }
   }
 
-  // Hide the bar when it is empty. Quarto re-offsets the page by the
-  // header's height on resize, so tell it the height changed.
+  // Quarto re-offsets the page by the header's height on resize, so tell it
+  // the height changed whenever the bar grows or shrinks.
   function fit() {
-    bar.hidden = statusEl.hidden && noticeEl.hidden;
     try { window.dispatchEvent(new Event("resize")); } catch (e) {}
   }
 
-  function confirmOff() {
-    if (!dialog) {
-      dialog = document.createElement("dialog");
-      dialog.className = "pen-nav-dialog";
-      dialog.setAttribute("aria-labelledby", "pen-nav-dialog-title");
-      dialog.setAttribute("aria-describedby", "pen-nav-dialog-text");
-      dialog.innerHTML = '<p class="pen-nav-dialog-title" id="pen-nav-dialog-title">Turn off navigator mode?</p>' +
-        '<p id="pen-nav-dialog-text">Your progress stays, but check-ins stop. To turn it back on later, open your personal navigator link again.</p>' +
-        '<div class="pen-nav-dialog-actions">' +
-        '<button type="button" class="pen-nav-dialog-keep" autofocus>Keep it on</button>' +
-        '<button type="button" class="pen-nav-dialog-confirm">Turn off</button></div>';
-      document.body.appendChild(dialog);
-      // Keep it on and Escape both close it and put focus back on Turn off.
-      function keep() { var off = statusEl.querySelector(".pen-nav-off"); if (off) off.focus(); }
-      dialog.querySelector(".pen-nav-dialog-keep").addEventListener("click", function () { dialog.close(); keep(); });
-      dialog.querySelector(".pen-nav-dialog-confirm").addEventListener("click", function () { dialog.close(); turnOff(); });
-      dialog.addEventListener("cancel", function () { window.setTimeout(keep, 0); });
-    }
-    if (typeof dialog.showModal === "function") dialog.showModal();
-    else if (window.confirm("Turn off navigator mode? Your progress stays, but check-ins stop. To turn it back on later, open your personal navigator link again.")) turnOff();
+  // --- The "get back in" drawer (public view only) -----------------------
+  function buildDrawer() {
+    drawerEl = document.createElement("div");
+    drawerEl.className = "pen-nav-drawer";
+    drawerEl.id = DRAWER_ID;
+    drawerEl.hidden = true;
+    drawerEl.innerHTML =
+      '<form class="pen-nav-form" novalidate>' +
+      '<p class="pen-nav-drawer-title">Get back in to navigator mode</p>' +
+      '<label for="' + FIELD_ID + '">Navigator code</label>' +
+      '<div class="pen-nav-field">' +
+      '<input id="' + FIELD_ID + '" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" ' +
+      'aria-errormessage="' + ERR_ID + '">' +
+      '<button type="submit" class="pen-nav-submit">Turn on navigator mode</button></div>' +
+      '<p class="pen-nav-error" id="' + ERR_ID + '" role="alert" hidden></p>' +
+      '</form>' +
+      '<div class="pen-nav-lost"><p class="pen-nav-drawer-title">Lost your code or link?</p>' +
+      '<p><a class="no-external" href="' + HELPMAIL + '">Email the PEN team' +
+      '<span class="visually-hidden"> (opens your email app)</span></a>. We will reply with your link.</p></div>';
+    bar.insertBefore(drawerEl, noticeEl);
+
+    var input = drawerEl.querySelector("input");
+    input.addEventListener("input", clearError);
+    drawerEl.querySelector("form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      turnOn(input.value);
+    });
+    drawerEl.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") { e.stopPropagation(); closeDrawer(true); }
+    });
   }
 
-  function turnOff() {
-    var previous = window.penNav.code;
-    if (!previous) return;
-    clear();
-    window.penNav.code = null;
-    window.penNav.active = false;
+  function openDrawer() {
+    if (!drawerEl) buildDrawer();
+    drawerEl.hidden = false;
+    var t = toggleBtn();
+    if (t) {
+      t.setAttribute("aria-expanded", "true");
+      t.querySelector(".pen-nav-toggle-text").textContent = "Close";
+    }
+    fit();
+    drawerEl.querySelector("input").focus();
+  }
+
+  function closeDrawer(returnFocus) {
+    if (!drawerEl || drawerEl.hidden) return;
+    drawerEl.hidden = true;
+    clearError();
+    var t = toggleBtn();
+    if (t) {
+      t.setAttribute("aria-expanded", "false");
+      t.querySelector(".pen-nav-toggle-text").textContent = "Navigator? Get back in";
+      if (returnFocus) t.focus();
+    }
+    fit();
+  }
+
+  function clearError() {
+    if (!drawerEl) return;
+    var err = drawerEl.querySelector(".pen-nav-error");
+    err.hidden = true;
+    err.textContent = "";
+    drawerEl.querySelector("input").removeAttribute("aria-invalid");
+  }
+
+  function showError(msg) {
+    var err = drawerEl.querySelector(".pen-nav-error");
+    var input = drawerEl.querySelector("input");
+    err.textContent = msg;
+    err.hidden = false;
+    input.setAttribute("aria-invalid", "true");
+    input.focus();
+  }
+
+  function turnOn(raw) {
+    if (!String(raw || "").trim()) { showError("Enter your navigator code."); return; }
+    var c = normalize(raw);
+    if (!c) {
+      showError("That code does not look right. Check it against your PEN email, or email the PEN team.");
+      return;
+    }
+    var saved = write(c);
+    window.penNav.code = c;
+    window.penNav.active = true;
     paintStatus();
-    showNotice("Navigator mode is off. Your progress stays. To turn it back on, open your personal navigator link again. " +
-      '<a href="' + HELP + '">How navigator mode works</a>');
+    showNotice(saved
+      ? 'Navigator mode is on. Your code is <span class="pen-nav-code">' + esc(c) + "</span>."
+      : "Navigator mode is on, but your browser is not saving, so it will turn off when you leave this page.");
     noticeEl.focus();
-    changed(previous);
+    changed(null);
   }
 
   paintStatus();

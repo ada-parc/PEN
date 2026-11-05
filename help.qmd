@@ -94,20 +94,23 @@ personal navigator link, you can skip it.
 <summary>What is navigator mode?</summary>
 
 Your personal link turns on navigator mode in the browser you open it in. A
-bar under the menu shows **Navigator mode** and your code. When you finish a
+bar under the menu shows **Navigator mode** and your code on every page. If you
+are not in navigator mode, the same bar says **Public view**. When you finish a
 module, PEN asks you to check in: a short form for the PEN team, with your
 code and the module already filled in.
 
 </details>
 
 <details>
-<summary>I turned navigator mode off. How do I turn it back on?</summary>
+<summary>The bar says Public view. How do I get back into navigator mode?</summary>
 
-Open your personal navigator link again, from the email the PEN team sent you.
-Navigator mode comes back on right away. Your progress and the check-ins you
-already sent are still there.
+In the bar, choose **Navigator? Get back in**, type your navigator code, and
+choose **Turn on navigator mode**. Your code is in the email the PEN team sent
+you and looks like N-014-7. You can also open your personal navigator link
+again. Navigator mode comes back on right away. Your progress and the
+check-ins you already sent are still there.
 
-Lost the email? [Email the PEN team](mailto:hammel@uic.edu?subject=PEN%20navigator%20link)
+Lost the email or the code? [Email the PEN team](mailto:hammel@uic.edu?subject=PEN%20navigator%20link)
 and we will send your link again.
 
 </details>

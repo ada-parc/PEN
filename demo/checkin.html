@@ -112,6 +112,28 @@
   form { display: grid; gap: 1.4rem; }
   label { display: block; font-weight: 700; }
   .hint { margin: 0.15rem 0 0.5rem; font-size: var(--pen-text-sm); }
+  /* The 1 to 5 rating: large targets, with the end labels in words. */
+  fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
+  legend { padding: 0; font-weight: 700; }
+  .rating-scale { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5rem; }
+  label.rating-opt {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    min-height: 3rem;
+    padding: 0.6rem 0.3rem;
+    text-align: center;
+    line-height: 1.2;
+    border: 2px solid var(--pen-rule);
+    border-radius: 8px;
+    background: var(--pen-surface);
+    cursor: pointer;
+  }
+  .rating-opt:has(input:checked) { border-color: var(--pen-chrome); box-shadow: inset 0 0 0 2px var(--pen-chrome); }
+  .rating-opt input { width: 1.25rem; height: 1.25rem; margin: 0; accent-color: var(--pen-chrome); }
+  .rating-word { font-size: var(--pen-text-sm); font-weight: 600; }
+  .field-error { margin: 0.6rem 0 0; font-weight: 700; color: var(--pen-accent); }
   textarea {
     width: 100%;
     min-height: 7rem;
@@ -168,6 +190,8 @@
     .card { padding: 1.4rem 1.1rem 1.6rem; }
     h1 { font-size: var(--pen-text-h3); }
     .facts { grid-template-columns: 1fr; }
+    .rating-scale { grid-template-columns: 1fr; }
+    label.rating-opt { flex-direction: row; justify-content: flex-start; gap: 0.7rem; padding: 0.6rem 0.9rem; text-align: left; }
     .facts dd { border-top: 0; padding-top: 0; }
     .actions { flex-direction: column; align-items: stretch; }
     .submit { justify-content: center; }
@@ -199,9 +223,21 @@
     </dl>
     <p class="facts-note">Something wrong? Go back to PEN and use the check-in button again.</p>
     <form id="form" novalidate>
+      <fieldset id="rating-field" aria-describedby="rating-hint rating-error">
+        <legend>How useful did you find the content in this module?</legend>
+        <p class="hint" id="rating-hint">Required. Choose a number from 1 (not useful) to 5 (very useful).</p>
+        <div class="rating-scale">
+          <label class="rating-opt"><input type="radio" name="rating" value="1"><span>1<br><span class="rating-word">Not useful</span></span></label>
+          <label class="rating-opt"><input type="radio" name="rating" value="2"><span>2</span></label>
+          <label class="rating-opt"><input type="radio" name="rating" value="3"><span>3</span></label>
+          <label class="rating-opt"><input type="radio" name="rating" value="4"><span>4</span></label>
+          <label class="rating-opt"><input type="radio" name="rating" value="5"><span>5<br><span class="rating-word">Very useful</span></span></label>
+        </div>
+        <p class="field-error" id="rating-error" role="alert" hidden></p>
+      </fieldset>
       <div id="note-field">
-        <label for="note">Anything to tell the PEN team?</label>
-        <p class="hint" id="note-hint">Optional. A question, a problem, or something that helped.</p>
+        <label for="note">Feedback or other thoughts on the content &amp; accessibility of this module:</label>
+        <p class="hint" id="note-hint">Optional. Use this to flag any issues.</p>
         <textarea id="note" name="note" aria-describedby="note-hint"></textarea>
       </div>
       <div class="actions">
@@ -240,8 +276,19 @@
   document.getElementById("back").setAttribute("href", back.href);
   if (p.get("note") === "off") document.getElementById("note-field").remove();
   document.title = label + " check-in (demo form)";
+  var ratingError = document.getElementById("rating-error");
+  document.getElementById("rating-field").addEventListener("change", function () {
+    ratingError.hidden = true;
+    ratingError.textContent = "";
+  });
   document.getElementById("form").addEventListener("submit", function (e) {
     e.preventDefault();
+    if (!document.querySelector('input[name="rating"]:checked')) {
+      ratingError.textContent = "Choose a number from 1 to 5 to submit your check-in.";
+      ratingError.hidden = false;
+      document.querySelector('input[name="rating"]').focus();
+      return;
+    }
     back.searchParams.set("checkin", item);
     back.searchParams.set("code", code);
     window.location.assign(back.href);

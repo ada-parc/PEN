@@ -22,12 +22,13 @@
   localStorage `pen:checkin:v1` as { code: { "module-02": iso, ... } }.
 
   SETTINGS, at the top of the script, holds everything that changes when the
-  real form (REDCap or similar, How PEN Works decisions consent-tool and
-  checkin-contents) replaces the stand-in demo/checkin.html: its address, the
-  names of the fields PEN fills in, where Submit sends people back to, and
-  whether the demo shows the optional note box. Whatever the form, its "on
-  submit" redirect must land on a PEN page with ?checkin=<item>&code=<code>
-  added. Styles: `.pen-checkin*` in pen.scss.
+  real form (How PEN Works decisions consent-tool and checkin-contents)
+  replaces the stand-in demo/checkin.html: its address, the names of the fields
+  PEN fills in, where Submit sends people back to, and whether the demo shows
+  the optional note box. The form also asks two feedback questions (a 1 to 5
+  usefulness rating and an open note) that PEN does not fill in. Whatever the
+  form, its "on submit" redirect must land on a PEN page with
+  ?checkin=<item>&code=<code> added. Styles: `.pen-checkin*` in pen.scss.
   Loaded via `include-after-body` in _quarto.yml, after progress-init.html.
 -->
 <script>
@@ -37,19 +38,19 @@
   // --- Settings: the only part to edit when the real form exists -------
   var SETTINGS = {
     // The check-in form: a path from the site root, or a full https:// address.
-    form: "https://docs.google.com/forms/d/e/1FAIpQLSfnUu1DMUlK2PDrG3PMxNjFQNMlMgv3yNP6OhfXPinz32vHTw/viewform",
+    form: "demo/checkin.html",
     // Address parameters PEN adds to the form link. REDCap pre-fills a field
     // from a parameter with that field's name, so match these to the form.
     // Set returnTo to "" if the form's redirect is fixed in the form itself.
-    fields: { code: "entry.1572468452", item: "entry.110328935", returnTo: "" },
+    fields: { code: "code", item: "item", returnTo: "return" },
     // Where Submit sends people: "same page" (back where they left), or a
     // path from the site root such as "index.html" for one fixed page.
     returnTo: "same page",
     // Google Forms: set form to the form's .../viewform address and fields to
     // its entry ids (scripts/google_suite/README.md), with returnTo "" in
     // fields. Its confirmation message links back to <site>/?checkin=done.
-    // The optional "Anything to tell the PEN team?" box. This switch drives
-    // the demo form only; in a real form, add or leave out that field.
+    // The optional feedback note. This switch drives the demo form only; in a
+    // real form, add or leave out that field.
     noteBox: true
   };
 
@@ -173,7 +174,7 @@
       '<ol class="pen-checkin-steps">' +
       '<li class="is-done"><span class="pen-checkin-n" aria-hidden="true">&#10003;</span>All ' + moduleCount(item.slice(7)) + " units complete</li>" +
       '<li class="is-now"><span class="pen-checkin-n" aria-hidden="true">2</span>Check in with the PEN team</li></ol>' +
-      "<p>As a navigator, you check in once per module. It is a short form with your code and the module already filled in. Submit it, and you will come back here.</p>" +
+      "<p>As a navigator, you check in once per module. It is a short form with your code and the module already filled in, plus two quick questions about the module: how useful it was, and any feedback. Submit it, and you will come back here.</p>" +
       certNote +
       '<div class="pen-checkin-actions">' + checkinBtn(code, item) +
       '<button type="button" class="pen-checkin-later" data-pen-checkin-close>I\u2019ll do it later</button></div>' +
@@ -212,7 +213,7 @@
     return '<section class="pen-checkin-remind" data-pen-checkin-ui aria-labelledby="pen-checkin-remind-' + item + '">' +
       kicker(code, "Navigator check-in") +
       '<h2 id="pen-checkin-remind-' + item + '">' + label(item) + " check-in still to do</h2>" +
-      "<p>A short form for the PEN team, with your code already filled in.</p>" + checkinBtn(code, item) + "</section>";
+      "<p>A short form for the PEN team, with your code already filled in. It also asks how useful the module was.</p>" + checkinBtn(code, item) + "</section>";
   }
   // --- Home page: the navigator version of "Your progress" -------------
   // Each module row shows two steps, "Units done" then "Check in", the head
@@ -265,8 +266,7 @@
   // --- The navigator bar under the menu: check-ins at a glance ----------
   function paintBar(code) {
     var statusEl = document.querySelector(".pen-nav-status");
-    var off = statusEl && statusEl.querySelector(".pen-nav-off");
-    if (!off) return;
+    if (!statusEl || !statusEl.classList.contains("is-navigator")) return;
     var due = itemKeys().filter(function (k) { return status(code, k) === "due"; });
     var n = checkedIn(code);
     var dot = '<span class="pen-nav-dot" aria-hidden="true" data-pen-checkin-ui>&middot;</span>';
@@ -277,7 +277,7 @@
       html += '<a class="pen-nav-ck-btn" data-pen-checkin-ui href="' + esc(formHref(code, due[0])) + '">Check in ' + label(due[0]) +
         '<span class="visually-hidden"> (opens the check-in form)</span></a>' + dot;
     }
-    off.insertAdjacentHTML("beforebegin", html);
+    statusEl.insertAdjacentHTML("beforeend", html);
     try { window.dispatchEvent(new Event("resize")); } catch (e) {}
   }
 

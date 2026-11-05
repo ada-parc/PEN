@@ -11,6 +11,9 @@
  *              Link the Form to this spreadsheet, or to a second one that the
  *              wider team may see (see README, "Keeping names apart").
  *   Dashboard  one row per navigator: who has checked in, per module.
+ *   Feedback   average usefulness rating and response count per module, and
+ *              the open notes. Reads Check-ins columns D (rating) and E (note);
+ *              run setupFeedback() after the Form has those two questions.
  */
 
 var SITE = "https://ada-parc.github.io/PEN/";
@@ -81,6 +84,32 @@ function setupDashboard() {
   );
   sh.setFrozenRows(1);
   sh.autoResizeColumns(1, head.length);
+}
+
+/** Feedback tab: formulas only. Needs Check-ins D = rating (1 to 5), E = note. */
+function setupFeedback() {
+  var ss = SpreadsheetApp.getActive();
+  var sh = ss.getSheetByName("Feedback") || ss.insertSheet("Feedback");
+  var C = "'" + CHECKINS_SHEET + "'!";
+  sh.clear();
+  sh.appendRow(["Module", "Ratings", "Average usefulness (1 to 5)"]);
+  MODULES.forEach(function (m, i) {
+    var r = i + 2;
+    sh.getRange(r, 1).setValue(m);
+    sh.getRange(r, 2).setFormula("=COUNTIFS(" + C + "C:C,$A" + r + "," + C + "D:D,\">0\")");
+    sh.getRange(r, 3).setFormula("=IFERROR(ROUND(AVERAGEIFS(" + C + "D:D," + C + "C:C,$A" + r + "),2),\"\")");
+  });
+  var top = MODULES.length + 3;
+  sh.getRange(top, 1, 1, 4).setValues([["Timestamp", "Code", "Module", "Note"]]);
+  sh.getRange(top + 1, 1).setFormula(
+    "=IFERROR(FILTER({" + C + "A2:A," + C + "B2:B," + C + "C2:C," + C + "E2:E}," + C + "E2:E<>\"\"),\"No notes yet\")"
+  );
+  sh.setFrozenRows(1);
+  sh.getRange("A1:C1").setBackground("#1f2a44").setFontColor("#ffffff").setFontWeight("bold");
+  sh.getRange(top, 1, 1, 4).setFontWeight("bold");
+  sh.getRange("B2:C" + (MODULES.length + 1)).setHorizontalAlignment("center");
+  sh.setColumnWidth(1, 170); sh.setColumnWidth(2, 90); sh.setColumnWidth(3, 200); sh.setColumnWidth(4, 520);
+  sh.getRange(top + 1, 4, 200, 1).setWrap(true);
 }
 
 /**
